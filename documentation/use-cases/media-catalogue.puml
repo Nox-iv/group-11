@@ -31,6 +31,6 @@ guest_user -- search_media
 guest_user -- view_media
 
 update_catalogue -d- media_procurement_service
-export_data -d- reporting_service
+export_data -d-- reporting_service
 
 @enduml
