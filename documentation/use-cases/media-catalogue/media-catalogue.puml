@@ -10,7 +10,7 @@ rectangle "<<service>> \n Media Catalogue Service" {
     (Bulk Add Media Items) as bulk_add
     (Bulk Update Media Items) as bulk_update
     (Bulk Delete Media Items) as bulk_delete
-    (Extract Analytical Data) as export_data
+    (Extract Media Search Trends) as export_search_trends
 }
 
 :   <<person>> \n Guest User: as guest_user
@@ -31,6 +31,6 @@ guest_user -- search_media
 guest_user -- view_media
 
 update_catalogue -d- media_procurement_service
-export_data -d-- reporting_service
+export_search_trends -d-- reporting_service
 
 @enduml
