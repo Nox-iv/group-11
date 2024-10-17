@@ -1,2 +1,23 @@
 @startuml media-catalogue
+
+left to right direction
+
+rectangle "<<service>> \n Media Catalogue Service" {
+    (Browse Media) as browse_media
+    (Media Full Text Search) as search_media
+    (View Media Details) as view_media
+}
+
+:Guest User: as guest_user
+:AML Member: as aml_member
+
+guest_user <|-r-- aml_member
+
+browse_media <.l. search_media: <<extend>>
+browse_media <-l- view_media: <<include>>
+
+guest_user -- browse_media
+guest_user -- search_media
+guest_user -- view_media
+
 @enduml
