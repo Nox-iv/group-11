@@ -1,2 +1,28 @@
 @startuml payment-processing
+
+left to right direction
+
+rectangle "<<service>> \n Payment Processing Service" {
+    (Add Payment Method) as add_payment
+    (Remove Payment Method) as remove_payment
+    (Update Payment Method) as update_payment
+    (Pay Subscription Fee) as pay_subscription
+    (Pay Borrowing Fine) as pay_fine
+}
+
+:   <<person>> \n AML Member: as aml_member
+:    <<ext. system>> \n Payment Processor: as payment_processor
+
+aml_member -- add_payment
+aml_member -- remove_payment
+aml_member -- update_payment
+aml_member -- pay_subscription
+aml_member -- pay_fine
+
+payment_processor -u- add_payment
+payment_processor -u- remove_payment
+payment_processor -u- update_payment
+payment_processor -u- pay_subscription
+payment_processor -u- pay_fine
+
 @enduml
