@@ -1,2 +1,25 @@
 @startuml media-borrowing
+left to right direction
+
+rectangle "<<service>> \n Media Borrowing Service" {
+    (Borrow Media Item) as borrow_media
+    (Renew Borrowed Media) as renew_media
+    (Return Media Item) as return_media
+    (View Borrowing Record) as view_borrowing_record
+    (Get Media Availablity) as get_availability
+    (Extract Borrowing Trends) as extract_trends
+}
+
+:    <<person>> \n AML Member: as aml_member 
+:              <<service>> \n Media Catalogue Service: as media_catalogue
+:        <<service>> \n Reporting Service: as reporting_service
+
+
+aml_member -- borrow_media
+aml_member -- renew_media
+aml_member -- return_media
+aml_member -- view_borrowing_record
+media_catalogue -u- get_availability
+reporting_service -u- extract_trends
+
 @enduml
