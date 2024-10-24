@@ -1,3 +1,36 @@
 @startuml media-borrowing-sequence
-    
+
+skinparam sequence {
+    ActorBorderColor Black
+    ActorBackgroundColor #A9DCDF
+    ParticipantBorderColor Black
+    ParticipantBackgroundColor #F8E1A0
+    LifeLineBorderColor Black
+    LifeLineBackgroundColor White
+    NoteBorderColor Black
+    NoteBackgroundColor #FEFECE
+    ArrowColor Black
+    ArrowThickness 1
+    ActivationBorderColor Black
+    ActivationBackgroundColor #B3E2CD
+}
+
+title UC-002 (A): Media Catalogue Search
+
+actor AmlMember as aml_member
+participant MediaCatalogueController as media_search_controller
+participant MediaSearchLogic as media_search_logic
+participant MediaSearchClient as media_search_client
+participant MediaSearchIndex as media_search_index
+
+aml_member -> media_search_controller: Search Query Request
+media_search_controller -> media_search_logic: Search Query Payload
+media_search_logic -> media_search_client: Validated Query Payload
+media_search_client -> media_search_index: Serialized Query Payload
+media_search_index --> media_search_client: Serialized Results Response
+media_search_client --> media_search_logic: Deserialized Results Response
+media_search_logic --> media_search_controller: Search Results Payload
+media_search_controller --> aml_member: Search Results Response
+
+
 @enduml
