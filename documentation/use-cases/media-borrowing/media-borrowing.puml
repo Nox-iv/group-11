@@ -2,14 +2,14 @@
 left to right direction
 
 rectangle "<<service>> \n Media Borrowing Service" {
-    (Borrow Media Item) as borrow_media
-    (Renew Borrowed Media) as renew_media
-    (Return Media Item) as return_media
+    (Borrow Digital Media Item) as borrow_media
+    (Renew Borrowed Media Item) as renew_media
+    (Return Digital Media Item) as return_media
     (View Borrowing Record) as view_borrowing_record
     (Get Media Availablity) as get_availability
     (Extract Borrowing Trends) as extract_trends
-    (Process In-Branch Media Return) as process_return
-    (Process In-Branch Media Pickup) as process_pickup
+    (In-Branch Physical Media Return) as process_return
+    (Borrow/Pick-up Media In-Branch) as process_borrow
 }
 
 :    <<person>> \n AML Member: as aml_member 
@@ -22,8 +22,10 @@ aml_member -- borrow_media
 aml_member -- renew_media
 aml_member -- return_media
 aml_member -- view_borrowing_record
+aml_member -- process_return
+aml_member -- process_borrow
 librarian -u- process_return
-librarian -u- process_pickup
+librarian -u- process_borrow
 
 media_catalogue -u- get_availability
 reporting_service -u- extract_trends
