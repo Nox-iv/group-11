@@ -1,0 +1,28 @@
+@startuml media-borrowing-sequence-2
+
+skinparam sequence {
+    ActorBorderColor Black
+    ActorBackgroundColor #A9DCDF
+    ParticipantBorderColor Black
+    ParticipantBackgroundColor #F8E1A0
+    LifeLineBorderColor Black
+    LifeLineBackgroundColor White
+    NoteBorderColor Black
+    NoteBackgroundColor #FEFECE
+    ArrowColor Black
+    ArrowThickness 1
+    ActivationBorderColor Black
+    ActivationBackgroundColor #B3E2CD
+}
+
+title UC-002 (B): Media Borrowing & Reservation - Borrowing
+
+actor AmlMember as aml_member
+participant MediaBorrowingController as media_borrowing_controller
+participant MediaBorrowingLogic as media_borrowing_logic
+participant MediaBorrowingRepository as media_borrowing_repo
+participant MediaBorrowingDatabase as media_borrowing_db
+
+
+
+@enduml
