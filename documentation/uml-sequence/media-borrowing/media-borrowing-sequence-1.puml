@@ -1,4 +1,4 @@
-@startuml media-borrowing-sequence
+@startuml media-borrowing-sequence-1
 
 skinparam sequence {
     ActorBorderColor Black
@@ -15,7 +15,7 @@ skinparam sequence {
     ActivationBackgroundColor #B3E2CD
 }
 
-title UC-002 (A): Media Catalogue Search
+title UC-002 (A): Media Borrowing - Search for Media
 
 actor AmlMember as aml_member
 participant MediaCatalogueController as media_search_controller
