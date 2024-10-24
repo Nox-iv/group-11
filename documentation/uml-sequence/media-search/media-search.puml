@@ -15,22 +15,38 @@ skinparam sequence {
     ActivationBackgroundColor #B3E2CD
 }
 
-title UC-002 (A): Media Borrowing - Search for Media
+title UC-002: Media Search
 
 actor AmlMember as aml_member
-participant MediaCatalogueController as media_search_controller
+participant MediaSearchController as media_search_controller
 participant MediaSearchLogic as media_search_logic
 participant MediaSearchClient as media_search_client
-participant MediaSearchIndex as media_search_index
+participant SearchIndexClient as media_search_index
 
 aml_member -> media_search_controller: Search Query Request
-media_search_controller -> media_search_logic: Search Query Payload
-media_search_logic -> media_search_client: Validated Query Payload
-media_search_client -> media_search_index: Serialized Query Payload
-media_search_index --> media_search_client: Serialized Results Response
-media_search_client --> media_search_logic: Deserialized Results Response
-media_search_logic --> media_search_controller: Search Results Payload
-media_search_controller --> aml_member: Search Results Response
-
+alt successful case
+    media_search_controller -> media_search_logic: Search Query Payload
+else invalid Query
+    media_search_logic --> media_search_controller: Invalid Query Error
+    media_search_controller --> aml_member: Invalid Query Error Response
+end
+media_search_logic -> media_search_client: Serialized Query Payload
+media_search_client -> media_search_index: Search Index Request
+alt Database Connection Successful
+    media_search_index --> media_search_client: Search Index Response
+    media_search_client --> media_search_logic: Deserialized Results Payload
+    media_search_logic --> media_search_controller: Search Results Payload
+    media_search_controller --> aml_member: Search Results Response
+else Database Connection Failure
+    loop Retry Connection 5 Times
+    media_search_client -> media_search_index: Search Index Request
+    note over media_search_client
+    If retry is successful then continue on successful scenario.
+    end note
+    end
+    media_search_client --> media_search_logic: Connection Failed Error
+    media_search_logic --> media_search_controller: Connection Failed Error
+    media_search_controller --> aml_member: Conntection Failed Response
+end
 
 @enduml
