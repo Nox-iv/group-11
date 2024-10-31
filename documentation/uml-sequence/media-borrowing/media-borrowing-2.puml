@@ -15,13 +15,35 @@ skinparam sequence {
     ActivationBackgroundColor #B3E2CD
 }
 
-title UC-002 (B): Media Borrowing & Reservation
+title UC-002: Media Borrowing & Returns
 
 actor AmlMember as aml_member
+participant FrontEndApplication as front_end
 participant MediaBorrowingController as media_borrowing_controller
 participant MediaBorrowingLogic as media_borrowing_logic
 participant MediaBorrowingRepository as media_borrowing_repo
-participant MediaBorrowingDatabase as media_borrowing_db
+
+aml_member -> front_end: Select Branch Location
+front_end -> media_borrowing_controller: Branch Media Availability Request
+media_borrowing_controller -> media_borrowing_logic: Branch Media Availibility Payload
+media_borrowing_logic -> media_borrowing_repo: Branch Media Availability Query
+media_borrowing_repo --> media_borrowing_logic: Branch Media Availability Result
+media_borrowing_logic --> media_borrowing_controller: Branch Media Availability Result Payload
+media_borrowing_controller --> front_end: Branch Media Availability Response
+front_end --> aml_member: Branch Media Availability 
+
+aml_member -> front_end: Select Pick-up & Return Date
+front_end -> media_borrowing_controller: Media Borrowing Request
+media_borrowing_controller -> media_borrowing_logic: Media Borrowing Payload
+media_borrowing_logic -> media_borrowing_repo: Update Media Availability Command
+media_borrowing_repo --> media_borrowing_logic: Update Media Availability Result
+media_borrowing_logic -> media_borrowing_repo: Insert Media Borrowing Record Command
+media_borrowing_repo --> media_borrowing_logic: Insert Media Borrowing Record Result
+media_borrowing_logic --> media_borrowing_controller: Media Borrowing Result Payload
+media_borrowing_controller --> front_end: Media Borrowing Response
+front_end --> aml_member: Media Borrowing Confirmation
+
+
 
 
 
