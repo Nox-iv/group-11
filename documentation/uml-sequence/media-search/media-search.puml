@@ -1,4 +1,4 @@
-@startuml media-borrowing-sequence-1
+@startuml media-search
 
 skinparam sequence {
     ActorBorderColor Black
@@ -18,17 +18,20 @@ skinparam sequence {
 title UC-002: Media Search
 
 actor AmlMember as aml_member
+participant FrontEndApplication as front_end
 participant MediaSearchController as media_search_controller
 participant MediaSearchLogic as media_search_logic
 participant MediaSearchClient as media_search_client
 participant SearchIndexClient as media_search_index
 
-aml_member -> media_search_controller: Search Query Request
+aml_member -> front_end: Search Query
+front_end -> media_search_controller: Search Query Request
 alt successful case
     media_search_controller -> media_search_logic: Search Query Payload
 else invalid Query
     media_search_logic --> media_search_controller: Invalid Query Error
-    media_search_controller --> aml_member: Invalid Query Error Response
+    media_search_controller --> front_end: Invalid Query Error Response
+    front_end --> aml_member: Invalid Query Error
 end
 media_search_logic -> media_search_client: Serialized Query Payload
 media_search_client -> media_search_index: Search Index Request
@@ -37,16 +40,17 @@ alt Database Connection Successful
     media_search_client --> media_search_logic: Deserialized Results Payload
     media_search_logic --> media_search_controller: Search Results Payload
     media_search_controller --> aml_member: Search Results Response
-else Database Connection Failure
+else Database Connection Failed
     loop Retry Connection 5 Times
     media_search_client -> media_search_index: Search Index Request
     note over media_search_client
-    If retry is successful then continue on successful scenario.
+    If retry is successful then continue on above succesful connection scenario.
     end note
     end
     media_search_client --> media_search_logic: Connection Failed Error
     media_search_logic --> media_search_controller: Connection Failed Error
-    media_search_controller --> aml_member: Conntection Failed Response
+    media_search_controller --> front_end: Connection Failed Response
+    front_end --> aml_member: Connection Failed Error
 end
 
 @enduml
