@@ -15,7 +15,7 @@ skinparam sequence {
     ActivationBackgroundColor #B3E2CD
 }
 
-title UC-002: Media Search
+title UC-005: Media Search
 
 actor AmlMember as aml_member
 participant FrontEndApplication as front_end

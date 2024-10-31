@@ -1,4 +1,4 @@
-@startuml media-borrowing-sequence-2
+@startuml media-borrowing
 
 skinparam sequence {
     ActorBorderColor Black
@@ -15,7 +15,7 @@ skinparam sequence {
     ActivationBackgroundColor #B3E2CD
 }
 
-title UC-002 (B): Media Borrowing & Reservation - Borrowing
+title UC-002 (B): Media Borrowing & Reservation
 
 actor AmlMember as aml_member
 participant MediaBorrowingController as media_borrowing_controller
