@@ -1,0 +1,46 @@
+@startuml media-returns
+
+skinparam sequence {
+    ActorBorderColor Black
+    ActorBackgroundColor #A9DCDF
+    ParticipantBorderColor Black
+    ParticipantBackgroundColor #F8E1A0
+    LifeLineBorderColor Black
+    LifeLineBackgroundColor White
+    NoteBorderColor Black
+    NoteBackgroundColor #FEFECE
+    ArrowColor Black
+    ArrowThickness 1
+    ActivationBorderColor Black
+    ActivationBackgroundColor #B3E2CD
+}
+
+title UC-002: Media Returns
+
+actor AmlMember as aml_member
+participant MediaReturnKiosk as kiosk
+participant MediaBorrowingController as media_borrowing_controller
+participant MediaBorrowingLogic as media_borrowing_logic
+participant MediaBorrowingRepository as media_borrowing_repo
+
+aml_member -> kiosk: Drop-off Media Item
+kiosk -> media_borrowing_controller: Media Return Request
+media_borrowing_controller -> media_borrowing_logic: Media Return Payload
+media_borrowing_logic -> media_borrowing_repo: Delete Media Borrowing Record Command
+media_borrowing_repo --> media_borrowing_logic: Delete Media Borrowing Record Result
+alt Success: Borrowing Record Exists
+media_borrowing_logic -> media_borrowing_repo: Update Media Availability Command
+media_borrowing_repo --> media_borrowing_logic: Update Media Availability Result
+media_borrowing_logic --> media_borrowing_controller: Return Success Payload
+media_borrowing_controller --> kiosk: Return Success Response
+kiosk --> aml_member: Media Return Confirmation
+else Failure: Borrowing Record Does Not Exist
+media_borrowing_logic --> media_borrowing_controller: Return Error Payload
+media_borrowing_controller --> kiosk: Return Error Response
+kiosk --> aml_member: Media Return Error Message
+
+end
+
+@enduml
+
+
