@@ -37,13 +37,21 @@ front_end -> media_borrowing_controller: Media Borrowing Request
 media_borrowing_controller -> media_borrowing_logic: Media Borrowing Payload
 media_borrowing_logic -> media_borrowing_repo: Update Media Availability Command
 media_borrowing_repo --> media_borrowing_logic: Update Media Availability Result
+alt Success: Media Item is Available
 media_borrowing_logic -> media_borrowing_repo: Insert Media Borrowing Record Command
 media_borrowing_repo --> media_borrowing_logic: Insert Media Borrowing Record Result
-media_borrowing_logic --> media_borrowing_controller: Media Borrowing Result Payload
-media_borrowing_controller --> front_end: Media Borrowing Response
-front_end --> aml_member: Media Borrowing Confirmation
-
-
-
+media_borrowing_logic --> media_borrowing_controller: Media Borrowing Success Payload
+media_borrowing_controller --> front_end: Media Borrowing Success Response
+front_end --> aml_member: Media Borrowing Confirmation Message
+else Failure: Media Item is Unavailable
+note over media_borrowing_logic
+Between the time that the media item is viewed and the borrow request is sent,
+another user could've borrowed the last available item. So, we need to check
+the media item's real-time availability prior to updating it.
+end note
+media_borrowing_logic --> media_borrowing_controller: Unavailable Media Item Error
+media_borrowing_controller --> front_end: Unavailable Media Item Error Response
+front_end --> aml_member: Unavailable Media Item Error Message
+end
 
 @enduml
