@@ -37,8 +37,8 @@ media_search_logic -> media_search_client: Serialized Query Payload
 media_search_client -> media_search_index: Search Index Request
 alt Database Connection Successful
     media_search_index --> media_search_client: Search Index Response
-    media_search_client --> media_search_logic: Deserialized Results Payload
-    media_search_logic --> media_search_controller: Search Results Payload
+    media_search_client --> media_search_logic: Serialized Results Payload
+    media_search_logic --> media_search_controller: Deserialized Search Results Payload
     media_search_controller --> aml_member: Search Results Response
 else Database Connection Failed
     loop Retry Connection 5 Times
