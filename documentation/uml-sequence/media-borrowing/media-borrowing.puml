@@ -30,7 +30,7 @@ media_borrowing_logic -> media_borrowing_repo: Branch Media Availability Query
 media_borrowing_repo --> media_borrowing_logic: Branch Media Availability Result
 media_borrowing_logic --> media_borrowing_controller: Branch Media Availability Result Payload
 media_borrowing_controller --> front_end: Branch Media Availability Response
-front_end --> aml_member: Branch Media Availability 
+front_end --> aml_member: Branch Media Availability Count
 
 aml_member -> front_end: Select Pick-up & Return Date
 front_end -> media_borrowing_controller: Media Borrowing Request
