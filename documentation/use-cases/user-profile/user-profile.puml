@@ -10,6 +10,7 @@ rectangle "<<service>> \n User Service" {
     (Update user role) as update_role
     (Delete user role) as delete_role
     (Assign user role) as assign_role
+    (Search user profiles) as search_profiles
 }
 
 :    <<person>> \n AML Member: as aml_member 
@@ -24,6 +25,7 @@ sys_admin -u- add_role
 sys_admin -u- update_role
 sys_admin -u- delete_role
 sys_admin -u- assign_role
+sys_admin -u- search_profiles
 
 add_role -r-> assign_scope: <<Include>>
 
