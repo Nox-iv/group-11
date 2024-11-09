@@ -1,0 +1,80 @@
+<h1 id="use-elasticsearch-as-a-secondary-index-for-an-efficient--scalable-core-full-text-search-feature">Use Elasticsearch as a Secondary Index for an Efficient &amp; Scalable Core Full-Text Search Feature.</h1>
+
+<h2 id="context-and-problem-statement">Context and Problem Statement</h2>
+
+<p>Full-text search is a core system function that will drive both customer-facing and employee operations in AML’s proposed system. Without full-text-search,
+it will become impossible for users to search through the vast amounts of data collected &amp; processed by the system. Given the importance of this feature, 
+it is imperative that search performance does not degrade with the ever-increasing load &amp; data requirements.</p>
+
+<ul>
+  <li>AML currently serves 20% of England’s population with this figure expected to grow by 10% annually. Although the growth seems predictable given the projection,
+it is likely that the growth will come in peaks &amp; troughs. Overall system load will follow the same pattern, therefore it is important to make sure that the computational
+resources backing the search functionality are automatically-scaled. Manually provisioning of resources could lead to misallocation which will come with increased costs
+and potentially critical operational failure.</li>
+  <li>Facing growing competition and increasing user demands, AML are seeking to be more adaptable to industry trends and consumer tastes. As well as simply collecting
+more data for analysis and process improvement, the shape of this data is likely to change, and entirely new entities may be introduced into the system. To facilitate
+this need, the search functionality must be easily adaptable to changes in existing data schema, and seamlessly handle the addition of new data types.</li>
+  <li>Full-text search in and of itself has become a cornerstone of most modern applications, with users relying on search functionality to browse and process the 
+vast amounts of data stored in contemporary systems. Given the central role that search plays in overall user experience, it is essential that AML’s search experience
+is seamless whilst at the same time being feature-rich. The search functionality must provide common features such as: auto-complete, spell-correction, fuzzing, and 
+filtering/sorting capabilities.</li>
+</ul>
+
+<h2 id="considered-options">Considered Options</h2>
+
+<ul>
+  <li>Relational database (Postgres) with a full-text search extension.</li>
+  <li>Lucene distributed over NFS.</li>
+  <li>Elasticsearch.</li>
+</ul>
+
+<h2 id="decision-outcome">Decision Outcome</h2>
+
+<p>Chosen option: “Elasticsearch”, because it is the only option providing automatic-scaling capabilities, dynamic data-schema, and out-of-the-box features like fuzzing, filtering, sorting, and paging. Additionally, Elasticsearch exists within an entire ecosystem of tools &amp; services which AML may wish to use in the future to support
+their business aims.</p>
+
+<h3 id="consequences">Consequences</h3>
+
+<ul>
+  <li>Good - Automatic-scaling will reduce costs and improve overall system resiliency.</li>
+  <li>Good - Excellent observability and monitoring capabilites.</li>
+  <li>Good - Comes with full suite of analytics tools which can be configured to serve several business needs.</li>
+  <li>Good - The out-of-the-box features will save huge amounts of developer effort and massively increase quality of the search experience.</li>
+  <li>Bad - Higher cost in comparison to using Lucene distributed over NFS.</li>
+  <li>Bad - Increases overall complexity of the system - have to consider network partitions and consistency issues e.g. if CDC fails then ELS will fall out of sync.</li>
+  <li>Bad - Elasticsearch uses an eventual consistency model - so it may not be suitable for some aspects of the system e.g. payments.</li>
+</ul>
+
+<h3 id="confirmation">Confirmation</h3>
+
+<p>ADR is fulfilled if an Elasticsearch cluster is deployed alongside the main relational database and updated with CDC in the following services: media catalogue, media procurement, user profiles, reporting service.</p>
+
+<h2 id="pros-and-cons-of-the-options">Pros and Cons of the Options</h2>
+
+<h3 id="relational-database-postgres-with-full-text-search-extension">Relational Database (Postgres) With Full-Text Search Extension</h3>
+
+<p>Most relational databases offer support for full-text search with the installation of an extension. In this case, such an extension would be installed on relevant
+relational databases and used for full-text search.</p>
+
+<ul>
+  <li>Good - Simple set-up and doesn’t increase infrastucture costs massively.</li>
+  <li>Good - No issues with consistency between search index and source of truth.</li>
+  <li>Good - Automatic-scaling.</li>
+  <li>Neutral - Doesn’t offer advanced search features out-of-the-box.</li>
+  <li>Bad - Although the database can be scaled automatically, it’s not as efficient as dedicated solutions. Performance will degrade as database size grows.</li>
+  <li>Bad - Only optimized for text-fields which limits capabilites - dedicated solutions can handle numeric, range and nested types.</li>
+</ul>
+
+<h3 id="lucene-over-nfs">Lucene over NFS.</h3>
+
+<p>Lucene is the database that actually powers Elasticsearch, with Elasticsearch essentially providing a orchestration framework for Lucene alongside an ecosystem
+of tools &amp; services. To avoid vendor-lock in and license costs, we could use Lucene distributed over NFS to back the core search functionality.</p>
+
+<ul>
+  <li>Good - No vendor lock-in and no license fees.</li>
+  <li>Good - Lower infrastucture costs.</li>
+  <li>Good - Fine-grained control of analyzers and index configuration.</li>
+  <li>Bad - Distributed features will need to be implemented manually, e.g. sharding, coordination, consistency model.</li>
+  <li>Bad - Lacks out-of-the-box advanced features &amp; tooling.</li>
+  <li>Bad - Introduces a single-point of failure if NFS is managed on-premise.</li>
+</ul>
