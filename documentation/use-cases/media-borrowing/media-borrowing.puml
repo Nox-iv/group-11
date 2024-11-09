@@ -14,6 +14,7 @@ rectangle "<<service>> \n Media Borrowing Service" {
 
 :    <<person>> \n AML Member: as aml_member 
 :      <<person>> \n Branch Librarian: as librarian
+:      <<system>> \n Self-Service Kiosk: as self_service
 :              <<service>> \n Media Catalogue Service: as media_catalogue
 :        <<service>> \n Reporting Service: as reporting_service
 
@@ -26,6 +27,8 @@ aml_member -- process_return
 aml_member -- process_borrow
 librarian -u- process_return
 librarian -u- process_borrow
+self_service -u- process_borrow
+self_service -u- process_return
 
 media_catalogue -u- get_availability
 reporting_service -u- extract_trends
