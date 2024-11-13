@@ -1,16 +1,16 @@
 import 'reflect-metadata';
 import Container from "typedi";
 import { MediaBorrowingLogic } from "../mediaBorrowingLogic";
-import { UserService } from '../../services/user';
-import { FakeUserService } from './mocks/FakeUserService';
+import { UserRepository } from '../../data/user';
+import { FakeUserRepository } from './mocks/fakeUserRepository';
 
-const fakeUserService = new FakeUserService()
-Container.set(UserService, fakeUserService)
+const fakeUserRepository = new FakeUserRepository()
+Container.set(UserRepository, fakeUserRepository)
 
 const mediaBorrowingLogic = Container.get(MediaBorrowingLogic)
 
 afterEach(() => {
-    fakeUserService.setValidUser()
+    fakeUserRepository.setValidUser()
 })
 
 describe('Update media borrowing record', () => {
@@ -44,7 +44,7 @@ describe('Update media borrowing record', () => {
 
         endDate.setDate(endDate.getDate() + 14)
 
-        fakeUserService.setInvalidUser()
+        fakeUserRepository.setInvalidUser()
 
         expect(() => {mediaBorrowingLogic.borrowMediaItem(3877387, 10, startDate, endDate)}).toThrow()
     })

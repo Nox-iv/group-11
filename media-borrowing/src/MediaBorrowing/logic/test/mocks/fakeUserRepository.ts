@@ -1,6 +1,6 @@
-import { UserService } from "../../../services/user"
+import { UserRepository } from "../../../data/user"
 
-export class FakeUserService extends UserService {
+export class FakeUserRepository extends UserRepository {
     private isValidUser: boolean
 
     constructor() {
