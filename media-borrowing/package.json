@@ -20,5 +20,9 @@
     "rimraf": "^6.0.1",
     "ts-jest": "^29.2.5",
     "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.2.2",
+    "typedi": "^0.10.0"
   }
 }
