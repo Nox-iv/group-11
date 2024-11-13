@@ -1,7 +1,19 @@
-import {sum} from "./mediaBorrowingLogic"
+import { addMediaBorrowingRecord } from "./mediaBorrowingLogic";
+import { MediaBorrowingRecord } from "./mediaBorrowingRecord";
 
-describe('sum module', () => {
-    test('adds 1 + 2 to equal 3', () => {
-      expect(sum(1, 2)).toBe(3);
+describe('Add media borrowing record', () => {
+    test('User with ID 1 borrows media item with ID 10 with a due date two weeks from the current date.', () => {
+        const startDate = new Date()
+        const endDate = new Date(startDate)
+
+        endDate.setDate(endDate.getDate() + 14)
+
+        const actualResult = addMediaBorrowingRecord(1, 10, startDate, endDate)
+
+        expect(actualResult.userId).toBe(1)
+        expect(actualResult.mediaItemId).toBe(10)
+        expect(actualResult.startDate.getTime()).toBe(startDate.getTime())
+        expect(actualResult.endDate.getTime()).toBe(endDate.getTime())
+        expect(actualResult.renewals).toBe(0)
     });
 });
