@@ -29,7 +29,7 @@ describe('Update media borrowing record', () => {
         expect(result.renewals).toBe(0)
     });
 
-    test('Users cannot borrow a media item with an end date after the start date', () => {
+    test('An item cannot be borrowed with a start date after than the end date', () => {
         const startDate = new Date()
         const endDate = new Date(startDate)
 
@@ -38,7 +38,7 @@ describe('Update media borrowing record', () => {
         expect(() => {mediaBorrowingLogic.borrowMediaItem(1, 10, startDate, endDate)}).toThrow()
     })
 
-    test('A borrowing record cannot be created for a non-existent user', () => {
+    test('A non-existent user cannot borrow a media item.', () => {
         const startDate = new Date()
         const endDate = new Date(startDate)
 
