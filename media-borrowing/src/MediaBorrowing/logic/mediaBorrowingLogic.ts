@@ -6,7 +6,7 @@ import { UserService } from '../services/user'
 export class MediaBorrowingLogic {
     constructor(@Inject() private userService : UserService) {}
 
-    addMediaBorrowingRecord(userId: number, mediaItemId: number, startDate: Date, endDate: Date): MediaBorrowingRecord {
+    borrowMediaItem(userId: number, mediaItemId: number, startDate: Date, endDate: Date): MediaBorrowingRecord {
         if (endDate < startDate) {
             throw new Error('End date cannot be earlier than start date.')
         }

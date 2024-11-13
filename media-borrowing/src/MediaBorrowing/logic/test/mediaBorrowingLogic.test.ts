@@ -20,7 +20,7 @@ describe('Update media borrowing record', () => {
 
         endDate.setDate(endDate.getDate() + 14)
 
-        const result = mediaBorrowingLogic.addMediaBorrowingRecord(1, 10, startDate, endDate)
+        const result = mediaBorrowingLogic.borrowMediaItem(1, 10, startDate, endDate)
 
         expect(result.userId).toBe(1)
         expect(result.mediaItemId).toBe(10)
@@ -35,7 +35,7 @@ describe('Update media borrowing record', () => {
 
         endDate.setDate(endDate.getDate() - 1)
 
-        expect(() => {mediaBorrowingLogic.addMediaBorrowingRecord(1, 10, startDate, endDate)}).toThrow()
+        expect(() => {mediaBorrowingLogic.borrowMediaItem(1, 10, startDate, endDate)}).toThrow()
     })
 
     test('A borrowing record cannot be created for a non-existent user', () => {
@@ -46,6 +46,6 @@ describe('Update media borrowing record', () => {
 
         fakeUserService.setInvalidUser()
 
-        expect(() => {mediaBorrowingLogic.addMediaBorrowingRecord(3877387, 10, startDate, endDate)}).toThrow()
+        expect(() => {mediaBorrowingLogic.borrowMediaItem(3877387, 10, startDate, endDate)}).toThrow()
     })
 });
