@@ -42,11 +42,10 @@ beforeEach(() => {
 
 describe('Borrow Media Item', () => {
     test('A media item can be borrowed.', () => {
+        const initialMediaAvailability = fakeMediaBorrowingRepository.mediaItems.get(genericMediaBorrowingRecord.mediaId)!
         mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
 
-        const insertedRecord = fakeMediaBorrowingRepository.mediaBorrowingRecords[0]
-        expect(insertedRecord.mediaId).toBe(genericMediaBorrowingRecord.mediaId)
-        expect(insertedRecord.userId).toBe(genericMediaBorrowingRecord.userId)
+        expect(fakeMediaBorrowingRepository.mediaItems.get(genericMediaBorrowingRecord.mediaId)).toBe(initialMediaAvailability - 1)
     });
 
     test('A media item cannot be borrowed with an end date that is earlier than the given start date.', () => {
