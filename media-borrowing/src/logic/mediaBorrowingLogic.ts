@@ -1,5 +1,4 @@
 import { Inject, Service } from 'typedi'
-import { MediaBorrowingRecord } from "./types/mediaBorrowingRecord"
 import { UserRepository } from '../data/user'
 import { MediaInventoryRepository } from '../data/inventory'
 import { MediaBorrowingRepository } from '../data/borrowing'
