@@ -3,23 +3,26 @@ import { MediaBorrowingRepository } from "../../../data/borrowing";
 
 @Service()
 export class FakeMediaBorrowingRepository extends MediaBorrowingRepository{
-    private borrowingRecordAlreadyExists : boolean
+    private borrowingRecordExists : boolean
 
     constructor() {
         super()
-        this.borrowingRecordAlreadyExists = false
+        this.borrowingRecordExists = false
     }
 
     insertBorrowingRecord(mediaItemId: number): void {
-        // Check inventory
-        // Update inventory with lock
-        // Handle error codes
-        if (this.borrowingRecordAlreadyExists) {
+        if (this.borrowingRecordExists) {
             throw Error('A customer can only borrow one copy of a media item.')
+        } else {
+            this.borrowingRecordExists = true
         }
     }
 
     setRecordExists(exists: boolean) {
-        this.borrowingRecordAlreadyExists = exists
+        this.borrowingRecordExists = exists
+    }
+
+    hasRecordBeenInserted() {
+        return this.borrowingRecordExists
     }
 } 

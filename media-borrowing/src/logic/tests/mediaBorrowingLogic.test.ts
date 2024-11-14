@@ -30,13 +30,8 @@ describe('Borrow Media Item', () => {
 
         endDate.setDate(endDate.getDate() + 14)
 
-        const result = mediaBorrowingLogic.borrowMediaItem(1, 10, startDate, endDate)
-
-        expect(result.userId).toBe(1)
-        expect(result.mediaItemId).toBe(10)
-        expect(result.startDate.getTime()).toBe(startDate.getTime())
-        expect(result.endDate.getTime()).toBe(endDate.getTime())
-        expect(result.renewals).toBe(0)
+        mediaBorrowingLogic.borrowMediaItem(1, 10, startDate, endDate)
+        expect(fakeMediaBorrowingRepository.hasRecordBeenInserted()).toBe(true)
     });
 
     test('A media item cannot be borrowed with an end date that is earlier than the given start date.', () => {

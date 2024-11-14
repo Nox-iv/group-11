@@ -12,7 +12,7 @@ export class MediaBorrowingLogic {
         @Inject() private mediaBorrowingRepository : MediaBorrowingRepository
     ) {}
 
-    borrowMediaItem(userId: number, mediaItemId: number, startDate: Date, endDate: Date): MediaBorrowingRecord {
+    borrowMediaItem(userId: number, mediaItemId: number, startDate: Date, endDate: Date) : void {
         if (endDate < startDate) {
             throw new Error('End date cannot be earlier than start date.')
         }
@@ -23,13 +23,5 @@ export class MediaBorrowingLogic {
 
         this.mediaInventoryRepository.updateMediaAvailability(mediaItemId)
         this.mediaBorrowingRepository.insertBorrowingRecord(userId, mediaItemId, startDate, endDate)
-    
-        return {
-            userId: userId,
-            mediaItemId: mediaItemId,
-            startDate: startDate,
-            endDate: endDate,
-            renewals: 0
-        } 
     }
 }
