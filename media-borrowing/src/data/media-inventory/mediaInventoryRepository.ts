@@ -8,6 +8,3 @@ export class MediaInventoryRepository {
         return 0
     }
 }
-
-// Check lock
-// 
