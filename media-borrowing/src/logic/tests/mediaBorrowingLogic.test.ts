@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import Container from "typedi";
 import { MediaBorrowingLogic } from "../mediaBorrowingLogic";
 import { UserRepository } from '../../data/user';
-import { FakeUserRepository, FakeMediaBorrowingRepository } from './mocks';
+import { FakeUserRepository, FakeMediaBorrowingRepository } from '../../mocks';
 import { MediaBorrowingRepository } from '../../data/borrowing';
 import { MediaBorrowingRecord } from '../types/mediaBorrowingRecord';
 

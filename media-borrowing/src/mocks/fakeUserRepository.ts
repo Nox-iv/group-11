@@ -1,4 +1,4 @@
-import { UserRepository } from "../../../data/user"
+import { UserRepository } from "../data/user"
 
 export class FakeUserRepository extends UserRepository {
     private isValidUser: boolean

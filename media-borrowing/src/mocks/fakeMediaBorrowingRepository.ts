@@ -1,6 +1,6 @@
 import { Service } from "typedi";
-import { MediaBorrowingRecord } from "../../types/mediaBorrowingRecord";
-import { MediaBorrowingRepository } from "../../../data/borrowing";
+import { MediaBorrowingRecord } from "../logic";
+import { MediaBorrowingRepository } from "../data/borrowing";
 
 @Service()
 export class FakeMediaBorrowingRepository extends MediaBorrowingRepository{
