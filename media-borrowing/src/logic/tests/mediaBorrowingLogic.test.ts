@@ -2,15 +2,21 @@ import 'reflect-metadata';
 import Container from "typedi";
 import { MediaBorrowingLogic } from "../mediaBorrowingLogic";
 import { UserRepository } from '../../data/user';
-import { FakeUserRepository } from './mocks/fakeUserRepository';
+import { FakeUserRepository, FakeMediaInventoryRepository } from './mocks';
+import { MediaInventoryRepository } from '../../data/inventory';
 
 const fakeUserRepository = new FakeUserRepository()
+const fakeMediaInventoryRepository = new FakeMediaInventoryRepository()
+
 Container.set(UserRepository, fakeUserRepository)
+Container.set(MediaInventoryRepository, fakeMediaInventoryRepository)
 
 const mediaBorrowingLogic = Container.get(MediaBorrowingLogic)
 
 afterEach(() => {
     fakeUserRepository.setValidUser()
+    fakeMediaInventoryRepository.setIsValidMediaItem(true)
+    fakeMediaInventoryRepository.setMediaItemIsAvailable(true)
 })
 
 describe('Borrow Media Item', () => {
@@ -55,6 +61,19 @@ describe('Borrow Media Item', () => {
 
         endDate.setDate(endDate.getDate() + 14)
 
+        fakeMediaInventoryRepository.setIsValidMediaItem(false)
+
         expect(() => {mediaBorrowingLogic.borrowMediaItem(1, 4747733, startDate, endDate)}).toThrow()
+    })
+
+    test('An unavailable media item cannot be borrowed.', () => {
+        const startDate = new Date()
+        const endDate = new Date(startDate)
+
+        endDate.setDate(endDate.getDate() + 14)
+
+        fakeMediaInventoryRepository.setMediaItemIsAvailable(false)
+
+        expect(() => {mediaBorrowingLogic.borrowMediaItem(1, 474, startDate, endDate)}).toThrow()
     })
 });
