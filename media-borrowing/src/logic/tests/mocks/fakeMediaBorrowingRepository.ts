@@ -1,28 +1,42 @@
 import { Service } from "typedi";
+import { MediaBorrowingRecord } from "../../types/mediaBorrowingRecord";
 import { MediaBorrowingRepository } from "../../../data/borrowing";
 
 @Service()
 export class FakeMediaBorrowingRepository extends MediaBorrowingRepository{
-    private borrowingRecordExists : boolean
+    public mediaItems: Map<number, number>
+    public mediaBorrowingRecords : MediaBorrowingRecord[]
 
     constructor() {
         super()
-        this.borrowingRecordExists = false
+        this.mediaItems = new Map<number, number>()
+        this.mediaBorrowingRecords = []
     }
 
-    insertBorrowingRecord(mediaItemId: number): void {
-        if (this.borrowingRecordExists) {
-            throw Error('A customer can only borrow one copy of a media item.')
-        } else {
-            this.borrowingRecordExists = true
+    insertBorrowingRecord(userId: number, mediaId: number, startDate: Date, endDate: Date): void {
+        const mediaBorrowingRecord : MediaBorrowingRecord = {
+            userId,
+            mediaId,
+            startDate,
+            endDate,
+            renewals: 0
         }
-    }
 
-    setRecordExists(exists: boolean) {
-        this.borrowingRecordExists = exists
-    }
+        if (!this.mediaItems.has(mediaId)) {
+            throw new Error(`Media item ${mediaId} does not exist.`)
+        }
 
-    hasRecordBeenInserted() {
-        return this.borrowingRecordExists
+        for(let record of this.mediaBorrowingRecords) {
+            if (record.userId == mediaBorrowingRecord.userId && record.mediaId == mediaBorrowingRecord.mediaId) {
+                throw new Error(`User ${userId} cannot borrow multiple copies of media item ${mediaId}`)
+            }
+        }
+
+        if (this.mediaItems.get(mediaId)! <= 0) {
+            throw new Error(`Media item ${mediaId} is unavailable.`)
+        }
+
+        this.mediaBorrowingRecords.push(mediaBorrowingRecord)
+        this.mediaItems.set(mediaId, this.mediaItems.get(mediaId)! - 1)
     }
 } 
