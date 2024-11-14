@@ -2,12 +2,14 @@ import { Inject, Service } from 'typedi'
 import { MediaBorrowingRecord } from "./types/mediaBorrowingRecord"
 import { UserRepository } from '../data/user'
 import { MediaInventoryRepository } from '../data/inventory'
+import { MediaBorrowingRepository } from '../data/borrowing'
 
 @Service()
 export class MediaBorrowingLogic {
     constructor(
         @Inject() private userRepository : UserRepository,
-        @Inject() private mediaInventoryRepository : MediaInventoryRepository
+        @Inject() private mediaInventoryRepository : MediaInventoryRepository,
+        @Inject() private mediaBorrowingRepository : MediaBorrowingRepository
     ) {}
 
     borrowMediaItem(userId: number, mediaItemId: number, startDate: Date, endDate: Date): MediaBorrowingRecord {
@@ -20,6 +22,7 @@ export class MediaBorrowingLogic {
         }
 
         this.mediaInventoryRepository.updateMediaAvailability(mediaItemId)
+        this.mediaBorrowingRepository.insertBorrowingRecord(userId, mediaItemId, startDate, endDate)
     
         return {
             userId: userId,

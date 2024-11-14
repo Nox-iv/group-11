@@ -7,10 +7,10 @@ export class FakeMediaBorrowingRepository extends MediaBorrowingRepository{
 
     constructor() {
         super()
-        this.borrowingRecordAlreadyExists = true
+        this.borrowingRecordAlreadyExists = false
     }
 
-    updateMediaAvailability(mediaItemId: number): void {
+    insertBorrowingRecord(mediaItemId: number): void {
         // Check inventory
         // Update inventory with lock
         // Handle error codes

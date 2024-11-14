@@ -2,21 +2,25 @@ import 'reflect-metadata';
 import Container from "typedi";
 import { MediaBorrowingLogic } from "../mediaBorrowingLogic";
 import { UserRepository } from '../../data/user';
-import { FakeUserRepository, FakeMediaInventoryRepository } from './mocks';
+import { FakeUserRepository, FakeMediaInventoryRepository, FakeMediaBorrowingRepository } from './mocks';
 import { MediaInventoryRepository } from '../../data/inventory';
+import { MediaBorrowingRepository } from '../../data/borrowing';
 
 const fakeUserRepository = new FakeUserRepository()
 const fakeMediaInventoryRepository = new FakeMediaInventoryRepository()
+const fakeMediaBorrowingRepository = new FakeMediaBorrowingRepository()
 
 Container.set(UserRepository, fakeUserRepository)
 Container.set(MediaInventoryRepository, fakeMediaInventoryRepository)
+Container.set(MediaBorrowingRepository, fakeMediaBorrowingRepository)
 
 const mediaBorrowingLogic = Container.get(MediaBorrowingLogic)
 
-afterEach(() => {
+beforeEach(() => {
     fakeUserRepository.setValidUser()
     fakeMediaInventoryRepository.setIsValidMediaItem(true)
     fakeMediaInventoryRepository.setMediaItemIsAvailable(true)
+    fakeMediaBorrowingRepository.setRecordExists(false)
 })
 
 describe('Borrow Media Item', () => {
@@ -75,5 +79,16 @@ describe('Borrow Media Item', () => {
         fakeMediaInventoryRepository.setMediaItemIsAvailable(false)
 
         expect(() => {mediaBorrowingLogic.borrowMediaItem(1, 474, startDate, endDate)}).toThrow()
+    })
+
+    test('Users cannot borrow several copies of the same media item.', () => {
+        const startDate = new Date()
+        const endDate = new Date(startDate)
+
+        endDate.setDate(endDate.getDate() + 14)
+
+        fakeMediaBorrowingRepository.setRecordExists(true)
+
+        expect(() => {mediaBorrowingLogic.borrowMediaItem(1, 10, startDate, endDate)}).toThrow()
     })
 });
