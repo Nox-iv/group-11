@@ -48,6 +48,22 @@ describe('Borrow Media Item', () => {
         expect(fakeMediaBorrowingRepository.mediaItems.get(genericMediaBorrowingRecord.mediaId)).toBe(initialMediaAvailability - 1)
     });
 
+    test('A user can borrow multiple media items', () => {
+        const mediaItemId1 = genericMediaBorrowingRecord.mediaId
+        const mediaItemId2 = 2
+
+        const initialAvailabilityItem1 = fakeMediaBorrowingRepository.mediaItems.get(mediaItemId1)!
+        const initialAvailabilityItem2 = fakeMediaBorrowingRepository.mediaItems.get(mediaItemId2)!
+
+        mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
+
+        genericMediaBorrowingRecord.mediaId = mediaItemId2
+        mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
+
+        expect(fakeMediaBorrowingRepository.mediaItems.get(mediaItemId1)).toBe(initialAvailabilityItem1 - 1)
+        expect(fakeMediaBorrowingRepository.mediaItems.get(mediaItemId2)).toBe(initialAvailabilityItem2 - 1)
+    })
+
     test('A media item cannot be borrowed with an end date that is earlier than the given start date.', () => {
         const invalidEndDate = genericMediaBorrowingRecord.startDate.getDate() - 1
         genericMediaBorrowingRecord.endDate.setDate(invalidEndDate)
