@@ -13,8 +13,8 @@ afterEach(() => {
     fakeUserRepository.setValidUser()
 })
 
-describe('Update media borrowing record', () => {
-    test('User with ID 1 borrows media item with ID 10 with a due date two weeks from the current date.', () => {
+describe('Borrow Media Item', () => {
+    test('A user with ID 1 borrows media item with ID 10 for 14 days.', () => {
         const startDate = new Date()
         const endDate = new Date(startDate)
 
@@ -47,5 +47,14 @@ describe('Update media borrowing record', () => {
         fakeUserRepository.setInvalidUser()
 
         expect(() => {mediaBorrowingLogic.borrowMediaItem(3877387, 10, startDate, endDate)}).toThrow()
+    })
+
+    test('A non-existent media item cannot be borrowed.', () => {
+        const startDate = new Date()
+        const endDate = new Date(startDate)
+
+        endDate.setDate(endDate.getDate() + 14)
+
+        expect(() => {mediaBorrowingLogic.borrowMediaItem(1, 4747733, startDate, endDate)}).toThrow()
     })
 });
