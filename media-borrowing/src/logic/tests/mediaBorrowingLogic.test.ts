@@ -24,7 +24,7 @@ beforeEach(() => {
 })
 
 describe('Borrow Media Item', () => {
-    test('A user with ID 1 borrows media item with ID 10 for 14 days.', () => {
+    test('A media item can be borrowed.', () => {
         const startDate = new Date()
         const endDate = new Date(startDate)
 
@@ -39,7 +39,7 @@ describe('Borrow Media Item', () => {
         expect(result.renewals).toBe(0)
     });
 
-    test('An item cannot be borrowed with a start date after than the end date', () => {
+    test('A media item cannot be borrowed with an end date that is earlier than the given start date.', () => {
         const startDate = new Date()
         const endDate = new Date(startDate)
 
