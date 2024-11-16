@@ -1,10 +1,9 @@
-import { UserRepository } from "../data/user"
+import { IUserRepository } from "../data/user/interfaces/userRepository.type"
 
-export class FakeUserRepository extends UserRepository {
+export class FakeUserRepository implements IUserRepository {
     private isValidUser: boolean
 
     constructor() {
-        super()
         this.isValidUser = true
     }
 
