@@ -1,14 +1,14 @@
 import { Service } from "typedi";
 import { MediaBorrowingRecord } from "../logic";
 import { MediaBorrowingRepository } from "../data/borrowing";
+import { IMediaBorrowingRepository } from "../data/borrowing/interfaces/mediaBorrowingRepository.type";
 
 @Service()
-export class FakeMediaBorrowingRepository extends MediaBorrowingRepository{
+export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {
     public mediaItems: Map<number, number>
     public mediaBorrowingRecords : MediaBorrowingRecord[]
 
     constructor() {
-        super()
         this.mediaItems = new Map<number, number>()
         this.mediaBorrowingRecords = []
     }
@@ -38,5 +38,9 @@ export class FakeMediaBorrowingRepository extends MediaBorrowingRepository{
 
         this.mediaBorrowingRecords.push(mediaBorrowingRecord)
         this.mediaItems.set(mediaId, this.mediaItems.get(mediaId)! - 1)
+    }
+
+    deleteBorrowingRecord(userId: number, mediaId: number): void {
+        
     }
 } 
