@@ -28,7 +28,7 @@ beforeEach(() => {
     fakeMediaBorrowingRepository.mediaItems = new Map()
     fakeMediaBorrowingRepository.mediaBorrowingRecords = []
     
-    fakeMediaBorrowingRepository.mediaItems.set(1, 2)
+    fakeMediaBorrowingRepository.mediaItems.set(1, 1)
     fakeMediaBorrowingRepository.mediaItems.set(2, 1)
     fakeMediaBorrowingRepository.mediaItems.set(3, 1)
 
