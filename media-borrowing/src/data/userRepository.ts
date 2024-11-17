@@ -1,5 +1,5 @@
 import { Service } from "typedi";
-import { IUserRepository } from "./interfaces/userRepository.type";
+import { IUserRepository } from ".";
 
 @Service()
 export class UserRepository implements IUserRepository {

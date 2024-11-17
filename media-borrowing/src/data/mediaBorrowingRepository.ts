@@ -1,5 +1,5 @@
 import { Service } from "typedi";
-import { IMediaBorrowingRepository } from "./interfaces/mediaBorrowingRepository.type";
+import { IMediaBorrowingRepository } from ".";
 
 @Service()
 export class MediaBorrowingRepository implements IMediaBorrowingRepository {

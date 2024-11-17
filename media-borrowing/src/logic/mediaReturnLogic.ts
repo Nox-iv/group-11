@@ -1,7 +1,6 @@
 import { Inject, Service } from 'typedi'
-import { UserRepository } from '../data/user'
-import { MediaBorrowingRepository } from '../data/borrowing'
-import { MediaBorrowingRecord } from './types/mediaBorrowingRecord'
+import { UserRepository, MediaBorrowingRepository } from '../data'
+import { MediaBorrowingRecord } from '.'
 
 @Service()
 export class MediaReturnLogic {

@@ -1,9 +1,6 @@
 import { Inject, Service } from 'typedi'
-import { UserRepository } from '../data/user'
-import { MediaBorrowingRepository } from '../data/borrowing'
-import { MediaBorrowingRecord } from './types/mediaBorrowingRecord'
-import { InvalidBorrowingDateError } from './errors/invalidBorrowingDateError'
-import { InvalidUserError } from './errors/invalidUserError'
+import { UserRepository, MediaBorrowingRepository } from '../data'
+import { InvalidUserError, InvalidBorrowingDateError, MediaBorrowingRecord } from '.'
 
 @Service()
 export class MediaBorrowingLogic {

@@ -1,7 +1,6 @@
 import { Service } from "typedi";
 import { MediaBorrowingRecord } from "../logic";
-import { MediaBorrowingRepository } from "../data/borrowing";
-import { IMediaBorrowingRepository } from "../data/borrowing/interfaces/mediaBorrowingRepository.type";
+import { IMediaBorrowingRepository } from "../data";
 
 @Service()
 export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {

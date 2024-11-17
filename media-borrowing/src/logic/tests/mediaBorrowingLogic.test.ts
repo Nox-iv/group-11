@@ -1,12 +1,8 @@
 import 'reflect-metadata';
 import Container from "typedi";
-import { MediaBorrowingLogic } from "../mediaBorrowingLogic";
-import { UserRepository } from '../../data/user';
+import { MediaBorrowingRecord, MediaBorrowingLogic, InvalidBorrowingDateError, InvalidUserError } from "..";
+import { UserRepository, MediaBorrowingRepository } from '../../data';
 import { FakeUserRepository, FakeMediaBorrowingRepository } from '../../mocks';
-import { MediaBorrowingRepository } from '../../data/borrowing';
-import { MediaBorrowingRecord } from '../types/mediaBorrowingRecord';
-import { InvalidBorrowingDateError } from '../errors/invalidBorrowingDateError';
-import { InvalidUserError } from '../errors/invalidUserError';
 
 const genericMediaBorrowingRecord : MediaBorrowingRecord = {
     userId: 1,
