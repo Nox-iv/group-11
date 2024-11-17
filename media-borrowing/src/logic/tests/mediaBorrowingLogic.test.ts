@@ -1,8 +1,9 @@
 import 'reflect-metadata';
 import Container from "typedi";
-import { MediaBorrowingRecord, MediaBorrowingLogic, InvalidBorrowingDateError, InvalidUserError } from "..";
+import { MediaBorrowingRecord, MediaBorrowingLogic, InvalidBorrowingDateError, InvalidUserError, MaxBorrowingPeriodExceededError, MaxRenewalsExceededError } from "..";
 import { UserRepository, MediaBorrowingRepository } from '../../data';
 import { FakeUserRepository, FakeMediaBorrowingRepository } from '../../mocks';
+import { MAX_BORROWING_PERIOD_DAYS, MAX_RENEWALS } from '../../config';
 
 const genericMediaBorrowingRecord : MediaBorrowingRecord = {
     userId: 1,
@@ -36,6 +37,9 @@ beforeEach(() => {
     genericMediaBorrowingRecord.startDate = new Date(start)
     genericMediaBorrowingRecord.endDate = new Date(start)
     genericMediaBorrowingRecord.endDate.setDate(genericMediaBorrowingRecord.endDate.getDate() + 14)
+
+    Container.set(MAX_BORROWING_PERIOD_DAYS, 14)
+    Container.set(MAX_RENEWALS, 2)
 })
 
 describe('Borrow Media Item', () => {
@@ -99,3 +103,48 @@ describe('Borrow Media Item', () => {
         expect(() => {mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)}).toThrow()
     })
 });
+
+describe("Renew borrowed media item", () => {
+    test("A borrowed media item can be renewed.", () => {
+        const userId = genericMediaBorrowingRecord.userId
+        const mediaId = genericMediaBorrowingRecord.mediaId
+        const extension = 14
+
+        const endDateAfterRenewal = new Date(genericMediaBorrowingRecord.endDate)
+        endDateAfterRenewal.setDate(endDateAfterRenewal.getDate() + extension)
+
+        mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
+        mediaBorrowingLogic.renewBorrowedMediaItem(genericMediaBorrowingRecord, extension)
+
+        expect(fakeMediaBorrowingRepository.mediaBorrowingRecords[0].endDate).toStrictEqual(endDateAfterRenewal)
+    })
+
+    test("A renewal cannot extend beyond the maximum borrowing period.", () => {
+        const userId = genericMediaBorrowingRecord.userId
+        const mediaId = genericMediaBorrowingRecord.mediaId
+        const extension = 14
+
+        const endDateAfterRenewal = new Date(genericMediaBorrowingRecord.endDate)
+        endDateAfterRenewal.setDate(endDateAfterRenewal.getDate() + extension)
+
+        Container.set(MAX_BORROWING_PERIOD_DAYS, 13)
+
+        mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
+        expect(() => mediaBorrowingLogic.renewBorrowedMediaItem(genericMediaBorrowingRecord, extension)).toThrow(MaxBorrowingPeriodExceededError)
+    })
+
+    test("A renewal is rejected if the user has exceeded the max number of renewals.", () => {
+        const userId = genericMediaBorrowingRecord.userId
+        const mediaId = genericMediaBorrowingRecord.mediaId
+        const extension = 14
+
+        const endDateAfterRenewal = new Date(genericMediaBorrowingRecord.endDate)
+        endDateAfterRenewal.setDate(endDateAfterRenewal.getDate() + extension)
+
+        Container.set(MAX_RENEWALS, 1)
+
+        mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
+        mediaBorrowingLogic.renewBorrowedMediaItem(fakeMediaBorrowingRepository.mediaBorrowingRecords[0], extension)
+        expect(() => mediaBorrowingLogic.renewBorrowedMediaItem(fakeMediaBorrowingRepository.mediaBorrowingRecords[0], extension)).toThrow(MaxRenewalsExceededError)
+    })
+})

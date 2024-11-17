@@ -50,6 +50,18 @@ export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {
         this.mediaItems.set(1, this.mediaItems.get(mediaId)! + 1)
     }
 
+    extendBorrowingRecord(userId: number, mediaId: number, endDate: Date): void {
+        const idx = this.mediaBorrowingRecords.findIndex(x => x.userId == userId && x.mediaId == mediaId)
+
+        if (idx == -1) {
+            throw new Error(`Media borrowing record for user ${userId} and media item ${mediaId} does not exist.`)
+        }
+        
+        const record = this.mediaBorrowingRecords[idx]
+        record.endDate = endDate
+        record.renewals += 1
+    }
+
     verifyMediaItemExists(mediaId: number): void {
         if (!this.mediaItems.has(mediaId)) {
             throw new Error(`Media item ${mediaId} does not exist.`)
