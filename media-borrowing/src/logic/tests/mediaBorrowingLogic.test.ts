@@ -79,6 +79,11 @@ describe('Borrow Media Item', () => {
         expect(() => {mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)}).toThrow(InvalidBorrowingDateError)
     })
 
+    test('A media item cannot be borrowed for longer than the max borrowing period', () => {
+        genericMediaBorrowingRecord.endDate.setDate(genericMediaBorrowingRecord.endDate.getDate() + 1)
+        expect(() => mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)).toThrow(MaxBorrowingPeriodExceededError)
+    })
+
     test('A new media borrowing record must not have any renewals', () => {
         genericMediaBorrowingRecord.renewals = 1
         expect(() => mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)).toThrow(InvalidBorrowingRecordError)
@@ -131,14 +136,10 @@ describe("Renew borrowed media item", () => {
     })
 
     test("A renewal cannot extend beyond the maximum borrowing period.", () => {
-        const userId = genericMediaBorrowingRecord.userId
-        const mediaId = genericMediaBorrowingRecord.mediaId
-        const extension = 14
+        const extension = 15
 
         const endDateAfterRenewal = new Date(genericMediaBorrowingRecord.endDate)
         endDateAfterRenewal.setDate(endDateAfterRenewal.getDate() + extension)
-
-        Container.set(MAX_BORROWING_PERIOD_DAYS, 13)
 
         mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
         expect(() => mediaBorrowingLogic.renewBorrowedMediaItem(genericMediaBorrowingRecord, extension)).toThrow(MaxBorrowingPeriodExceededError)
