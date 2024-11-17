@@ -4,10 +4,12 @@ import { IMediaBorrowingRepository } from "../data";
 
 @Service()
 export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {
+    public users: number[]
     public mediaItems: Map<number, number>
     public mediaBorrowingRecords : MediaBorrowingRecord[]
 
     constructor() {
+        this.users = []
         this.mediaItems = new Map<number, number>()
         this.mediaBorrowingRecords = []
     }
@@ -21,6 +23,7 @@ export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {
             renewals: 0
         }
 
+        this.verifyUserExists(userId)
         this.verifyMediaItemExists(mediaId)
 
         for(let record of this.mediaBorrowingRecords) {
@@ -65,6 +68,12 @@ export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {
     verifyMediaItemExists(mediaId: number): void {
         if (!this.mediaItems.has(mediaId)) {
             throw new Error(`Media item ${mediaId} does not exist.`)
+        }
+    }
+
+    verifyUserExists(userId: number): void {
+        if (this.users.findIndex(id => id == userId) == -1) {
+            throw new Error(`User ${userId} does not exist.`)
         }
     }
 } 

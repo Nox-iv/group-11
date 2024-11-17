@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import Container from "typedi";
 import { MediaBorrowingRecord, MediaBorrowingLogic, InvalidBorrowingDateError, InvalidUserError, MaxBorrowingPeriodExceededError, MaxRenewalsExceededError } from "..";
-import { UserRepository, MediaBorrowingRepository } from '../../data';
-import { FakeUserRepository, FakeMediaBorrowingRepository } from '../../mocks';
+import { MediaBorrowingRepository } from '../../data';
+import { FakeMediaBorrowingRepository } from '../../mocks';
 import { MAX_BORROWING_PERIOD_DAYS, MAX_RENEWALS } from '../../config';
 
 const genericMediaBorrowingRecord : MediaBorrowingRecord = {
@@ -14,17 +14,16 @@ const genericMediaBorrowingRecord : MediaBorrowingRecord = {
 }
 
 const invalidMediaId = 4
-const fakeUserRepository = new FakeUserRepository()
+const invalidUserId = 4
 const fakeMediaBorrowingRepository = new FakeMediaBorrowingRepository()
 
-Container.set(UserRepository, fakeUserRepository)
 Container.set(MediaBorrowingRepository, fakeMediaBorrowingRepository)
 
 const mediaBorrowingLogic = Container.get(MediaBorrowingLogic)
 
 beforeEach(() => {
-    fakeUserRepository.setValidUser()
     fakeMediaBorrowingRepository.mediaItems = new Map()
+    fakeMediaBorrowingRepository.users = [1, 2, 3]
     fakeMediaBorrowingRepository.mediaBorrowingRecords = []
     
     fakeMediaBorrowingRepository.mediaItems.set(1, 1)
@@ -74,8 +73,8 @@ describe('Borrow Media Item', () => {
     })
 
     test('A non-existent user cannot borrow a media item.', () => {
-        fakeUserRepository.setInvalidUser()
-        expect(() => {mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)}).toThrow(InvalidUserError)
+        genericMediaBorrowingRecord.userId = invalidUserId
+        expect(() => {mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)}).toThrow()
     })
 
     test('A non-existent media item cannot be borrowed.', () => {
