@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import Container from "typedi";
 import { MediaReturnLogic, MediaBorrowingRecord } from '..';
-import { UserRepository, MediaBorrowingRepository } from '../../data';
-import { FakeUserRepository, FakeMediaBorrowingRepository } from '../../mocks';
+import { MediaBorrowingRepository } from '../../data';
+import { FakeMediaBorrowingRepository } from '../../mocks';
 
 const existingMediaBorrowingRecord : MediaBorrowingRecord = {
     userId: 1,
@@ -14,11 +14,8 @@ const existingMediaBorrowingRecord : MediaBorrowingRecord = {
 
 existingMediaBorrowingRecord.endDate.setDate(existingMediaBorrowingRecord.endDate.getDate() + 14)
 
-const invalidMediaId = 4
-const fakeUserRepository = new FakeUserRepository()
 const fakeMediaBorrowingRepository = new FakeMediaBorrowingRepository()
 
-Container.set(UserRepository, fakeUserRepository)
 Container.set(MediaBorrowingRepository, fakeMediaBorrowingRepository)
 
 const mediaReturnLogic = Container.get(MediaReturnLogic)
