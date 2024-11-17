@@ -3,6 +3,7 @@ import { UserRepository } from '../data/user'
 import { MediaBorrowingRepository } from '../data/borrowing'
 import { MediaBorrowingRecord } from './types/mediaBorrowingRecord'
 import { InvalidBorrowingDateError } from './errors/invalidBorrowingDateError'
+import { InvalidUserError } from './errors/invalidUserError'
 
 @Service()
 export class MediaBorrowingLogic {
@@ -17,7 +18,7 @@ export class MediaBorrowingLogic {
         }
     
         if (!this.userRepository.isValidUserId(mediaBorrowingRecord.userId)) {
-            throw new Error(`User ${mediaBorrowingRecord.userId} does not exist`)
+            throw new InvalidUserError(`User ${mediaBorrowingRecord.userId} does not exist`)
         }
 
         this.mediaBorrowingRepository.insertBorrowingRecord(
