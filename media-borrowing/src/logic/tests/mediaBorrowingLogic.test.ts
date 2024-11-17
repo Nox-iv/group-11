@@ -148,3 +148,16 @@ describe("Renew borrowed media item", () => {
         expect(() => mediaBorrowingLogic.renewBorrowedMediaItem(fakeMediaBorrowingRepository.mediaBorrowingRecords[0], extension)).toThrow(MaxRenewalsExceededError)
     })
 })
+
+describe("Media returns", () => {
+    test("A user can return a media item that they have borrowed", () => {
+        const userId = genericMediaBorrowingRecord.userId
+        const mediaId = genericMediaBorrowingRecord.mediaId
+
+        mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
+        mediaBorrowingLogic.returnMediaItem(genericMediaBorrowingRecord)
+
+        expect(fakeMediaBorrowingRepository.mediaBorrowingRecords.length).toBe(0)
+        expect(fakeMediaBorrowingRepository.mediaItems.get(1)).toBe(1)
+    })
+})

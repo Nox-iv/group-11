@@ -41,4 +41,11 @@ export class MediaBorrowingLogic {
         
         this.mediaBorrowingRepository.extendBorrowingRecord(mediaBorrowingRecord.userId, mediaBorrowingRecord.mediaId, extendedEndDate)
     }
+
+    returnMediaItem(mediaBorrowingRecord: MediaBorrowingRecord) : void {
+        this.mediaBorrowingRepository.deleteBorrowingRecord(
+            mediaBorrowingRecord.userId, 
+            mediaBorrowingRecord.mediaId, 
+        )
+    }
 }
