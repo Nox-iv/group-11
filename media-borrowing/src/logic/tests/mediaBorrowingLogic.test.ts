@@ -5,6 +5,7 @@ import { UserRepository } from '../../data/user';
 import { FakeUserRepository, FakeMediaBorrowingRepository } from '../../mocks';
 import { MediaBorrowingRepository } from '../../data/borrowing';
 import { MediaBorrowingRecord } from '../types/mediaBorrowingRecord';
+import { InvalidBorrowingDateError } from '../errors/invalidBorrowingDateError';
 
 const genericMediaBorrowingRecord : MediaBorrowingRecord = {
     userId: 1,
@@ -68,7 +69,7 @@ describe('Borrow Media Item', () => {
         const invalidEndDate = new Date(genericMediaBorrowingRecord.startDate.getTime() - 1)
         genericMediaBorrowingRecord.endDate = invalidEndDate
 
-        expect(() => {mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)}).toThrow()
+        expect(() => {mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)}).toThrow(InvalidBorrowingDateError)
     })
 
     test('A non-existent user cannot borrow a media item.', () => {
