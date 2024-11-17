@@ -65,8 +65,8 @@ describe('Borrow Media Item', () => {
     })
 
     test('A media item cannot be borrowed with an end date that is earlier than the given start date.', () => {
-        const invalidEndDate = genericMediaBorrowingRecord.startDate.getDate() - 1
-        genericMediaBorrowingRecord.endDate.setDate(invalidEndDate)
+        const invalidEndDate = new Date(genericMediaBorrowingRecord.startDate.getTime() - 1)
+        genericMediaBorrowingRecord.endDate = invalidEndDate
 
         expect(() => {mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)}).toThrow()
     })
