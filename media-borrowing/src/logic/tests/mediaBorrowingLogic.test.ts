@@ -1,9 +1,15 @@
 import 'reflect-metadata';
 import Container from "typedi";
-import { MediaBorrowingRecord, MediaBorrowingLogic, InvalidBorrowingDateError, InvalidUserError, MaxBorrowingPeriodExceededError, MaxRenewalsExceededError } from "..";
 import { MediaBorrowingRepository } from '../../data';
 import { FakeMediaBorrowingRepository } from '../../mocks';
 import { MAX_BORROWING_PERIOD_DAYS, MAX_RENEWALS } from '../../config';
+import { 
+    MediaBorrowingRecord, 
+    MediaBorrowingLogic, 
+    InvalidBorrowingDateError, 
+    MaxBorrowingPeriodExceededError, 
+    MaxRenewalsExceededError, 
+    InvalidBorrowingRecordError } from "..";
 
 const genericMediaBorrowingRecord : MediaBorrowingRecord = {
     userId: 1,
@@ -36,6 +42,7 @@ beforeEach(() => {
     genericMediaBorrowingRecord.startDate = new Date(start)
     genericMediaBorrowingRecord.endDate = new Date(start)
     genericMediaBorrowingRecord.endDate.setDate(genericMediaBorrowingRecord.endDate.getDate() + 14)
+    genericMediaBorrowingRecord.renewals = 0
 
     Container.set(MAX_BORROWING_PERIOD_DAYS, 14)
     Container.set(MAX_RENEWALS, 2)
@@ -70,6 +77,11 @@ describe('Borrow Media Item', () => {
         genericMediaBorrowingRecord.endDate = invalidEndDate
 
         expect(() => {mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)}).toThrow(InvalidBorrowingDateError)
+    })
+
+    test('A new media borrowing record must not have any renewals', () => {
+        genericMediaBorrowingRecord.renewals = 1
+        expect(() => mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)).toThrow(InvalidBorrowingRecordError)
     })
 
     test('A non-existent user cannot borrow a media item.', () => {

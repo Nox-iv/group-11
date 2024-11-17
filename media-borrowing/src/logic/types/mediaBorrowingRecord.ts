@@ -3,5 +3,5 @@ export type MediaBorrowingRecord = {
     mediaId: number,
     startDate: Date,
     endDate: Date,
-    renewals: 0
+    renewals: number
 }

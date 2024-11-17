@@ -1,7 +1,7 @@
 import { Container, Inject, Service } from 'typedi'
 import { MAX_BORROWING_PERIOD_DAYS, MAX_RENEWALS } from '../config'
 import { MediaBorrowingRepository } from '../data'
-import { InvalidUserError, InvalidBorrowingDateError, MediaBorrowingRecord, MaxBorrowingPeriodExceededError, MaxRenewalsExceededError } from '.'
+import { InvalidBorrowingDateError, MediaBorrowingRecord, MaxBorrowingPeriodExceededError, MaxRenewalsExceededError, InvalidBorrowingRecordError } from '.'
 
 @Service()
 export class MediaBorrowingLogic {
@@ -12,6 +12,10 @@ export class MediaBorrowingLogic {
     borrowMediaItem(mediaBorrowingRecord: MediaBorrowingRecord) : void {
         if (mediaBorrowingRecord.endDate < mediaBorrowingRecord.startDate) {
             throw new InvalidBorrowingDateError('End date cannot be earlier than start date.')
+        }
+
+        if (mediaBorrowingRecord.renewals > 0) {
+            throw new InvalidBorrowingRecordError('A new media borrowing record must have 0 renewals.')
         }
 
         this.mediaBorrowingRepository.insertBorrowingRecord(
