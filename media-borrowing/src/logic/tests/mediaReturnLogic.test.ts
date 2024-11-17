@@ -28,7 +28,7 @@ const mediaReturnLogic = Container.get(MediaReturnLogic)
 
 beforeEach(() => {
     fakeMediaBorrowingRepository.mediaBorrowingRecords = [existingMediaBorrowingRecord]
-    fakeMediaBorrowingRepository.mediaItems = new Map()
+    fakeMediaBorrowingRepository.mediaItems = new Map<number, number>()
     fakeMediaBorrowingRepository.mediaItems.set(1, 1)
     fakeMediaBorrowingRepository.mediaItems.set(2, 1)
     fakeMediaBorrowingRepository.mediaItems.set(3, 1)
@@ -41,7 +41,7 @@ describe("Media returns", () => {
 
         mediaReturnLogic.returnMediaItem(existingMediaBorrowingRecord)
 
-        expect(fakeMediaBorrowingRepository.mediaBorrowingRecords.find(x => x.userId == userId && x.mediaId == mediaId)).toBe(undefined)
+        expect(fakeMediaBorrowingRepository.mediaBorrowingRecords.length).toBe(0)
         expect(fakeMediaBorrowingRepository.mediaItems.get(1)).toBe(2)
     })
 })

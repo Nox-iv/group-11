@@ -22,9 +22,7 @@ export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {
             renewals: 0
         }
 
-        if (!this.mediaItems.has(mediaId)) {
-            throw new Error(`Media item ${mediaId} does not exist.`)
-        }
+        this.verifyMediaItemExists(mediaId)
 
         for(let record of this.mediaBorrowingRecords) {
             if (record.userId == mediaBorrowingRecord.userId && record.mediaId == mediaBorrowingRecord.mediaId) {
@@ -41,6 +39,21 @@ export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {
     }
 
     deleteBorrowingRecord(userId: number, mediaId: number): void {
-        
+        this.verifyMediaItemExists(mediaId)
+
+        const idx = this.mediaBorrowingRecords.findIndex(x => x.mediaId == mediaId && x.userId == userId)
+
+        if (idx == -1) {
+            throw new Error(`Media borrowing record for user ${userId} and media item ${mediaId} does not exist.`)
+        }
+
+        this.mediaBorrowingRecords.splice(idx, 1)
+        this.mediaItems.set(1, this.mediaItems.get(mediaId)! + 1)
+    }
+
+    verifyMediaItemExists(mediaId: number): void {
+        if (!this.mediaItems.has(mediaId)) {
+            throw new Error(`Media item ${mediaId} does not exist.`)
+        }
     }
 } 
