@@ -1,5 +1,6 @@
 import { Service } from "typedi";
 import { IMediaBorrowingRepository } from ".";
+import { MediaBorrowingRecord } from "../logic";
 
 @Service()
 export class MediaBorrowingRepository implements IMediaBorrowingRepository {
@@ -18,5 +19,9 @@ export class MediaBorrowingRepository implements IMediaBorrowingRepository {
     extendBorrowingRecord(userId: number, mediaId: number, endDate: Date): void {
         // Update media borrowing record date
         // Throw if record does not exist.
+    }
+
+    getBorrowingRecordsByUserId(userId: number) : MediaBorrowingRecord[] {
+        return []
     }
 } 

@@ -65,6 +65,10 @@ export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {
         record.renewals += 1
     }
 
+    getBorrowingRecordsByUserId(userId: number) : MediaBorrowingRecord[] {
+        return this.mediaBorrowingRecords.filter(x => x.userId == userId)
+    }
+
     verifyMediaItemExists(mediaId: number): void {
         if (!this.mediaItems.has(mediaId)) {
             throw new Error(`Media item ${mediaId} does not exist.`)

@@ -160,3 +160,20 @@ describe("Media returns", () => {
         expect(fakeMediaBorrowingRepository.mediaItems.get(1)).toBe(1)
     })
 })
+
+describe("Retrieve media borrowing records", () => {
+    test("All media borrowing records for a specific user can be retrieved", () => {
+        const mediaBorrowingRecordOtherUser: MediaBorrowingRecord = {
+            userId: 2,
+            mediaId: 2,
+            startDate: genericMediaBorrowingRecord.startDate,
+            endDate: genericMediaBorrowingRecord.endDate,
+            renewals: 0
+        }
+
+        mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
+        mediaBorrowingLogic.borrowMediaItem(mediaBorrowingRecordOtherUser)
+
+        expect(mediaBorrowingLogic.getBorrowingRecordsByUserId(1)).toStrictEqual([genericMediaBorrowingRecord])
+    })
+})

@@ -43,4 +43,8 @@ export class MediaBorrowingLogic {
             mediaBorrowingRecord.mediaId, 
         )
     }
+
+    getBorrowingRecordsByUserId(userId: number) {
+        return this.mediaBorrowingRepository.getBorrowingRecordsByUserId(userId)
+    }
 }
