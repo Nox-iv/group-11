@@ -8,7 +8,6 @@ export class DbConnectionFactory {
     constructor() {
         // Connection info in env variables.
         this.dbConnectionPool = new Pool()
-          
     }
 
     async getDbConnection() : Promise<PoolClient>  {
