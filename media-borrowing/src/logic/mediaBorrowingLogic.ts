@@ -15,7 +15,7 @@ export class MediaBorrowingLogic {
         }
 
         const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0);
+        currentDate.setMinutes(currentDate.getMinutes() - 1);
 
         if (mediaBorrowingRecord.startDate < currentDate) {
             throw new InvalidBorrowingDateError('Start date cannot be in the past.')
