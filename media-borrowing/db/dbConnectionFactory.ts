@@ -6,13 +6,8 @@ export class DbConnectionFactory {
     private dbConnectionPool : Pool
 
     constructor() {
-        this.dbConnectionPool = new Pool({
-            user: 'dbuser',
-            password: 'secretpassword',
-            host: 'database.server.com',
-            port: 3211,
-            database: 'mydb',
-        })
+        // Connection info in env variables.
+        this.dbConnectionPool = new Pool()
           
     }
 
