@@ -72,6 +72,11 @@ describe('Borrow Media Item', () => {
         expect(fakeMediaBorrowingRepository.mediaItems.get(mediaItemId2)).toBe(initialAvailabilityItem2 - 1)
     })
 
+    test('A media item cannot be borrowed with a start date before the current date', () => {
+        genericMediaBorrowingRecord.startDate.setDate(genericMediaBorrowingRecord.startDate.getDate() - 1)
+        expect(() => {mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)}).toThrow(InvalidBorrowingDateError)
+    })
+
     test('A media item cannot be borrowed with an end date that is earlier than the given start date.', () => {
         const invalidEndDate = new Date(genericMediaBorrowingRecord.startDate.getTime() - 1)
         genericMediaBorrowingRecord.endDate = invalidEndDate

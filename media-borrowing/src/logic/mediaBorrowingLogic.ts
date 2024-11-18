@@ -14,10 +14,16 @@ export class MediaBorrowingLogic {
             throw new InvalidBorrowingDateError('End date cannot be earlier than start date.')
         }
 
-        //TODO: Check Locale and make sure start date isn't in the past.
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0);
+
+        if (mediaBorrowingRecord.startDate < currentDate) {
+            throw new InvalidBorrowingDateError('Start date cannot be in the past.')
+        }
 
         const borrowingPeriodInDays = Math.floor((mediaBorrowingRecord.endDate.getTime() - mediaBorrowingRecord.startDate.getTime()) / 86400000)
         const maxBorrowingPeriodInDays = Container.get(MAX_BORROWING_PERIOD_DAYS)
+        
         if (borrowingPeriodInDays > maxBorrowingPeriodInDays) {
             throw new MaxBorrowingPeriodExceededError(`Max borrowing period is ${maxBorrowingPeriodInDays} calendar days.`)
         }
