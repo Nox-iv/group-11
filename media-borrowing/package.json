@@ -6,7 +6,10 @@
     "test": "jest",
     "build": "rimraf ./build && npx tsc",
     "start": "npm run build && npx functions-framework --source=./build/index.js --target=myHttpFunction",
-    "migrate": "node-pg-migrate"
+    "migrate:up": "node-pg-migrate up",
+    "migrate:down": "node-pg-migrate down",
+    "migrate:redo": "node-pg-migrate redo",
+    "migrate:create": "node-pg-migrate create"
   },
   "keywords": [],
   "author": "",
