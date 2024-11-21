@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import Container from "typedi";
-import { MediaBorrowingRepository } from '../../data';
+import { IMediaBorrowingRepository } from '../../interfaces';
 import { FakeMediaBorrowingRepository } from '../../mocks';
 import { MAX_BORROWING_PERIOD_DAYS, MAX_RENEWALS } from '../../config';
 import { 
@@ -23,7 +23,7 @@ const invalidMediaId = 4
 const invalidUserId = 4
 const fakeMediaBorrowingRepository = new FakeMediaBorrowingRepository()
 
-Container.set(MediaBorrowingRepository, fakeMediaBorrowingRepository)
+Container.set(IMediaBorrowingRepository, fakeMediaBorrowingRepository)
 
 const mediaBorrowingLogic = Container.get(MediaBorrowingLogic)
 

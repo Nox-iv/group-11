@@ -1,12 +1,12 @@
 import { Container, Inject, Service } from 'typedi'
 import { MAX_BORROWING_PERIOD_DAYS, MAX_RENEWALS } from '../config'
-import { MediaBorrowingRepository } from '../data'
+import { IMediaBorrowingRepository } from '../interfaces'
 import { InvalidBorrowingDateError, MediaBorrowingRecord, MaxBorrowingPeriodExceededError, MaxRenewalsExceededError, InvalidBorrowingRecordError } from '.'
 
 @Service()
 export class MediaBorrowingLogic {
     constructor(
-        @Inject() private mediaBorrowingRepository : MediaBorrowingRepository
+        @Inject() private mediaBorrowingRepository : IMediaBorrowingRepository
     ) {}
 
     borrowMediaItem(mediaBorrowingRecord: MediaBorrowingRecord) : void {

@@ -1,14 +1,15 @@
 import { Service } from "typedi";
 import { MediaBorrowingRecord } from "../logic";
-import { IMediaBorrowingRepository } from "../data";
+import { IMediaBorrowingRepository } from "../interfaces";
 
 @Service()
-export class FakeMediaBorrowingRepository implements IMediaBorrowingRepository {
+export class FakeMediaBorrowingRepository extends IMediaBorrowingRepository {
     public users: number[]
     public mediaItems: Map<number, number>
     public mediaBorrowingRecords : MediaBorrowingRecord[]
 
     constructor() {
+        super()
         this.users = []
         this.mediaItems = new Map<number, number>()
         this.mediaBorrowingRecords = []
