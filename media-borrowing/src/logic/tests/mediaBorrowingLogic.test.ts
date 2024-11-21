@@ -10,17 +10,21 @@ import {
     MaxBorrowingPeriodExceededError, 
     MaxRenewalsExceededError, 
     InvalidBorrowingRecordError } from "..";
+import { randomUUID } from 'crypto';
+
+const validUserUUIDs = [randomUUID(), randomUUID(), randomUUID()]
+const validMediaUUIDs = [randomUUID(), randomUUID(), randomUUID()]
 
 const genericMediaBorrowingRecord : MediaBorrowingRecord = {
-    userId: 1,
-    mediaId: 1,
+    userId: validUserUUIDs[0],
+    mediaId: validMediaUUIDs[0],
     startDate: new Date(),
     endDate: new Date(),
     renewals: 0
 }
 
-const invalidMediaId = 4
-const invalidUserId = 4
+const invalidMediaId = randomUUID()
+const invalidUserId = randomUUID()
 const fakeMediaBorrowingRepository = new FakeMediaBorrowingRepository()
 
 Container.set(IMediaBorrowingRepository, fakeMediaBorrowingRepository)
@@ -29,16 +33,16 @@ const mediaBorrowingLogic = Container.get(MediaBorrowingLogic)
 
 beforeEach(() => {
     fakeMediaBorrowingRepository.mediaItems = new Map()
-    fakeMediaBorrowingRepository.users = [1, 2, 3]
+    fakeMediaBorrowingRepository.users = validUserUUIDs
     fakeMediaBorrowingRepository.mediaBorrowingRecords = []
-    
-    fakeMediaBorrowingRepository.mediaItems.set(1, 1)
-    fakeMediaBorrowingRepository.mediaItems.set(2, 1)
-    fakeMediaBorrowingRepository.mediaItems.set(3, 1)
+
+    for (let mediaUUID of validMediaUUIDs) {
+        fakeMediaBorrowingRepository.mediaItems.set(mediaUUID, 1)
+    }
 
     const start = Date.now()
-    genericMediaBorrowingRecord.userId = 1
-    genericMediaBorrowingRecord.mediaId = 1
+    genericMediaBorrowingRecord.userId = validUserUUIDs[0]
+    genericMediaBorrowingRecord.mediaId = validMediaUUIDs[0]
     genericMediaBorrowingRecord.startDate = new Date(start)
     genericMediaBorrowingRecord.endDate = new Date(start)
     genericMediaBorrowingRecord.endDate.setDate(genericMediaBorrowingRecord.endDate.getDate() + 14)
@@ -58,7 +62,7 @@ describe('Borrow Media Item', () => {
 
     test('A user can borrow multiple media items', () => {
         const mediaItemId1 = genericMediaBorrowingRecord.mediaId
-        const mediaItemId2 = 2
+        const mediaItemId2 = validMediaUUIDs[1]
 
         const initialAvailabilityItem1 = fakeMediaBorrowingRepository.mediaItems.get(mediaItemId1)!
         const initialAvailabilityItem2 = fakeMediaBorrowingRepository.mediaItems.get(mediaItemId2)!
@@ -105,11 +109,10 @@ describe('Borrow Media Item', () => {
     })
 
     test('An unavailable media item cannot be borrowed.', () => {
-        genericMediaBorrowingRecord.mediaId = 3
         mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
 
         const mediaBorrowingRecordForUnavailableItem: MediaBorrowingRecord = {
-            userId: 2,
+            userId: validUserUUIDs[1],
             mediaId: genericMediaBorrowingRecord.mediaId,
             startDate: genericMediaBorrowingRecord.startDate,
             endDate: genericMediaBorrowingRecord.endDate,
@@ -175,15 +178,15 @@ describe("Media returns", () => {
         mediaBorrowingLogic.returnMediaItem(genericMediaBorrowingRecord)
 
         expect(fakeMediaBorrowingRepository.mediaBorrowingRecords.length).toBe(0)
-        expect(fakeMediaBorrowingRepository.mediaItems.get(1)).toBe(1)
+        expect(fakeMediaBorrowingRepository.mediaItems.get(genericMediaBorrowingRecord.mediaId)).toBe(1)
     })
 })
 
 describe("Retrieve media borrowing records", () => {
     test("All media borrowing records for a specific user can be retrieved", () => {
         const mediaBorrowingRecordOtherUser: MediaBorrowingRecord = {
-            userId: 2,
-            mediaId: 2,
+            userId: validUserUUIDs[1],
+            mediaId: validMediaUUIDs[1],
             startDate: genericMediaBorrowingRecord.startDate,
             endDate: genericMediaBorrowingRecord.endDate,
             renewals: 0
@@ -192,6 +195,6 @@ describe("Retrieve media borrowing records", () => {
         mediaBorrowingLogic.borrowMediaItem(genericMediaBorrowingRecord)
         mediaBorrowingLogic.borrowMediaItem(mediaBorrowingRecordOtherUser)
 
-        expect(mediaBorrowingLogic.getBorrowingRecordsByUserId(1)).toStrictEqual([genericMediaBorrowingRecord])
+        expect(mediaBorrowingLogic.getBorrowingRecordsByUserId(genericMediaBorrowingRecord.userId)).toStrictEqual([genericMediaBorrowingRecord])
     })
 })

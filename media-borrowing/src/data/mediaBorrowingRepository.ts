@@ -1,6 +1,7 @@
 import { Service } from "typedi";
 import { IMediaBorrowingRepository } from "../interfaces";
 import { MediaBorrowingRecord } from "../logic";
+import { UUID } from "crypto";
 
 @Service()
 export class MediaBorrowingRepository extends IMediaBorrowingRepository {
@@ -8,22 +9,22 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
         super()
     }
 
-    insertBorrowingRecord(userId: number, mediaId: number, startDate: Date, endDate: Date): void {
+    insertBorrowingRecord(userId: UUID, mediaId: UUID, startDate: Date, endDate: Date): void {
         // Check record doesn't already exist for item and user ID
         // Insert record
     }
 
-    deleteBorrowingRecord(userId: number, mediaId: number): void {
+    deleteBorrowingRecord(userId: UUID, mediaId: UUID): void {
         // Delete record if exists
         // Throw if record does not exist or could not be deleted
     }
 
-    extendBorrowingRecord(userId: number, mediaId: number, endDate: Date): void {
+    extendBorrowingRecord(userId: UUID, mediaId: UUID, endDate: Date): void {
         // Update media borrowing record date
         // Throw if record does not exist.
     }
 
-    getBorrowingRecordsByUserId(userId: number) : MediaBorrowingRecord[] {
+    getBorrowingRecordsByUserId(userId: UUID) : MediaBorrowingRecord[] {
         return []
     }
 } 

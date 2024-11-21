@@ -2,6 +2,7 @@ import { Container, Inject, Service } from 'typedi'
 import { MAX_BORROWING_PERIOD_DAYS, MAX_RENEWALS } from '../config'
 import { IMediaBorrowingRepository } from '../interfaces'
 import { InvalidBorrowingDateError, MediaBorrowingRecord, MaxBorrowingPeriodExceededError, MaxRenewalsExceededError, InvalidBorrowingRecordError } from '.'
+import { UUID } from 'crypto'
 
 @Service()
 export class MediaBorrowingLogic {
@@ -30,6 +31,14 @@ export class MediaBorrowingLogic {
 
         if (mediaBorrowingRecord.renewals > 0) {
             throw new InvalidBorrowingRecordError('A new media borrowing record must have 0 renewals.')
+        }
+
+        if (!this.mediaBorrowingRepository.hasUser(mediaBorrowingRecord.userId)) {
+            throw new Error()
+        }
+
+        if (!this.mediaBorrowingRepository.hasMediaItem(mediaBorrowingRecord.mediaId)) {
+            throw new Error()
         }
 
         this.mediaBorrowingRepository.insertBorrowingRecord(
@@ -62,7 +71,7 @@ export class MediaBorrowingLogic {
         )
     }
 
-    getBorrowingRecordsByUserId(userId: number) {
+    getBorrowingRecordsByUserId(userId: UUID) {
         return this.mediaBorrowingRepository.getBorrowingRecordsByUserId(userId)
     }
 }

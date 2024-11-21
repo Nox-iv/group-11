@@ -1,6 +1,8 @@
+import { UUID } from "crypto"
+
 export type MediaBorrowingRecord = {
-    userId: number,
-    mediaId: number,
+    userId: UUID,
+    mediaId: UUID,
     startDate: Date,
     endDate: Date,
     renewals: number
