@@ -4,9 +4,11 @@ RUN npm install pnpm -g
 
 WORKDIR /usr/media-borrowing/src
 
-COPY . .
+COPY package.json package-lock.json pnpm-lock.yaml ./
 
 RUN pnpm install
+
+COPY . .
 
 EXPOSE 8080
 
