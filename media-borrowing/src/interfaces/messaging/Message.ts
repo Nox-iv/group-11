@@ -2,7 +2,7 @@ export class Message<T> {
     public value: T | null
     public errors: Error[]
 
-    constructor(value: T | null, errors: Error[] = []) {
+    constructor(value: T | null = null, errors: Error[] = []) {
         this.value = value
         this.errors = errors
     }

@@ -1,17 +1,9 @@
 import { Inject } from "typedi"
-import { IUnitOfWorkFactory, IUnitOfWork, IDbContext } from "../../interfaces/data/uow"
-import { IMediaBorrowingRepository, IMediaRepository, IUserRepository } from "../../interfaces/data/repositories"
-import { MediaBorrowingRepository } from "../../data"
-import { UserRepository } from "../repositories/userRepository"
-import { MediaRepository } from "../repositories/mediaRepository"
+import { IUnitOfWorkFactory, IDbContext } from "../../interfaces/data/uow"
+import { IMediaBorrowingRepository, IMediaBorrowingConfigRepository, IMediaRepository, IUserRepository } from "../../interfaces/data/repositories"
+import { MediaBorrowingRepository, MediaBorrowingConfigRepository, UserRepository, MediaRepository } from "../repositories"
 
 export class DbContext extends IDbContext {
-    private unitOfWork : IUnitOfWork | null
-    private unitOfWorkFactory : IUnitOfWorkFactory
-    private mediaBorrowingRepository : IMediaBorrowingRepository | null
-    private userRepository : IUserRepository | null
-    private mediaRepository : IMediaRepository | null
-
     constructor(
         @Inject() unitOfWorkFactory : IUnitOfWorkFactory
     ) {
@@ -45,6 +37,14 @@ export class DbContext extends IDbContext {
         }
 
         return this.mediaRepository
+    }
+
+    public async getMediaBorrowingConfigRepository() : Promise<IMediaBorrowingConfigRepository> {
+        if (this.mediaBorrowingConfigRepository == null) {
+            this.mediaBorrowingConfigRepository = new MediaBorrowingConfigRepository(await this.getUnitOfWork())
+        }
+
+        return this.mediaBorrowingConfigRepository
     }
 
     public commit() : void {

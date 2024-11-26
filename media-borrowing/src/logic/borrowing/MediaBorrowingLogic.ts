@@ -10,7 +10,6 @@ import { InvalidBorrowingRecordError } from "../errors/invalidBorrowingRecordErr
 import { IMediaBorrowingRepository } from "../../interfaces/data/repositories";
 
 export class MediaBorrowingLogic extends IMediaBorrowingLogic {
-
     constructor(@Inject() dbContext : IDbContext) {
         super()
         this.dbContext = dbContext

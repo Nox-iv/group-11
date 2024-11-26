@@ -2,6 +2,7 @@ import { IMediaBorrowingRepository } from "../../interfaces/data/repositories";
 import { MediaBorrowingRecord } from "../../interfaces/dto/MediaBorrowingRecord";
 import { IUnitOfWork } from "../../interfaces/data/uow";
 import { Message } from "../../interfaces/messaging/Message";
+import { NotImplementedError } from "../../interfaces/errors/notImplementedError";
 
 export class MediaBorrowingRepository extends IMediaBorrowingRepository {
     private uow : IUnitOfWork
@@ -27,7 +28,7 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
     }
     
 
-    getBorrowingRecord(userId: number, mediaId: number) : Message<MediaBorrowingRecord> {
-        return new Message({} as MediaBorrowingRecord)
+    public getBorrowingRecord(userId: number, mediaId: number) : Promise<Message<MediaBorrowingRecord>> {
+        throw new NotImplementedError()
     }
 } 
