@@ -3,7 +3,7 @@ import { Message } from "../../messaging/Message"
 import { NotImplementedError } from "../../errors/notImplementedError"
 
 export class IMediaBorrowingRepository {
-    insertBorrowingRecord(userId: number, mediaId: number, startDate: Date, endDate: Date): void {
+    insertBorrowingRecord(mediaBorrowingRecord : MediaBorrowingRecord): void {
         throw new NotImplementedError()
     }
 
@@ -15,15 +15,11 @@ export class IMediaBorrowingRepository {
         throw new NotImplementedError()
     }
 
+    hasBorrowingRecord(userId : number, mediaId: number): Promise<Message<boolean>> {
+        throw new NotImplementedError()
+    }
+
     getBorrowingRecord(userId: number, mediaId: number) : Message<MediaBorrowingRecord> {
-        throw new NotImplementedError()
-    }
-
-    hasMediaItem(mediaId: number) : Message<boolean> {
-        throw new NotImplementedError()
-    }
-
-    hasUser(userId: number) : Message<boolean> {
         throw new NotImplementedError()
     }
 }

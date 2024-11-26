@@ -11,7 +11,7 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
         this.uow = uow
     }
 
-    insertBorrowingRecord(userId: number, mediaId: number, startDate: Date, endDate: Date): void {
+    insertBorrowingRecord(mediaBorrowingRecord: MediaBorrowingRecord): void {
         // Check record doesn't already exist for item and user ID
         // Insert record
     }
@@ -25,16 +25,9 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
         // Update media borrowing record date
         // Throw if record does not exist.
     }
+    
 
     getBorrowingRecord(userId: number, mediaId: number) : Message<MediaBorrowingRecord> {
         return new Message({} as MediaBorrowingRecord)
-    }
-
-    hasMediaItem(mediaId: number) : Message<boolean> {
-        return new Message(true)
-    }
-
-    hasUser(userId: number) : Message<boolean> {
-        return new Message(true)
     }
 } 
