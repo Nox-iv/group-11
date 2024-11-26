@@ -1,7 +1,6 @@
 import { Message } from "../../interfaces/messaging/Message";
 import { MediaBorrowingRecord } from "../../interfaces/dto";
 import { IMediaBorrowingLogic } from "../../interfaces/logic/borrowing/IMediaBorrowingLogic";
-import { InvalidBorrowingDateError } from "../errors/invalidBorrowingDateError";
 import { IDbContext } from "../../interfaces/data/uow";
 import { Inject } from "typedi";
 import { InvalidUserError } from "../errors/invalidUserError";
