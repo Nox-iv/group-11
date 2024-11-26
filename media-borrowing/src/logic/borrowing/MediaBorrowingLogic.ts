@@ -8,11 +8,17 @@ import { InvalidUserError } from "../errors/invalidUserError";
 import { InvalidMediaError } from "../errors/invalidMediaError";
 import { InvalidBorrowingRecordError } from "../errors/invalidBorrowingRecordError";
 import { IMediaBorrowingRepository } from "../../interfaces/data/repositories";
+import { IMediaBorrowingDateValidator } from "../../interfaces/logic/date-validator/IMediaBorrowingDateValidator";
+
 
 export class MediaBorrowingLogic extends IMediaBorrowingLogic {
-    constructor(@Inject() dbContext : IDbContext) {
+    constructor(
+        @Inject() dbContext : IDbContext,
+        @Inject() mediaBorrowingDateValidator : IMediaBorrowingDateValidator
+    ) {
         super()
         this.dbContext = dbContext
+        this.mediaBorrowingDateValidator = mediaBorrowingDateValidator
     }
 
     public async BorrowMediaItem(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<Message<boolean>> {
@@ -41,10 +47,12 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         }
     }
 
-    private async validateBorrowingDates(startDate : Date, endDate : Date, result : Message<boolean>) {
-        const earliestEndDate = this.getEarliestEndDate(startDate)
-        if (endDate < earliestEndDate) {
-            result.addError(new InvalidBorrowingDateError(`Earliest possible end date for the given start date is ${earliestEndDate}`))
+    private validateBorrowingDates(startDate : Date, endDate : Date, result : Message<boolean>) {
+        const validationResult = this.mediaBorrowingDateValidator.validateBorrowingDates(startDate, endDate)
+        if (validationResult.hasErrors()) {
+            for(let error of validationResult.errors) {
+                result.addError(error)
+            }
         }
     }
 
@@ -72,12 +80,5 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         if (hasBorrowingRecordResult.value) {
             result.addError(new InvalidBorrowingRecordError(`User ${userId} is already borrowing media item ${mediaId}`))
         }
-    }
-
-    private getEarliestEndDate(startDate: Date) : Date {
-        const earliestEndDate = new Date(startDate)
-        earliestEndDate.setDate(earliestEndDate.getDate() + 1)
-
-        return earliestEndDate
     }
 }

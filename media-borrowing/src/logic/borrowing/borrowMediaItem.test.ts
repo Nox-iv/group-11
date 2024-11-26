@@ -5,11 +5,13 @@ import { IMediaBorrowingLogic } from "../../interfaces/logic/borrowing/IMediaBor
 import { MediaBorrowingLogic } from "./MediaBorrowingLogic";
 import { Message } from "../../interfaces/messaging/Message";
 import { MediaBorrowingRecord } from "../../interfaces/dto";
-import { InvalidBorrowingDateError } from "../errors/invalidBorrowingDateError";
 import { InvalidUserError } from '../errors/invalidUserError';
 import { InvalidMediaError } from '../errors/invalidMediaError';
 import { InvalidBorrowingRecordError } from '../errors/invalidBorrowingRecordError';
+import { IMediaBorrowingDateValidator } from '../../interfaces/logic/date-validator/IMediaBorrowingDateValidator';
+import { InvalidBorrowingDateError } from '../errors';
 
+jest.mock('../../interfaces/logic/date-validator/IMediaBorrowingDateValidator')
 jest.mock("../../interfaces/data/uow")
 jest.mock("../../interfaces/data/repositories")
 
@@ -17,6 +19,7 @@ let mockMediaBorrowingRepository : jest.Mocked<IMediaBorrowingRepository>;
 let mockUserRepository : jest.Mocked<IUserRepository>
 let mockMediaRepository : jest.Mocked<IMediaRepository>
 let mockDbContext : jest.Mocked<IDbContext>
+let mockMediaBorrowingDateValidator : jest.Mocked<IMediaBorrowingDateValidator>
 let mediaBorrowingLogic : IMediaBorrowingLogic
 let genericMediaBorrowingRecord : MediaBorrowingRecord
 
@@ -37,8 +40,12 @@ beforeEach(() => {
     mockDbContext.getUserRepository.mockResolvedValue(mockUserRepository)
     mockDbContext.getMediaRepository.mockResolvedValue(mockMediaRepository)
 
+    // Setup logic dependencies
+    mockMediaBorrowingDateValidator = new IMediaBorrowingDateValidator as jest.Mocked<IMediaBorrowingDateValidator>
+    mockMediaBorrowingDateValidator.validateBorrowingDates.mockReturnValue(new Message(true))
+
     // Setup media borrowing logic.
-    mediaBorrowingLogic = new MediaBorrowingLogic(mockDbContext)
+    mediaBorrowingLogic = new MediaBorrowingLogic(mockDbContext, mockMediaBorrowingDateValidator)
 
     // Setup data.
     genericMediaBorrowingRecord = {
@@ -56,19 +63,8 @@ beforeEach(() => {
 });
 
 describe("A media item cannot be borrowed if ...", () => {
-    test("the start date has been set to a date later than the end date.", async () => {
-        genericMediaBorrowingRecord.startDate = new Date(genericMediaBorrowingRecord.endDate)
-        genericMediaBorrowingRecord.startDate.setDate(genericMediaBorrowingRecord.startDate.getDate() + 1)
-
-        const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
-
-        expect(result.errors[0]).toBeInstanceOf(InvalidBorrowingDateError)
-        expect(result.value).toBe(false)
-    })
-
-    test("the end date is less than one day after the start date.", async () => {
-        genericMediaBorrowingRecord.endDate = new Date(genericMediaBorrowingRecord.startDate)
-        genericMediaBorrowingRecord.endDate.setHours(genericMediaBorrowingRecord.endDate.getHours() + 1)
+    test("the dates provided are invalid", async () => {
+        mockMediaBorrowingDateValidator.validateBorrowingDates.mockReturnValue(new Message(false, [new InvalidBorrowingDateError()]))
 
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
