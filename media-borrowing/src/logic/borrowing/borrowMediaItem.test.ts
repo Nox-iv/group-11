@@ -1,8 +1,8 @@
 import 'reflect-metadata'
 import { IDbContext } from "../../interfaces/data/uow";
 import { IMediaBorrowingRepository, IMediaRepository, IUserRepository } from "../../interfaces/data/repositories";
-import { IMediaBorrowingLogic } from "../../interfaces/logic/IMediaBorrowingLogic";
-import { MediaBorrowingLogic } from "../MediaBorrowingLogic";
+import { IMediaBorrowingLogic } from "../../interfaces/logic/borrowing/IMediaBorrowingLogic";
+import { MediaBorrowingLogic } from "./MediaBorrowingLogic";
 import { Message } from "../../interfaces/messaging/Message";
 import { MediaBorrowingRecord } from "../../interfaces/dto";
 import { InvalidBorrowingDateError } from "../errors/invalidBorrowingDateError";
@@ -104,7 +104,7 @@ describe("A media item cannot be borrowed if ...", () => {
     })
 })
 
-describe("When a media item is borrowed...", () => {
+describe("When a media item is borrowed by a user...", () => {
     test("the media borrowing databse is updated", async () => {
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 

@@ -1,13 +1,13 @@
-import { Message } from "../interfaces/messaging/Message";
-import { MediaBorrowingRecord } from "../interfaces/dto";
-import { IMediaBorrowingLogic } from "../interfaces/logic/IMediaBorrowingLogic";
-import { InvalidBorrowingDateError } from "./errors/invalidBorrowingDateError";
-import { IDbContext } from "../interfaces/data/uow";
+import { Message } from "../../interfaces/messaging/Message";
+import { MediaBorrowingRecord } from "../../interfaces/dto";
+import { IMediaBorrowingLogic } from "../../interfaces/logic/borrowing/IMediaBorrowingLogic";
+import { InvalidBorrowingDateError } from "../errors/invalidBorrowingDateError";
+import { IDbContext } from "../../interfaces/data/uow";
 import { Inject } from "typedi";
-import { InvalidUserError } from "./errors/invalidUserError";
-import { InvalidMediaError } from "./errors/invalidMediaError";
-import { InvalidBorrowingRecordError } from "./errors/invalidBorrowingRecordError";
-import { IMediaBorrowingRepository } from "../interfaces/data/repositories";
+import { InvalidUserError } from "../errors/invalidUserError";
+import { InvalidMediaError } from "../errors/invalidMediaError";
+import { InvalidBorrowingRecordError } from "../errors/invalidBorrowingRecordError";
+import { IMediaBorrowingRepository } from "../../interfaces/data/repositories";
 
 export class MediaBorrowingLogic extends IMediaBorrowingLogic {
 

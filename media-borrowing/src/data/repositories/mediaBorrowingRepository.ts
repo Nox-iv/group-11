@@ -1,5 +1,5 @@
 import { IMediaBorrowingRepository } from "../../interfaces/data/repositories";
-import { MediaBorrowingRecord } from "../../logic";
+import { MediaBorrowingRecord } from "../../interfaces/dto/MediaBorrowingRecord";
 import { IUnitOfWork } from "../../interfaces/data/uow";
 import { Message } from "../../interfaces/messaging/Message";
 
