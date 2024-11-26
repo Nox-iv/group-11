@@ -9,6 +9,7 @@ import { InvalidMediaError } from "../errors/invalidMediaError";
 import { InvalidBorrowingRecordError } from "../errors/invalidBorrowingRecordError";
 import { IMediaBorrowingRepository } from "../../interfaces/data/repositories";
 import { IMediaBorrowingDateValidator } from "../../interfaces/logic/date-validator/IMediaBorrowingDateValidator";
+import { UnavailableMediaItemError } from "../errors";
 
 
 export class MediaBorrowingLogic extends IMediaBorrowingLogic {
@@ -29,7 +30,7 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
 
             this.validateBorrowingDates(mediaBorrowingRecord.startDate, mediaBorrowingRecord.endDate, result)
             await this.validateUserId(mediaBorrowingRecord.userId, result)
-            await this.validateMediaId(mediaBorrowingRecord.mediaId, result)
+            await this.validateMediaAvailability(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId, result)
             await this.rejectIfUserIsAlreadyBorrowingMediaItem(mediaBorrowingRecord.userId, mediaBorrowingRecord.mediaId, mediaBorrowingRepository, result)
     
             if (!result.hasErrors()) {
@@ -65,12 +66,16 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         }
     }
 
-    private async validateMediaId(mediaId: number, result : Message<boolean>) {
+    private async validateMediaAvailability(mediaId: number, branchId: number, result : Message<boolean>) {
         const mediaRepository = await this.dbContext.getMediaRepository()
-        const hasMediaResult = await mediaRepository.hasMedia(mediaId)
+        const mediaItemResult = await mediaRepository.getMedia(mediaId, branchId)
 
-        if (!hasMediaResult.value) {
-            result.addError(new InvalidMediaError(`Media item ${mediaId} does not exist.`))
+        const mediaItem = mediaItemResult.value
+
+        if (mediaItem == null) {
+            result.addError(new InvalidMediaError(`Media item with ${mediaId} could not be found.`))
+        } else if (mediaItem.availability <= 0) {
+            result.addError(new UnavailableMediaItemError(`Media item ${mediaId} is not available at branch ${branchId}`))
         }
     }
 

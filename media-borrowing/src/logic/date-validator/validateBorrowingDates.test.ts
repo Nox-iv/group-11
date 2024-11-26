@@ -12,6 +12,7 @@ beforeEach(() => {
     genericMediaBorrowingRecord = {
         userId: 1,
         mediaId: 1,
+        branchId: 1,
         startDate: new Date(),
         endDate: new Date(),
         renewals: 0

@@ -10,7 +10,7 @@ export class MediaRepository extends IMediaRepository {
         this.uow = uow
     }
 
-    public async hasMedia(mediaId: number): Promise<Message<boolean>> {
+    public async hasMedia(mediaId: number, branchId: number): Promise<Message<boolean>> {
         const result = new Message(false)
 
         return new Promise(() => null)

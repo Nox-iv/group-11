@@ -9,7 +9,8 @@ import { InvalidUserError } from '../errors/invalidUserError';
 import { InvalidMediaError } from '../errors/invalidMediaError';
 import { InvalidBorrowingRecordError } from '../errors/invalidBorrowingRecordError';
 import { IMediaBorrowingDateValidator } from '../../interfaces/logic/date-validator/IMediaBorrowingDateValidator';
-import { InvalidBorrowingDateError } from '../errors';
+import { InvalidBorrowingDateError, UnavailableMediaItemError } from '../errors';
+import { MediaItem } from '../../interfaces/dto/MediaItem';
 
 jest.mock('../../interfaces/logic/date-validator/IMediaBorrowingDateValidator')
 jest.mock("../../interfaces/data/uow")
@@ -22,8 +23,30 @@ let mockDbContext : jest.Mocked<IDbContext>
 let mockMediaBorrowingDateValidator : jest.Mocked<IMediaBorrowingDateValidator>
 let mediaBorrowingLogic : IMediaBorrowingLogic
 let genericMediaBorrowingRecord : MediaBorrowingRecord
+let genericMediaItem : MediaItem
 
 beforeEach(() => {
+    // Setup data.
+    genericMediaBorrowingRecord = {
+        userId: 1,
+        mediaId: 1,
+        branchId: 1,
+        startDate: new Date(),
+        endDate: new Date(),
+        renewals: 0
+    }
+
+    genericMediaItem = {
+        mediaId: 1,
+        branchId: 1,
+        availability: 1
+    }
+
+    const endDate = new Date()
+    endDate.setDate(endDate.getDate() + 14)
+
+    genericMediaBorrowingRecord.endDate = endDate
+
     // Setup mock repositories.
     mockMediaBorrowingRepository = new IMediaBorrowingRepository() as jest.Mocked<IMediaBorrowingRepository>
     mockMediaBorrowingRepository.hasBorrowingRecord.mockResolvedValue(new Message(false))
@@ -33,6 +56,7 @@ beforeEach(() => {
 
     mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
     mockMediaRepository.hasMedia.mockResolvedValue(new Message(true))
+    mockMediaRepository.getMedia.mockResolvedValue(new Message(genericMediaItem))
 
     // Setup mock DB context.
     mockDbContext = new IDbContext() as jest.Mocked<IDbContext>;
@@ -46,20 +70,6 @@ beforeEach(() => {
 
     // Setup media borrowing logic.
     mediaBorrowingLogic = new MediaBorrowingLogic(mockDbContext, mockMediaBorrowingDateValidator)
-
-    // Setup data.
-    genericMediaBorrowingRecord = {
-        userId: 1,
-        mediaId: 1,
-        startDate: new Date(),
-        endDate: new Date(),
-        renewals: 0
-    }
-
-    const endDate = new Date()
-    endDate.setDate(endDate.getDate() + 14)
-
-    genericMediaBorrowingRecord.endDate = endDate
 });
 
 describe("A media item cannot be borrowed if ...", () => {
@@ -82,7 +92,7 @@ describe("A media item cannot be borrowed if ...", () => {
     })
 
     test("the provided media ID does not exist.", async () => {
-        mockMediaRepository.hasMedia.mockResolvedValue(new Message(false))
+        mockMediaRepository.getMedia.mockResolvedValue(new Message())
 
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
@@ -98,7 +108,16 @@ describe("A media item cannot be borrowed if ...", () => {
         expect(result.errors[0]).toBeInstanceOf(InvalidBorrowingRecordError)
         expect(result.value).toBe(false)
     })
-})
+
+    test("the requested media item is unavailable at the given branch location.", async () => {
+        genericMediaItem.availability = 0
+        
+        const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
+
+        expect(result.errors[0]).toBeInstanceOf(UnavailableMediaItemError)
+        expect(result.value).toBe(false)
+    })
+})  
 
 describe("When a media item is borrowed by a user...", () => {
     test("the media borrowing databse is updated", async () => {
@@ -108,4 +127,3 @@ describe("When a media item is borrowed by a user...", () => {
         expect(result.value).toBe(true)
     })
 })
-
