@@ -1,3 +1,3 @@
-import { MediaBorrowingRepository } from "./mediaBorrowingRepository";
+import { MediaBorrowingRepository } from "./repositories/mediaBorrowingRepository";
 
 export { MediaBorrowingRepository }

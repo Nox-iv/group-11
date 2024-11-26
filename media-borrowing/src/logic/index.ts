@@ -1,5 +1,5 @@
 import { MediaBorrowingRecord } from "./types/mediaBorrowingRecord";
-import { MediaBorrowingLogic } from "./mediaBorrowingLogic";
+import { MediaBorrowingLogic } from "./logic";
 import { InvalidUserError } from "./errors/invalidUserError";
 import { InvalidBorrowingDateError } from "./errors/invalidBorrowingDateError";
 import { InvalidBorrowingRecordError } from "./errors/invalidBorrowingRecordError"
