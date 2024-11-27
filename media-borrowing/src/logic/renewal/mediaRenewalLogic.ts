@@ -5,6 +5,7 @@ import Container, { Inject } from "typedi";
 import { IDbContext } from "../../interfaces/data/uow";
 import { InvalidBorrowingRecordError, MaxRenewalsExceededError } from "../errors";
 import { MAX_RENEWALS } from "../../config";
+import { MediaRenewalRequest } from "../../interfaces/dto/MediaRenewalRequest";
 
 export class MediaRenewalLogic extends IMediaRenewalLogic {
     constructor(@Inject() dbContext : IDbContext) {
@@ -12,17 +13,17 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
         this.dbContext = dbContext
     }
 
-    public async renewMediaItem(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<Message<boolean>> {
+    public async renewMediaItem(mediaRenewalRequest : MediaRenewalRequest) : Promise<Message<boolean>> {
         const result = new Message(true)
 
         const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
         const mediaBorrowingConfigRepository = await this.dbContext.getMediaBorrowingConfigRepository()
 
-        const existingMediaBorrowingRecordResult = await mediaBorrowingRepository.getBorrowingRecord(mediaBorrowingRecord.userId, mediaBorrowingRecord.mediaId)
+        const existingMediaBorrowingRecordResult = await mediaBorrowingRepository.getBorrowingRecord(mediaRenewalRequest.userId, mediaRenewalRequest.mediaId)
         const existingMediaBorrowingRecord = existingMediaBorrowingRecordResult.value
 
         if (existingMediaBorrowingRecord == null) {
-            result.addError(new InvalidBorrowingRecordError(`User ${mediaBorrowingRecord.userId} is not currently borrowing ${mediaBorrowingRecord.mediaId}`))
+            result.addError(new InvalidBorrowingRecordError(`User ${mediaRenewalRequest.userId} is not currently borrowing media item ${mediaRenewalRequest.mediaId}`))
         } else {
             const renewalsLimitResult = await mediaBorrowingConfigRepository.getRenewalLimit()
             const renewalsLimit = renewalsLimitResult.value ?? Container.get(MAX_RENEWALS)

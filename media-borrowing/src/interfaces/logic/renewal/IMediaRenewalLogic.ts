@@ -1,5 +1,5 @@
 import { IDbContext } from "../../data/uow";
-import { MediaBorrowingRecord } from "../../dto";
+import { MediaRenewalRequest } from "../../dto/MediaRenewalRequest";
 import { NotImplementedError } from "../../errors/notImplementedError";
 import { Message } from "../../messaging/Message";
 
@@ -9,7 +9,7 @@ export class IMediaRenewalLogic {
 
     constructor () {}
 
-    public renewMediaItem(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<Message<boolean>> {
+    public renewMediaItem(mediaRenewalRequest : MediaRenewalRequest) : Promise<Message<boolean>> {
         throw new NotImplementedError()
     }
 }
