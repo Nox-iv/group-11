@@ -23,7 +23,7 @@ export class IMediaBorrowingRepository {
         throw new NotImplementedError()
     }
 
-    public getBorrowingRecord(userId: number, mediaId: number) : Promise<Message<MediaBorrowingRecord>> {
+    public getBorrowingRecordById(mediaBorrowingRecordId : number) : Promise<Message<MediaBorrowingRecord>> {
         throw new NotImplementedError()
     }
 }

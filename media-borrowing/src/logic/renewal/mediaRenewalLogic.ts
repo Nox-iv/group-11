@@ -23,11 +23,11 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
         try {
             const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
 
-            const mediaBorrowingRecordResult = await mediaBorrowingRepository.getBorrowingRecord(mediaRenewalRequest.userId, mediaRenewalRequest.mediaId)
+            const mediaBorrowingRecordResult = await mediaBorrowingRepository.getBorrowingRecordById(mediaRenewalRequest.mediaBorrowingRecordId)
             const mediaBorrowingRecord = mediaBorrowingRecordResult.value
     
             if (mediaBorrowingRecord == null) {
-                result.addError(new InvalidBorrowingRecordError(`User ${mediaRenewalRequest.userId} is not currently borrowing media item ${mediaRenewalRequest.mediaId}`))
+                result.addError(new InvalidBorrowingRecordError(`Media Borrowing Record ${mediaRenewalRequest.mediaBorrowingRecordId} does not exist.`))
             } else {
                 await this.verifyRenewalLimitIsNotExceeded(mediaBorrowingRecord.renewals, result)
                 this.validateRenewedEndDate(mediaBorrowingRecord.endDate, mediaRenewalRequest.renewedEndDate, result)

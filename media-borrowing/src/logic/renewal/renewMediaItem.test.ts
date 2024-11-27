@@ -39,8 +39,7 @@ beforeEach(() => {
     genericMediaBorrowingRecord.endDate = endDate
 
     genericMediaRenewalRequest = {
-        userId : 1,
-        mediaId : 1,
+        mediaBorrowingRecordId : 1,
         renewedEndDate : new Date(genericMediaBorrowingRecord.endDate)
     }
 
@@ -49,7 +48,7 @@ beforeEach(() => {
     // Setup mock repositories.
     mockMediaBorrowingRepository = new IMediaBorrowingRepository() as jest.Mocked<IMediaBorrowingRepository>
     mockMediaBorrowingRepository.hasBorrowingRecord.mockResolvedValue(new Message(true))
-    mockMediaBorrowingRepository.getBorrowingRecord.mockResolvedValue(new Message(genericMediaBorrowingRecord))
+    mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(new Message(genericMediaBorrowingRecord))
 
     mockMediaBorrowingConfigRepository = new IMediaBorrowingConfigRepository as jest.Mocked<IMediaBorrowingConfigRepository>
     mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(new Message(5))
@@ -68,7 +67,7 @@ beforeEach(() => {
 
 describe("A user cannot renew a borrowed media item if...", () => {
     test("they are not actively borrowing the media item.", async () => {
-        mockMediaBorrowingRepository.getBorrowingRecord.mockResolvedValue(new Message())
+        mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(new Message())
 
         const result = await mediaRenewalLogic.renewMediaItem(genericMediaRenewalRequest)
 

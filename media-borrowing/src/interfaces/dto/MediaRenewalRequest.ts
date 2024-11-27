@@ -1,5 +1,4 @@
 export interface MediaRenewalRequest {
-    userId : number,
-    mediaId : number
+    mediaBorrowingRecordId : number,
     renewedEndDate : Date
 }

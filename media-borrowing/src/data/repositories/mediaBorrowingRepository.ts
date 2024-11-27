@@ -17,7 +17,7 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
         // Insert record
     }
 
-    public async updateBorrowingRecord(mediaBorrowingRecordId : number) : Promise<void> {
+    public async updateBorrowingRecord(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<void> {
 
     }
 
@@ -32,7 +32,7 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
     }
     
 
-    public getBorrowingRecord(userId: number, mediaId: number) : Promise<Message<MediaBorrowingRecord>> {
+    public getBorrowingRecordById(mediaBorrowingRecord : number) : Promise<Message<MediaBorrowingRecord>> {
         throw new NotImplementedError()
     }
 } 
