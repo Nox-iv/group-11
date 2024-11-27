@@ -3,19 +3,23 @@ import { Message } from "../../messaging/Message"
 import { NotImplementedError } from "../../errors/notImplementedError"
 
 export class IMediaBorrowingRepository {
-    insertBorrowingRecord(mediaBorrowingRecord : MediaBorrowingRecord): void {
+    public insertBorrowingRecord(mediaBorrowingRecord : MediaBorrowingRecord): void {
         throw new NotImplementedError()
     }
 
-    deleteBorrowingRecord(userId: number, mediaId: number): void {
+    public updateBorrowingRecord(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<void> {
         throw new NotImplementedError()
     }
 
-    extendBorrowingRecord(userId: number, mediaId: number, endDate: Date): void {
+    public deleteBorrowingRecord(userId: number, mediaId: number): void {
         throw new NotImplementedError()
     }
 
-    hasBorrowingRecord(userId : number, mediaId: number): Promise<Message<boolean>> {
+    public extendBorrowingRecord(userId: number, mediaId: number, endDate: Date): void {
+        throw new NotImplementedError()
+    }
+
+    public hasBorrowingRecord(userId : number, mediaId: number): Promise<Message<boolean>> {
         throw new NotImplementedError()
     }
 

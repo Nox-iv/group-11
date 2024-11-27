@@ -5,15 +5,18 @@ import { IMediaRenewalLogic } from '../../interfaces/logic/renewal/IMediaRenewal
 import { MediaBorrowingRecord } from '../../interfaces/dto';
 import { Message } from '../../interfaces/messaging/Message';
 import { MediaRenewalLogic } from './mediaRenewalLogic';
-import { InvalidBorrowingRecordError, MaxRenewalsExceededError } from '../errors';
+import { InvalidBorrowingDateError, InvalidBorrowingRecordError, MaxRenewalsExceededError } from '../errors';
 import { MediaRenewalRequest } from '../../interfaces/dto/MediaRenewalRequest';
+import { IMediaBorrowingDateValidator } from '../../interfaces/logic/date-validator/IMediaBorrowingDateValidator';
 
 jest.mock("../../interfaces/data/uow")
 jest.mock("../../interfaces/data/repositories")
+jest.mock("../../interfaces/logic/date-validator/IMediaBorrowingDateValidator")
 
 let mockMediaBorrowingRepository : jest.Mocked<IMediaBorrowingRepository>;
 let mockMediaBorrowingConfigRepository : jest.Mocked<IMediaBorrowingConfigRepository>
 let mockDbContext : jest.Mocked<IDbContext>
+let mockMediaBorrowingDateValidator : jest.Mocked<IMediaBorrowingDateValidator>
 let mediaRenewalLogic : IMediaRenewalLogic
 let genericMediaBorrowingRecord : MediaBorrowingRecord
 let genericMediaRenewalRequest : MediaRenewalRequest
@@ -21,6 +24,7 @@ let genericMediaRenewalRequest : MediaRenewalRequest
 beforeEach(() => {
     // Setup data.
     genericMediaBorrowingRecord = {
+        mediaBorrowingRecordId : 1,
         userId: 1,
         branchId: 1,
         mediaId: 1,
@@ -55,8 +59,11 @@ beforeEach(() => {
     mockDbContext.getMediaBorrowingRepository.mockResolvedValue(mockMediaBorrowingRepository)
     mockDbContext.getMediaBorrowingConfigRepository.mockResolvedValue(mockMediaBorrowingConfigRepository)
 
-    // Setup media renewal logic.
-    mediaRenewalLogic = new MediaRenewalLogic(mockDbContext)
+    // Setup logic.
+    mockMediaBorrowingDateValidator = new IMediaBorrowingDateValidator() as jest.Mocked<IMediaBorrowingDateValidator>
+    mockMediaBorrowingDateValidator.validateBorrowingDates.mockReturnValue(new Message(true))
+
+    mediaRenewalLogic = new MediaRenewalLogic(mockDbContext, mockMediaBorrowingDateValidator)
 })
 
 describe("A user cannot renew a borrowed media item if...", () => {
@@ -77,5 +84,34 @@ describe("A user cannot renew a borrowed media item if...", () => {
 
         expect(result.errors[0]).toBeInstanceOf(MaxRenewalsExceededError)
         expect(result.value).toBe(false)
+    })
+
+    test("the renewed end date is invalid.", async () => {
+        mockMediaBorrowingDateValidator.validateBorrowingDates.mockReturnValue(new Message(false, [new InvalidBorrowingDateError()]))
+
+        const result = await mediaRenewalLogic.renewMediaItem(genericMediaRenewalRequest)
+
+        expect(result.errors[0]).toBeInstanceOf(InvalidBorrowingDateError)
+        expect(result.value).toBe(false)
+    })
+})
+
+describe("When a media borrowing record is renewed...", () => {
+    test("the media borrowing record's renewal count and end date are updated.", async () => {
+        const expectedRenewals = genericMediaBorrowingRecord.renewals + 1
+        const expectedEndDate = genericMediaRenewalRequest.renewedEndDate
+
+        const result = await mediaRenewalLogic.renewMediaItem(genericMediaRenewalRequest)
+
+        expect(result.value).toBe(true)
+        expect(genericMediaBorrowingRecord.renewals).toBe(expectedRenewals)
+        expect(genericMediaBorrowingRecord.endDate).toBe(expectedEndDate)
+    })
+
+    test("the media borrowing record is updated in the database", async () => {
+        const result = await mediaRenewalLogic.renewMediaItem(genericMediaRenewalRequest)
+
+        expect(result.value).toBe(true)
+        expect(mockMediaBorrowingRepository.updateBorrowingRecord).toHaveBeenCalledWith(genericMediaBorrowingRecord)
     })
 })

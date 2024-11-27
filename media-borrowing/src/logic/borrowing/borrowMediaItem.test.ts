@@ -28,6 +28,7 @@ let genericMediaItem : MediaItem
 beforeEach(() => {
     // Setup data.
     genericMediaBorrowingRecord = {
+        mediaBorrowingRecordId : 0,
         userId: 1,
         mediaId: 1,
         branchId: 1,
