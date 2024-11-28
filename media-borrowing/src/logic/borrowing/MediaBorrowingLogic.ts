@@ -6,10 +6,9 @@ import { Inject } from "typedi";
 import { InvalidUserError } from "../errors/invalidUserError";
 import { InvalidMediaError } from "../errors/invalidMediaError";
 import { InvalidBorrowingRecordError } from "../errors/invalidBorrowingRecordError";
-import { IMediaBorrowingRepository } from "../../interfaces/data/repositories";
+import { MediaItem } from "../../interfaces/dto/MediaItem";
 import { IMediaBorrowingDateValidator } from "../../interfaces/logic/date-validator/IMediaBorrowingDateValidator";
 import { UnavailableMediaItemError } from "../errors";
-
 
 export class MediaBorrowingLogic extends IMediaBorrowingLogic {
     constructor(
@@ -28,16 +27,26 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
             const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
 
             this.validateBorrowingDates(mediaBorrowingRecord.startDate, mediaBorrowingRecord.endDate, result)
-            await this.validateUserId(mediaBorrowingRecord.userId, result)
-            await this.validateMediaAvailability(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId, result)
-            await this.rejectIfUserIsAlreadyBorrowingMediaItem(mediaBorrowingRecord.userId, mediaBorrowingRecord.mediaId, mediaBorrowingRepository, result)
+
+            const mediaItemResult = await this.getMediaItem(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId, result)
+            const mediaItem = mediaItemResult.value
+
+            if (mediaItem != null) {
+                this.validateMediaAvailability(mediaItem, result)
+                await this.validateUserId(mediaBorrowingRecord.userId, result)
+                await this.rejectIfUserIsAlreadyBorrowingMediaItem(mediaBorrowingRecord, result)
+                await this.decrementMediaItemAvailability(mediaItem, result)
+            } else {
+                result.addError(new InvalidMediaError(`Media item ${mediaBorrowingRecord.mediaId} does not exist at branch ${mediaBorrowingRecord.branchId}`))
+            }
     
             if (!result.hasErrors()) {
-                mediaBorrowingRepository.insertBorrowingRecord(mediaBorrowingRecord)
+                await mediaBorrowingRepository.insertBorrowingRecord(mediaBorrowingRecord)
+                this.dbContext.commit()
                 result.value = true
+            } else {
+                this.dbContext.rollback()
             }
-            
-            this.dbContext.commit()
         } catch(e) {
             result.addError(e as Error)
             this.dbContext.rollback()
@@ -65,24 +74,38 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         }
     }
 
-    private async validateMediaAvailability(mediaId: number, branchId: number, result : Message<boolean>) {
+    private async getMediaItem(mediaId : number, branchId : number, result : Message<boolean>) : Promise<Message<MediaItem>> {
         const mediaRepository = await this.dbContext.getMediaRepository()
         const mediaItemResult = await mediaRepository.getByMediaAndBranchId(mediaId, branchId)
 
-        const mediaItem = mediaItemResult.value
+        return mediaItemResult
+    }
 
-        if (mediaItem == null) {
-            result.addError(new InvalidMediaError(`Media item with ${mediaId} could not be found.`))
-        } else if (mediaItem.availability <= 0) {
-            result.addError(new UnavailableMediaItemError(`Media item ${mediaId} is not available at branch ${branchId}`))
+    private validateMediaAvailability(mediaItem : MediaItem, result : Message<boolean>) {
+        if (mediaItem.availability <= 0) {
+            result.addError(new UnavailableMediaItemError(`Media item ${mediaItem.mediaId} is not available at branch ${mediaItem.branchId}`))
         }
     }
 
-    private async rejectIfUserIsAlreadyBorrowingMediaItem(userId: number, mediaId: number, mediaBorrowingRepository : IMediaBorrowingRepository, result: Message<boolean>) {
-        const hasBorrowingRecordResult = await mediaBorrowingRepository.hasBorrowingRecord(userId, mediaId)
+    private async rejectIfUserIsAlreadyBorrowingMediaItem(mediaBorrowingRecord : MediaBorrowingRecord, result: Message<boolean>) {
+        const {userId, mediaId, branchId} = mediaBorrowingRecord
+        const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
+        const hasBorrowingRecordResult = await mediaBorrowingRepository.checkBorrowingRecordExists(userId, mediaId, branchId)
 
         if (hasBorrowingRecordResult.value) {
             result.addError(new InvalidBorrowingRecordError(`User ${userId} is already borrowing media item ${mediaId}`))
+        }
+    }
+
+    private async decrementMediaItemAvailability(mediaItem : MediaItem, result : Message<boolean>) : Promise<void> {
+        const mediaRepository = await this.dbContext.getMediaRepository()
+
+        mediaItem.availability -= 1
+        const updateResult = await mediaRepository.updateMediaItem(mediaItem)
+        if (updateResult.hasErrors()) {
+            result.addErrorsFromMessage(updateResult)
+        } else if (updateResult.value == false) {
+            result.addError(new Error(`Media item ${mediaItem.mediaId} at branch ${mediaItem.branchId} could not be updated.`))
         }
     }
 }

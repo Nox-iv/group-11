@@ -47,7 +47,7 @@ beforeEach(() => {
 
     // Setup mock repositories.
     mockMediaBorrowingRepository = new IMediaBorrowingRepository() as jest.Mocked<IMediaBorrowingRepository>
-    mockMediaBorrowingRepository.hasBorrowingRecord.mockResolvedValue(new Message(true))
+    mockMediaBorrowingRepository.checkBorrowingRecordExists.mockResolvedValue(new Message(true))
     mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(new Message(genericMediaBorrowingRecord))
 
     mockMediaBorrowingConfigRepository = new IMediaBorrowingConfigRepository as jest.Mocked<IMediaBorrowingConfigRepository>

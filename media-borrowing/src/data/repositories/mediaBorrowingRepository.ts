@@ -12,20 +12,23 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
         this.uow = uow
     }
 
-    public insertBorrowingRecord(mediaBorrowingRecord: MediaBorrowingRecord): void {
-        // Check record doesn't already exist for item and user ID
-        // Insert record
+    public insertBorrowingRecord(mediaBorrowingRecord: MediaBorrowingRecord): Promise<void> {
+        throw new NotImplementedError()
     }
 
     public async updateBorrowingRecord(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<void> {
 
     }
 
+    public checkBorrowingRecordExists(userId : number, mediaId: number, branchId : number) : Promise<Message<boolean>> {
+        throw new NotImplementedError()
+    }
+
     public async archiveBorrowingRecord(mediaBorrowingRecordId : number) : Promise<Message<boolean>> {
         throw new NotImplementedError()
     }
 
-    public getBorrowingRecordById(mediaBorrowingRecord : number) : Promise<Message<MediaBorrowingRecord>> {
+    public getBorrowingRecordById(mediaBorrowingRecordId : number) : Promise<Message<MediaBorrowingRecord>> {
         throw new NotImplementedError()
     }
 } 

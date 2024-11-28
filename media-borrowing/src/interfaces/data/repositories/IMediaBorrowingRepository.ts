@@ -3,7 +3,7 @@ import { Message } from "../../messaging/Message"
 import { NotImplementedError } from "../../errors/notImplementedError"
 
 export class IMediaBorrowingRepository {
-    public insertBorrowingRecord(mediaBorrowingRecord : MediaBorrowingRecord): void {
+    public async insertBorrowingRecord(mediaBorrowingRecord : MediaBorrowingRecord): Promise<void> {
         throw new NotImplementedError()
     }
 
@@ -15,7 +15,7 @@ export class IMediaBorrowingRepository {
         throw new NotImplementedError()
     }
 
-    public hasBorrowingRecord(userId : number, mediaId: number): Promise<Message<boolean>> {
+    public checkBorrowingRecordExists(userId : number, mediaId: number, branchId : number) : Promise<Message<boolean>> {
         throw new NotImplementedError()
     }
 

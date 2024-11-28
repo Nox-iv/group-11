@@ -50,7 +50,7 @@ beforeEach(() => {
 
     // Setup mock repositories.
     mockMediaBorrowingRepository = new IMediaBorrowingRepository() as jest.Mocked<IMediaBorrowingRepository>
-    mockMediaBorrowingRepository.hasBorrowingRecord.mockResolvedValue(new Message(false))
+    mockMediaBorrowingRepository.checkBorrowingRecordExists.mockResolvedValue(new Message(false))
 
     mockUserRepository = new IUserRepository as jest.Mocked<IUserRepository>
     mockUserRepository.hasUser.mockResolvedValue(new Message(true))
@@ -58,6 +58,7 @@ beforeEach(() => {
     mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
     mockMediaRepository.branchHasMediaItem.mockResolvedValue(new Message(true))
     mockMediaRepository.getByMediaAndBranchId.mockResolvedValue(new Message(genericMediaItem))
+    mockMediaRepository.updateMediaItem.mockResolvedValue(new Message(true))
 
     // Setup mock DB context.
     mockDbContext = new IDbContext() as jest.Mocked<IDbContext>;
@@ -102,7 +103,7 @@ describe("A media item cannot be borrowed if ...", () => {
     })
 
     test("the user is already borrowing the requested media item.", async () => {
-        mockMediaBorrowingRepository.hasBorrowingRecord.mockResolvedValue(new Message(true))
+        mockMediaBorrowingRepository.checkBorrowingRecordExists.mockResolvedValue(new Message(true))
 
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
@@ -126,5 +127,14 @@ describe("When a media item is borrowed by a user...", () => {
 
         expect(mockMediaBorrowingRepository.insertBorrowingRecord).toHaveBeenCalled()
         expect(result.value).toBe(true)
+    })
+
+    test("the media item's availability is updated", async () => {
+        const expectedAvailability = genericMediaItem.availability - 1
+        const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
+
+        expect(result.value).toBe(true)
+        expect(genericMediaItem.availability).toBe(expectedAvailability)
+        expect(mockMediaRepository.updateMediaItem).toHaveBeenCalledWith(genericMediaItem)
     })
 })
