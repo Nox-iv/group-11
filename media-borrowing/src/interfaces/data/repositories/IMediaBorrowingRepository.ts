@@ -11,11 +11,7 @@ export class IMediaBorrowingRepository {
         throw new NotImplementedError()
     }
 
-    public deleteBorrowingRecord(userId: number, mediaId: number): void {
-        throw new NotImplementedError()
-    }
-
-    public extendBorrowingRecord(userId: number, mediaId: number, endDate: Date): void {
+    public archiveBorrowingRecord(mediaBorrowingRecordId : number) : Promise<Message<boolean>> {
         throw new NotImplementedError()
     }
 

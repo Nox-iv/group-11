@@ -67,7 +67,7 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
 
     private async validateMediaAvailability(mediaId: number, branchId: number, result : Message<boolean>) {
         const mediaRepository = await this.dbContext.getMediaRepository()
-        const mediaItemResult = await mediaRepository.getMedia(mediaId, branchId)
+        const mediaItemResult = await mediaRepository.getByMediaAndBranchId(mediaId, branchId)
 
         const mediaItem = mediaItemResult.value
 

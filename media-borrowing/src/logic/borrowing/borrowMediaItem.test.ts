@@ -56,8 +56,8 @@ beforeEach(() => {
     mockUserRepository.hasUser.mockResolvedValue(new Message(true))
 
     mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
-    mockMediaRepository.hasMedia.mockResolvedValue(new Message(true))
-    mockMediaRepository.getMedia.mockResolvedValue(new Message(genericMediaItem))
+    mockMediaRepository.branchHasMediaItem.mockResolvedValue(new Message(true))
+    mockMediaRepository.getByMediaAndBranchId.mockResolvedValue(new Message(genericMediaItem))
 
     // Setup mock DB context.
     mockDbContext = new IDbContext() as jest.Mocked<IDbContext>;
@@ -93,7 +93,7 @@ describe("A media item cannot be borrowed if ...", () => {
     })
 
     test("the provided media ID does not exist.", async () => {
-        mockMediaRepository.getMedia.mockResolvedValue(new Message())
+        mockMediaRepository.getByMediaAndBranchId.mockResolvedValue(new Message())
 
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
