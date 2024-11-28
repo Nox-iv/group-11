@@ -11,6 +11,14 @@ export class Message<T> {
         this.errors.push(error)
     }
 
+    addErrorsFromMessage(rmessage : Message<any>) : void {
+        if (rmessage.hasErrors()) {
+            for (let error of rmessage.errors) {
+                this.errors.push(error)
+            }
+        }
+    }
+
     hasErrors() : boolean {
         return this.errors.length > 0
     }
