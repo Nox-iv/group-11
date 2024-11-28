@@ -37,10 +37,12 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
                     mediaBorrowingRecord.renewals += 1
                     mediaBorrowingRepository.updateBorrowingRecord(mediaBorrowingRecord)
                     result.value = true
+                    this.dbContext.commit()
+                } else {
+                    this.dbContext.rollback()
                 }
             }
 
-            this.dbContext.commit()
         } catch (e) {
             result.addError(e as Error)
             this.dbContext.rollback()
