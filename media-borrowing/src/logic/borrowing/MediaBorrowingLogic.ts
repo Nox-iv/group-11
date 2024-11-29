@@ -9,7 +9,7 @@ import { InvalidBorrowingRecordError } from "../errors/invalidBorrowingRecordErr
 import { MediaItem } from "../../interfaces/dto/MediaItem";
 import { IMediaBorrowingDateValidator } from "../../interfaces/logic/date-validator/IMediaBorrowingDateValidator";
 import { UnavailableMediaItemError } from "../errors";
-
+import { BorrowingDateValidationRequest } from "../../interfaces/dto/BorrowingDateValidationRequest";
 export class MediaBorrowingLogic extends IMediaBorrowingLogic {
     constructor(
         @Inject() dbContext : IDbContext,
@@ -26,7 +26,7 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         try {
             const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
 
-            this.validateBorrowingDates(mediaBorrowingRecord.startDate, mediaBorrowingRecord.endDate, result)
+            await this.validateBorrowingDates(mediaBorrowingRecord.startDate, mediaBorrowingRecord.endDate, mediaBorrowingRecord.branchId, result)
 
             const mediaItemResult = await this.getMediaItem(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId, result)
             const mediaItem = mediaItemResult.value
@@ -56,8 +56,8 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         }
     }
 
-    private validateBorrowingDates(startDate : Date, endDate : Date, result : Message<boolean>) {
-        const validationResult = this.mediaBorrowingDateValidator.validateBorrowingDates(startDate, endDate)
+    private async validateBorrowingDates(startDate : Date, endDate : Date, branchId: number ,result : Message<boolean>) {
+        const validationResult = await this.mediaBorrowingDateValidator.validateBorrowingDates({startDate, endDate, branchId})
         if (validationResult.hasErrors()) {
             for(let error of validationResult.errors) {
                 result.addError(error)

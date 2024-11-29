@@ -1,5 +1,5 @@
 import { NotImplementedError } from "../../errors/notImplementedError";
-import { IMediaBorrowingConfigRepository, IMediaBorrowingRepository, IMediaRepository, IUserRepository } from "../repositories";
+import { IMediaBorrowingConfigRepository, IMediaBorrowingRepository, IMediaRepository, IUserRepository, IBranchRepository } from "../repositories";
 import { IUnitOfWork } from "./IUnitOfWork";
 import { IUnitOfWorkFactory } from "./IUnitOfWorkFactory";
 
@@ -22,6 +22,9 @@ export class IDbContext {
     //@ts-ignore
     protected mediaBorrowingConfigRepository : IMediaBorrowingConfigRepository | null
 
+    //@ts-ignore
+    protected branchRepository : IBranchRepository | null
+
     constructor() {}
 
     public getMediaBorrowingRepository() : Promise<IMediaBorrowingRepository> {
@@ -37,6 +40,10 @@ export class IDbContext {
     }
 
     public getMediaBorrowingConfigRepository() : Promise<IMediaBorrowingConfigRepository> {
+        throw new NotImplementedError()
+    }
+
+    public getBranchRepository() : Promise<IBranchRepository> {
         throw new NotImplementedError()
     }
 

@@ -60,7 +60,7 @@ beforeEach(() => {
 
     // Setup logic.
     mockMediaBorrowingDateValidator = new IMediaBorrowingDateValidator() as jest.Mocked<IMediaBorrowingDateValidator>
-    mockMediaBorrowingDateValidator.validateBorrowingDates.mockReturnValue(new Message(true))
+    mockMediaBorrowingDateValidator.validateBorrowingDates.mockResolvedValue(new Message(true))
 
     mediaRenewalLogic = new MediaRenewalLogic(mockDbContext, mockMediaBorrowingDateValidator)
 })
@@ -86,7 +86,7 @@ describe("A user cannot renew a borrowed media item if...", () => {
     })
 
     test("the renewed end date is invalid.", async () => {
-        mockMediaBorrowingDateValidator.validateBorrowingDates.mockReturnValue(new Message(false, [new InvalidBorrowingDateError()]))
+        mockMediaBorrowingDateValidator.validateBorrowingDates.mockResolvedValue(new Message(false, [new InvalidBorrowingDateError()]))
 
         const result = await mediaRenewalLogic.renewMediaItem(genericMediaRenewalRequest)
 

@@ -1,15 +1,23 @@
+import { Inject } from 'typedi'
 import { IMediaBorrowingDateValidator } from "../../interfaces/logic/date-validator/IMediaBorrowingDateValidator"
 import { Message } from "../../interfaces/messaging/Message"
 import { InvalidBorrowingDateError } from "../errors"
+import { BorrowingDateValidationRequest } from "../../interfaces/dto/BorrowingDateValidationRequest"
+import { BranchOpeningHours } from "../../interfaces/dto/BranchOpeningHours"
+import { IDbContext } from "../../interfaces/data/uow"
 
 export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
-    constructor() {
+    constructor(@Inject() dbContext : IDbContext) {
         super()
+        this.dbContext = dbContext
     }
 
-    public validateBorrowingDates(startDate : Date, endDate : Date) : Message<boolean> {
+    public async validateBorrowingDates(borrowingDateValidationRequest : BorrowingDateValidationRequest) : Promise<Message<boolean>> {
         const result = new Message(false)
-        this.verifyDateRangeAgainstMinimumBorrowingDuration(startDate, endDate, result)
+        const {startDate, endDate, branchId} = borrowingDateValidationRequest
+
+        this.validateDateRangeAgainstMinimumBorrowingDuration(startDate, endDate, result)
+        await this.validateDateRangeAgainstBranchOpeningHours(startDate, endDate, branchId, result)
 
         if(!result.hasErrors()) {
             result.value = true
@@ -18,7 +26,7 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
         return result 
     }
 
-    private verifyDateRangeAgainstMinimumBorrowingDuration(startDate : Date, endDate : Date, result : Message<boolean>) {
+    private validateDateRangeAgainstMinimumBorrowingDuration(startDate : Date, endDate : Date, result : Message<boolean>) {
         const earliestEndDate = this.getEarliestEndDate(startDate)
         if (endDate < earliestEndDate) {
             result.addError(new InvalidBorrowingDateError(`Earliest possible end date for the given start date is ${earliestEndDate}`))
@@ -30,5 +38,35 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
         earliestEndDate.setDate(earliestEndDate.getDate() + 1)
 
         return earliestEndDate
+    }
+
+    private async validateDateRangeAgainstBranchOpeningHours(startDate : Date, endDate : Date, branchId : number, result : Message<boolean>) {
+        const branchRepository = await this.dbContext.getBranchRepository()
+        const branchOpeningHoursResult = await branchRepository.getOpeningHoursById(branchId)
+
+        if (branchOpeningHoursResult.value != null) {
+            if (!this.dateIsWithinOpeningHours(startDate, branchOpeningHoursResult.value)) {
+                result.addError(new InvalidBorrowingDateError(`Invalid start date/time : start time must be within branch ${branchId}'s opening hours.`))
+            }
+
+            if (!this.dateIsWithinOpeningHours(endDate, branchOpeningHoursResult.value)) {
+                result.addError(new InvalidBorrowingDateError(`Invalid end date/time : end time must be within branch ${branchId}'s opening hours.`))
+            }
+        } else if (branchOpeningHoursResult.hasErrors()) {
+            result.addErrorsFromMessage(branchOpeningHoursResult)
+        } else {
+            result.addError(new Error(`Could not find opening hours for branch ${branchId}`))
+        }
+    }
+
+    private dateIsWithinOpeningHours(date : Date, openingHours: BranchOpeningHours) : boolean {
+        const dayOfWeek = date.getDay()
+        const [openingHour, closingHour] = openingHours[dayOfWeek]
+        const hoursIn24hFormat = this.getHoursIn24hFormat(date)
+        return openingHour <= hoursIn24hFormat && hoursIn24hFormat <= closingHour
+    }
+
+    private getHoursIn24hFormat(date : Date) : number {
+        return (date.getHours() * 100) + date.getMinutes() 
     }
 }

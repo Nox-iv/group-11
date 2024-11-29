@@ -6,6 +6,7 @@ import { InvalidBorrowingDateError, InvalidBorrowingRecordError, MaxRenewalsExce
 import { MAX_RENEWALS } from "../../config";
 import { MediaRenewalRequest } from "../../interfaces/dto/MediaRenewalRequest";
 import { IMediaBorrowingDateValidator } from "../../interfaces/logic/date-validator/IMediaBorrowingDateValidator";
+import { BorrowingDateValidationRequest } from "../../interfaces/dto/BorrowingDateValidationRequest";
 
 export class MediaRenewalLogic extends IMediaRenewalLogic {
     constructor(
@@ -30,7 +31,14 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
                 result.addError(new InvalidBorrowingRecordError(`Media Borrowing Record ${mediaRenewalRequest.mediaBorrowingRecordId} does not exist.`))
             } else {
                 await this.verifyRenewalLimitIsNotExceeded(mediaBorrowingRecord.renewals, result)
-                this.validateRenewedEndDate(mediaBorrowingRecord.endDate, mediaRenewalRequest.renewedEndDate, result)
+
+                const borrowingDateValidationRequest : BorrowingDateValidationRequest = {
+                    startDate : mediaBorrowingRecord.endDate,
+                    endDate : mediaRenewalRequest.renewedEndDate,
+                    branchId : mediaBorrowingRecord.branchId
+                }
+
+                await this.validateRenewedEndDate(borrowingDateValidationRequest, result)
 
                 if (!result.hasErrors()) {
                     mediaBorrowingRecord.endDate = mediaRenewalRequest.renewedEndDate
@@ -61,8 +69,8 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
         }
     }
 
-    private validateRenewedEndDate(currentEnd : Date, renewedEnd : Date, result : Message<boolean>) {
-        const dateValidationResult = this.mediaBorrowingDateValidator.validateBorrowingDates(currentEnd, renewedEnd)
+    private async validateRenewedEndDate(borrowingDateValidationRequest : BorrowingDateValidationRequest, result : Message<boolean>) {
+        const dateValidationResult = await this.mediaBorrowingDateValidator.validateBorrowingDates(borrowingDateValidationRequest)
         if (!dateValidationResult.value) {
             if (dateValidationResult.hasErrors()) {
                 for (let error of (dateValidationResult.errors)) {

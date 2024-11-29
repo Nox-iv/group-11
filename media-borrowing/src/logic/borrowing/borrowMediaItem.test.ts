@@ -68,7 +68,7 @@ beforeEach(() => {
 
     // Setup logic dependencies
     mockMediaBorrowingDateValidator = new IMediaBorrowingDateValidator as jest.Mocked<IMediaBorrowingDateValidator>
-    mockMediaBorrowingDateValidator.validateBorrowingDates.mockReturnValue(new Message(true))
+    mockMediaBorrowingDateValidator.validateBorrowingDates.mockResolvedValue(new Message(true))
 
     // Setup media borrowing logic.
     mediaBorrowingLogic = new MediaBorrowingLogic(mockDbContext, mockMediaBorrowingDateValidator)
@@ -76,7 +76,7 @@ beforeEach(() => {
 
 describe("A media item cannot be borrowed if ...", () => {
     test("the dates provided are invalid", async () => {
-        mockMediaBorrowingDateValidator.validateBorrowingDates.mockReturnValue(new Message(false, [new InvalidBorrowingDateError()]))
+        mockMediaBorrowingDateValidator.validateBorrowingDates.mockResolvedValue(new Message(false, [new InvalidBorrowingDateError()]))
 
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
