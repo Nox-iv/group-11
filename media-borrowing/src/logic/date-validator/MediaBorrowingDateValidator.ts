@@ -9,7 +9,7 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
 
     public validateBorrowingDates(startDate : Date, endDate : Date) : Message<boolean> {
         const result = new Message(false)
-        this.validateDateRange(startDate, endDate, result)
+        this.verifyDateRangeAgainstMinimumBorrowingDuration(startDate, endDate, result)
 
         if(!result.hasErrors()) {
             result.value = true
@@ -18,7 +18,7 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
         return result 
     }
 
-    private validateDateRange(startDate : Date, endDate : Date, result : Message<boolean>) {
+    private verifyDateRangeAgainstMinimumBorrowingDuration(startDate : Date, endDate : Date, result : Message<boolean>) {
         const earliestEndDate = this.getEarliestEndDate(startDate)
         if (endDate < earliestEndDate) {
             result.addError(new InvalidBorrowingDateError(`Earliest possible end date for the given start date is ${earliestEndDate}`))
