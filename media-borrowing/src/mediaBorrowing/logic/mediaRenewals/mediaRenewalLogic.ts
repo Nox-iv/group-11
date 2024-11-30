@@ -1,11 +1,10 @@
 import { IMediaRenewalLogic } from "../../interfaces/logic/mediaRenewals/IMediaRenewalLogic";
 import { Message } from "../../../shared/messaging/Message";
-import Container, { Inject } from "typedi";
+import { Inject } from "typedi";
 import { IDbContext } from "../../../db/interfaces/dbContext";
 import { InvalidBorrowingDateError } from "../mediaBorrowingDateValidation";
 import { MaxRenewalsExceededError } from "../mediaBorrowingConfig";
 import { InvalidBorrowingRecordError } from "../mediaBorrowing";
-import { MAX_RENEWALS } from "../../../config";
 import { MediaRenewalRequest } from "./dto/MediaRenewalRequest";
 import { IMediaBorrowingDateValidator } from "../../interfaces/logic/mediaBorrowingDateValidation/IMediaBorrowingDateValidator";
 import { BorrowingDateValidationRequest } from "../mediaBorrowingDateValidation/dto/BorrowingDateValidationRequest";
@@ -32,7 +31,7 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
             if (mediaBorrowingRecord == null) {
                 result.addError(new InvalidBorrowingRecordError(`Media Borrowing Record ${mediaRenewalRequest.mediaBorrowingRecordId} does not exist.`))
             } else {
-                await this.verifyRenewalLimitIsNotExceeded(mediaBorrowingRecord.renewals, result)
+                await this.verifyRenewalLimitIsNotExceeded(mediaBorrowingRecord.renewals, mediaBorrowingRecord.branchId, result)
 
                 const borrowingDateValidationRequest : BorrowingDateValidationRequest = {
                     startDate : mediaBorrowingRecord.endDate,
@@ -61,12 +60,15 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
         }
     }
 
-    private async verifyRenewalLimitIsNotExceeded(renewals : number, result : Message<boolean>) {
+    private async verifyRenewalLimitIsNotExceeded(renewals : number, branchId : number, result : Message<boolean>) {
         const mediaBorrowingConfigRepository = await this.dbContext.getMediaBorrowingConfigRepository()
-        const renewalsLimitResult = await mediaBorrowingConfigRepository.getRenewalLimit()
-        const renewalsLimit = renewalsLimitResult.value ?? Container.get(MAX_RENEWALS)
+        const renewalsLimitResult = await mediaBorrowingConfigRepository.getRenewalLimit(branchId)
+        const renewalsLimit = renewalsLimitResult.value
 
-        if (renewals >= renewalsLimit) {
+        if (renewalsLimit == null) {
+            result.addError(new Error(`Could not retrieve media borrowing config : max renewals.`))
+        }
+        else if (renewals >= renewalsLimit) {
             result.addError(new MaxRenewalsExceededError(`Maximum amount of renewals is ${renewalsLimit}.`))
         }
     }

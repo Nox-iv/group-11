@@ -7,7 +7,11 @@ export class IMediaBorrowingConfigRepository {
 
     constructor () {}
 
-    public getRenewalLimit() : Promise<Message<number>> {
+    public getRenewalLimit(branchId : number) : Promise<Message<number>> {
+        throw new NotImplementedError()
+    }
+
+    public getMaximumBorrowingDurationInDays(branchId : number) : Promise<Message<number>> {
         throw new NotImplementedError()
     }
 }

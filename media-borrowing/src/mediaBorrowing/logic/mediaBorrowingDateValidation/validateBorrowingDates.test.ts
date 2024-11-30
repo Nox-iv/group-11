@@ -6,13 +6,17 @@ import { InvalidBorrowingDateError, MediaBorrowingDateValidator } from "."
 import { IDbContext } from '../../../db/interfaces/dbContext'
 import { BranchOpeningHours } from "../../data/models/BranchOpeningHours"
 import { Message } from "../../../shared/messaging/Message"
+import { IMediaBorrowingConfigRepository } from '../../interfaces/data/repositories'
+import { MaxBorrowingPeriodExceededError } from '../mediaBorrowingConfig'
 
 jest.mock('../../../amlBranches/interfaces/data/repositories')
+jest.mock('../../interfaces/data/repositories')
 jest.mock('../../../db/interfaces/dbContext')
 
 let genericMediaBorrowingRecord : MediaBorrowingRecord
 let genericBranchOpeningHours : BranchOpeningHours
 let mockBranchRepository : jest.Mocked<IBranchRepository>
+let mockMediaBorrowingConfigRepository : jest.Mocked<IMediaBorrowingConfigRepository>
 let mockDbContext : jest.Mocked<IDbContext>
 let mediaBorrowingDateValidator : IMediaBorrowingDateValidator
 
@@ -24,15 +28,13 @@ beforeEach(() => {
         userId: 1,
         mediaId: 1,
         branchId: 1,
-        startDate: new Date(),
+        startDate: new Date('2024-11-30T16:00:00.000Z'),
         endDate: new Date(),
         renewals: 0
     }
 
-    const endDate = new Date()
-    endDate.setDate(endDate.getDate() + 14)
-
-    genericMediaBorrowingRecord.endDate = endDate
+    genericMediaBorrowingRecord.endDate = new Date(genericMediaBorrowingRecord.startDate)
+    genericMediaBorrowingRecord.endDate.setDate(genericMediaBorrowingRecord.startDate.getDate() + 14)
 
     genericBranchOpeningHours = [[900,1700],[900,1700],[900,1700],[900,1700],[900,1700],[900,1700],[900,1700]]
 
@@ -40,9 +42,14 @@ beforeEach(() => {
     mockBranchRepository = new IBranchRepository as jest.Mocked<IBranchRepository>
     mockBranchRepository.getOpeningHoursById.mockResolvedValue(new Message(genericBranchOpeningHours))
 
+    mockMediaBorrowingConfigRepository = new IMediaBorrowingConfigRepository as jest.Mocked<IMediaBorrowingConfigRepository>
+    mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(new Message(2))
+    mockMediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays.mockResolvedValue(new Message(14))
+
     // Setup db context
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>
     mockDbContext.getBranchRepository.mockResolvedValue(mockBranchRepository)
+    mockDbContext.getMediaBorrowingConfigRepository.mockResolvedValue(mockMediaBorrowingConfigRepository)
 
     // Setup media borrowing date validation logic
     mediaBorrowingDateValidator = new MediaBorrowingDateValidator(mockDbContext)
@@ -71,7 +78,6 @@ describe("A borrowing/renewal request is rejected if...", () => {
         genericMediaBorrowingRecord.endDate = new Date(genericMediaBorrowingRecord.startDate)
         genericMediaBorrowingRecord.endDate.setHours(genericMediaBorrowingRecord.endDate.getHours() + 1)
 
-        const {startDate, endDate, branchId} = genericMediaBorrowingRecord
         const result = await mediaBorrowingDateValidator.validateBorrowingDates(getBorrowingDateValidationRequest())
 
         expect(result.errors[0]).toBeInstanceOf(InvalidBorrowingDateError)
@@ -107,5 +113,22 @@ describe("A borrowing/renewal request is rejected if...", () => {
         expect(endDateTooLateResult.errors[0]).toBeInstanceOf(InvalidBorrowingDateError)
         expect(endDateTooEarlyResult.value).toBe(false)
         expect(endDateTooLateResult.value).toBe(false)
+    })
+
+    test("the requested borrowing duration exceeds the maximum borrowing duration", async () => {
+        mockMediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays.mockResolvedValue(new Message(10))
+
+        const result = await mediaBorrowingDateValidator.validateBorrowingDates(getBorrowingDateValidationRequest())
+
+        expect(result.errors[0]).toBeInstanceOf(MaxBorrowingPeriodExceededError)
+        expect(result.value).toBe(false)
+    })
+})
+
+describe("When a borrowing date range is valid..", () => {
+    test("the validation method returns true.", async() => {
+        const result = await mediaBorrowingDateValidator.validateBorrowingDates(getBorrowingDateValidationRequest())
+        expect(result.value).toBe(true)
+        expect(result.hasErrors()).toBe(false)
     })
 })

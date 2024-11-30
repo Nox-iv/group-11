@@ -4,6 +4,7 @@ import { Message } from '../../../shared/messaging/Message'
 import { InvalidBorrowingDateError, BorrowingDateValidationRequest} from "."
 import { BranchOpeningHours } from '../../data/models'
 import { IDbContext } from '../../../db/interfaces/dbContext'
+import { MaxBorrowingPeriodExceededError } from '../mediaBorrowingConfig'
 
 export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
     constructor(@Inject() dbContext : IDbContext) {
@@ -17,9 +18,13 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
 
         this.validateDateRangeAgainstMinimumBorrowingDuration(startDate, endDate, result)
         await this.validateDateRangeAgainstBranchOpeningHours(startDate, endDate, branchId, result)
+        await this.validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest, result)
 
         if(!result.hasErrors()) {
             result.value = true
+            this.dbContext.commit()
+        } else {
+            this.dbContext.rollback()
         }
 
         return result 
@@ -67,5 +72,25 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
 
     private getHoursIn24hFormat(date : Date) : number {
         return (date.getHours() * 100) + date.getMinutes() 
+    }
+
+    private async validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest : BorrowingDateValidationRequest, result : Message<boolean>) {
+        const { startDate, endDate, branchId } = borrowingDateValidationRequest
+        const mediaBorrowingConfigRepository = await this.dbContext.getMediaBorrowingConfigRepository()
+        const maxDurationResult = await mediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays(branchId)
+
+        if (maxDurationResult.hasErrors()) {
+            result.addErrorsFromMessage(maxDurationResult)
+        } else if (maxDurationResult.value == null) {
+            result.addError(new Error(`Could not find max borrowing duration for branch ${branchId}`))
+        } else if (this.getDifferenceInDays(startDate, endDate) > maxDurationResult.value) {
+            result.addError(new MaxBorrowingPeriodExceededError(`Max borrowing duration at branch ${branchId} is ${maxDurationResult.value} days.`))
+        }
+    }
+
+    private getDifferenceInDays(startDate : Date, endDate : Date) : number {
+        const timeDifference = Math.abs(startDate.getTime() - endDate.getTime());
+        const daysDifference = timeDifference / (1000 * 3600 * 24);
+        return daysDifference;
     }
 }

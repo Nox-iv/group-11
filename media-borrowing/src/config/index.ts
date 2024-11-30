@@ -1,5 +1,0 @@
-
-import { MAX_RENEWALS, MAX_BORROWING_PERIOD_DAYS } from "./config"
-
-export {MAX_RENEWALS, MAX_BORROWING_PERIOD_DAYS}
-
