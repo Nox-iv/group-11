@@ -24,7 +24,7 @@ beforeEach(() => {
 
     // Setup repositories
     mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
-    mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(new Message(genericMediaItem))
+    mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(genericMediaItem)
     mockMediaRepository.updateMediaItem.mockResolvedValue(new Message(true))
 
     // Setup db context
@@ -38,7 +38,7 @@ beforeEach(() => {
 
 describe("A media item's availability cannot be updated if...", () => {
     test("the media-branch combination is invalid", async () => {
-        mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(new Message<MediaItem>(null))
+        mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(null)
 
         const incrementResult = await mediaInventoryLogic.incrementMediaItemAvailabilityAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)
         const decrementResult = await mediaInventoryLogic.decrementMediaItemAvailabilityAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)

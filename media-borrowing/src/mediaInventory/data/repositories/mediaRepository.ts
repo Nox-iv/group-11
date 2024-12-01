@@ -12,7 +12,7 @@ export class MediaRepository extends IMediaRepository {
         this.uow = uow
     }
 
-    public getItemByMediaAndBranchId(mediaId: number, branchId : number) : Promise<Message<MediaItem>> {
+    public getItemByMediaAndBranchId(mediaId: number, branchId : number) : Promise<MediaItem | null> {
         throw new NotImplementedError()
     }
 } 

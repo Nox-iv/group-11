@@ -24,6 +24,7 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
             this.dbContext.commit()
         } catch(e) {
             result.addError(e as Error)
+            result.value = false
             this.dbContext.rollback()
         } finally {
             return result
@@ -47,6 +48,7 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
             } 
         } catch(e) {
             result.addError(e as Error)
+            result.value = false
             this.dbContext.rollback()
         } finally {
             return result
@@ -78,10 +80,10 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
 
     private async getMediaItem(mediaId : number, branchId : number) : Promise<MediaItem> {
         const mediaRepository = await this.dbContext.getMediaRepository()
-        const mediaItemResult = await mediaRepository.getItemByMediaAndBranchId(mediaId, branchId)
+        const mediaItem = await mediaRepository.getItemByMediaAndBranchId(mediaId, branchId)
 
-        if (mediaItemResult.value != null) {
-            return mediaItemResult.value
+        if (mediaItem != null) {
+            return mediaItem
         } else {
             throw new InvalidMediaError(`Media item ${mediaId} could not be found at branch ${branchId}`)
         }
