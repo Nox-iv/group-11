@@ -12,12 +12,6 @@ export class MediaRepository extends IMediaRepository {
         this.uow = uow
     }
 
-    public async branchHasMediaItem(mediaId: number, branchId: number): Promise<Message<boolean>> {
-        const result = new Message(false)
-
-        return new Promise(() => null)
-    }
-
     public getByMediaAndBranchId(mediaId: number, branchId : number) : Promise<Message<MediaItem>> {
         throw new NotImplementedError()
     }
