@@ -19,21 +19,13 @@ export class MediaReturnLogic extends IMediaReturnLogic {
 
         try {
             const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
-            const mediaBorrowingRecordResult = await mediaBorrowingRepository.getBorrowingRecordById(mediaBorrowingRecordId)
+            const mediaBorrowingRecord = await mediaBorrowingRepository.getBorrowingRecordById(mediaBorrowingRecordId)
 
-            if (mediaBorrowingRecordResult.hasErrors()) {
-                result.addErrorsFromMessage(mediaBorrowingRecordResult)
-            } 
-
-            if (mediaBorrowingRecordResult.value == null) {
+            if (mediaBorrowingRecord == null) {
                 result.addError(new InvalidBorrowingRecordError(`Media borrowing record ${mediaBorrowingRecordId} does not exist.`)) 
-            } 
-            
-            if (mediaBorrowingRecordResult.value != null && !mediaBorrowingRecordResult.hasErrors()) {
-                const {mediaId, branchId} = mediaBorrowingRecordResult.value
-
-                await this.archiveMediaBorrowingRecord(mediaBorrowingRecordId, result)
-                await this.updateMediaItemAvailability(mediaId, branchId, result)
+            } else {
+                await mediaBorrowingRepository.archiveBorrowingRecord(mediaBorrowingRecordId)
+                await this.updateMediaItemAvailability(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId, result)
             }
 
             if (!result.hasErrors()) {
@@ -48,17 +40,6 @@ export class MediaReturnLogic extends IMediaReturnLogic {
             this.dbContext.rollback()
         } finally {
             return result
-        }
-    }
-
-    private async archiveMediaBorrowingRecord(mediaBorrowingRecordId : number, result : Message<boolean>) : Promise<void> {
-        const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
-        const archivedResult = await mediaBorrowingRepository.archiveBorrowingRecord(mediaBorrowingRecordId)
-
-        if (archivedResult.hasErrors()) {
-            archivedResult.addErrorsFromMessage(archivedResult)
-        } else if (archivedResult.value == false) {
-            archivedResult.addError(new Error(`Could not archive media borrowing record ${mediaBorrowingRecordId}`))
         }
     }
 

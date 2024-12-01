@@ -46,8 +46,8 @@ beforeEach(() => {
 
     // Setup mock repositories 
     mockMediaBorrowingRepository = new IMediaBorrowingRepository as jest.Mocked<IMediaBorrowingRepository>
-    mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(new Message(genericMediaBorrowingRecord))
-    mockMediaBorrowingRepository.archiveBorrowingRecord.mockResolvedValue(new Message(true))
+    mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(genericMediaBorrowingRecord)
+    mockMediaBorrowingRepository.archiveBorrowingRecord.mockResolvedValue()
 
     // Setup db context
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>
@@ -62,7 +62,7 @@ beforeEach(() => {
 
 describe("A media item cannot be returned by user if...", () => {
     test("there is no record of the user borrowing the given media item.", async () => {
-        mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(new Message<MediaBorrowingRecord>(null, [new InvalidBorrowingRecordError()]))
+        mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(null)
         const result = await mediaReturnLogic.returnMediaItem(mediaBorrowingRecordId)
 
         expect(result.errors[0]).toBeInstanceOf(InvalidBorrowingRecordError)

@@ -25,8 +25,7 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
         try {
             const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
 
-            const mediaBorrowingRecordResult = await mediaBorrowingRepository.getBorrowingRecordById(mediaRenewalRequest.mediaBorrowingRecordId)
-            const mediaBorrowingRecord = mediaBorrowingRecordResult.value
+            const mediaBorrowingRecord = await mediaBorrowingRepository.getBorrowingRecordById(mediaRenewalRequest.mediaBorrowingRecordId)
     
             if (mediaBorrowingRecord == null) {
                 result.addError(new InvalidBorrowingRecordError(`Media Borrowing Record ${mediaRenewalRequest.mediaBorrowingRecordId} does not exist.`))
@@ -44,7 +43,9 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
                 if (!result.hasErrors()) {
                     mediaBorrowingRecord.endDate = mediaRenewalRequest.renewedEndDate
                     mediaBorrowingRecord.renewals += 1
-                    mediaBorrowingRepository.updateBorrowingRecord(mediaBorrowingRecord)
+
+                    await mediaBorrowingRepository.updateBorrowingRecord(mediaBorrowingRecord)
+                    
                     result.value = true
                     this.dbContext.commit()
                 } else {

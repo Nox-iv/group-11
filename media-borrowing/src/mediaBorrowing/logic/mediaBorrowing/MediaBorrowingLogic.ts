@@ -82,9 +82,8 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
     private async rejectIfUserIsAlreadyBorrowingMediaItem(mediaBorrowingRecord : MediaBorrowingRecord, result: Message<boolean>) {
         const {userId, mediaId, branchId} = mediaBorrowingRecord
         const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
-        const hasBorrowingRecordResult = await mediaBorrowingRepository.checkBorrowingRecordExists(userId, mediaId, branchId)
 
-        if (hasBorrowingRecordResult.value) {
+        if (await mediaBorrowingRepository.hasBorrowingRecord(userId, mediaId, branchId)) {
             result.addError(new InvalidBorrowingRecordError(`User ${userId} is already borrowing media item ${mediaId}`))
         }
     }

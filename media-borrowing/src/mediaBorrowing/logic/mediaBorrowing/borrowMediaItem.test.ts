@@ -55,7 +55,7 @@ beforeEach(() => {
 
     // Setup mock repositories.
     mockMediaBorrowingRepository = new IMediaBorrowingRepository() as jest.Mocked<IMediaBorrowingRepository>
-    mockMediaBorrowingRepository.checkBorrowingRecordExists.mockResolvedValue(new Message(false))
+    mockMediaBorrowingRepository.hasBorrowingRecord.mockResolvedValue(false)
 
     mockUserRepository = new IUserRepository as jest.Mocked<IUserRepository>
     mockUserRepository.hasUser.mockResolvedValue(new Message(true))
@@ -106,7 +106,7 @@ describe("A media item cannot be borrowed if ...", () => {
     })
 
     test("the user is already borrowing the requested media item.", async () => {
-        mockMediaBorrowingRepository.checkBorrowingRecordExists.mockResolvedValue(new Message(true))
+        mockMediaBorrowingRepository.hasBorrowingRecord.mockResolvedValue(true)
 
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 

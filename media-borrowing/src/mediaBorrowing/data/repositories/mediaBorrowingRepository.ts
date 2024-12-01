@@ -20,15 +20,15 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
 
     }
 
-    public checkBorrowingRecordExists(userId : number, mediaId: number, branchId : number) : Promise<Message<boolean>> {
+    public doesBorrowingRecordExist(userId : number, mediaId: number, branchId : number) : Promise<boolean> {
         throw new NotImplementedError()
     }
 
-    public async archiveBorrowingRecord(mediaBorrowingRecordId : number) : Promise<Message<boolean>> {
+    public async archiveBorrowingRecord(mediaBorrowingRecordId : number) : Promise<void> {
         throw new NotImplementedError()
     }
 
-    public getBorrowingRecordById(mediaBorrowingRecordId : number) : Promise<Message<MediaBorrowingRecord>> {
+    public getBorrowingRecordById(mediaBorrowingRecordId : number) : Promise<MediaBorrowingRecord | null> {
         throw new NotImplementedError()
     }
 } 

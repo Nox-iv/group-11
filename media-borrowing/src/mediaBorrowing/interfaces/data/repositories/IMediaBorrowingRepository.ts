@@ -11,15 +11,15 @@ export class IMediaBorrowingRepository {
         throw new NotImplementedError()
     }
 
-    public archiveBorrowingRecord(mediaBorrowingRecordId : number) : Promise<Message<boolean>> {
+    public archiveBorrowingRecord(mediaBorrowingRecordId : number) : Promise<void> {
         throw new NotImplementedError()
     }
 
-    public checkBorrowingRecordExists(userId : number, mediaId: number, branchId : number) : Promise<Message<boolean>> {
+    public hasBorrowingRecord(userId : number, mediaId: number, branchId : number) : Promise<boolean> {
         throw new NotImplementedError()
     }
 
-    public getBorrowingRecordById(mediaBorrowingRecordId : number) : Promise<Message<MediaBorrowingRecord>> {
+    public getBorrowingRecordById(mediaBorrowingRecordId : number) : Promise<MediaBorrowingRecord | null> {
         throw new NotImplementedError()
     }
 }
