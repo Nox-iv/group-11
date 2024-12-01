@@ -4,7 +4,7 @@ import { IUserRepository } from "../interfaces/data/repositories/IUserRepository
 import { IUserEligibilityLogic } from "../interfaces/logic/IUserEligibilityLogic"
 import { UserEligibilityLogic } from "./UserEligibilityLogic"
 import { User } from "../data/models/user"
-import { InvalidUserError } from "../invalidUserError"
+import { InvalidUserError } from "./errors/invalidUserError"
 import { InvalidLocationError } from "./errors/invalidLocationError"
 import { InvalidBranchError } from "../../amlBranches/logic/errors/invalidBranchError"
 
@@ -56,7 +56,7 @@ describe("A user is not eligible to borrow an item if...", () => {
     test("the branch they are borrowing from is outside the city where they hold their membership", async () => {
         mockBranchRepository.getBranchLocationId.mockResolvedValue(invalidBranchLocationId)
 
-        const result = await userEligibilityLogic.IsUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
+        const result = await userEligibilityLogic.isUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
 
         expect(result.value).toBe(false)
         expect(result.errors[0]).toBeInstanceOf(InvalidLocationError)
@@ -65,7 +65,7 @@ describe("A user is not eligible to borrow an item if...", () => {
     test("the given user does not exist", async () => {
         mockUserRepository.getUser.mockResolvedValue(null)
 
-        const result = await userEligibilityLogic.IsUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
+        const result = await userEligibilityLogic.isUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
 
         expect(result.value).toBe(false)
         expect(result.errors[0]).toBeInstanceOf(InvalidUserError)
@@ -74,7 +74,7 @@ describe("A user is not eligible to borrow an item if...", () => {
     test("the given branch does not exist", async () => {
         mockBranchRepository.getBranchLocationId.mockResolvedValue(null)
 
-        const result = await userEligibilityLogic.IsUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
+        const result = await userEligibilityLogic.isUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
 
         expect(result.value).toBe(false)
         expect(result.errors[0]).toBeInstanceOf(InvalidBranchError)
@@ -83,7 +83,7 @@ describe("A user is not eligible to borrow an item if...", () => {
 
 describe("A user is elgibile to borrow a media item...", () => {
     test("if they borrow from a branch in the city where the hold their membership", async () => {
-        const result = await userEligibilityLogic.IsUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
+        const result = await userEligibilityLogic.isUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
 
         expect(result.value).toBe(true)
     })

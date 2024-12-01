@@ -1,8 +1,8 @@
 export class Message<T> {
-    public value: T | null
+    public value: T
     public errors: Error[]
 
-    constructor(value: T | null = null, errors: Error[] = []) {
+    constructor(value: T, errors: Error[] = []) {
         this.value = value
         this.errors = errors
     }

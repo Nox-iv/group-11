@@ -8,7 +8,7 @@ export class IUserEligibilityLogic {
 
     constructor() {}
 
-    public IsUserEligibleToBorrowMediaItemAtBranch(userId : number, mediaId : number, branchId : number) : Promise<Message<boolean>> {
+    public isUserEligibleToBorrowMediaItemAtBranch(userId : number, mediaId : number, branchId : number) : Promise<Message<boolean>> {
         throw new NotImplementedError()
     }
 }

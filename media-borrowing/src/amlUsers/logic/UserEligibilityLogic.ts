@@ -3,7 +3,7 @@ import { Message } from "../../shared/messaging/Message"
 import { IUserEligibilityLogic } from "../interfaces/logic/IUserEligibilityLogic"
 import { User } from "../data/models/user"
 import { InvalidLocationError } from "./errors/invalidLocationError"
-import { InvalidUserError } from "../invalidUserError"
+import { InvalidUserError } from "./errors/invalidUserError"
 import { InvalidBranchError } from "../../amlBranches/logic/errors/invalidBranchError"
 
 export class UserEligibilityLogic extends IUserEligibilityLogic {
@@ -12,7 +12,7 @@ export class UserEligibilityLogic extends IUserEligibilityLogic {
         this.dbContext = dbContext
     }
 
-    public async IsUserEligibleToBorrowMediaItemAtBranch(userId : number, mediaId : number, branchId : number) : Promise<Message<boolean>> {
+    public async isUserEligibleToBorrowMediaItemAtBranch(userId : number, mediaId : number, branchId : number) : Promise<Message<boolean>> {
         const result = new Message(false)
         try {
             const user =  await this.getUser(userId)

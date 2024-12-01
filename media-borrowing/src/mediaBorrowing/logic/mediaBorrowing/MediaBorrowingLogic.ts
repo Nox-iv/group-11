@@ -3,15 +3,17 @@ import { MediaBorrowingRecord } from "../../data/models";
 import { IMediaBorrowingLogic } from "../../interfaces/logic/mediaBorrowing/IMediaBorrowingLogic";
 import { IDbContext } from "../../../db/interfaces/dbContext";
 import { Inject } from "typedi";
-import { InvalidUserError } from "../../../amlUsers/invalidUserError";
+import { InvalidUserError } from "../../../amlUsers/logic/errors/invalidUserError";
 import { InvalidBorrowingRecordError } from "./errors/invalidBorrowingRecordError";
 import { IMediaBorrowingDateValidator } from "../../interfaces/logic/mediaBorrowingDateValidation/IMediaBorrowingDateValidator";
 import { UnavailableMediaItemError } from "./errors/unavailableMediaItemError";
 import { IMediaInventoryLogic } from "../../../mediaInventory/interfaces/logic/IMediaInventoryLogic";
+import { IUserEligibilityLogic } from "../../../amlUsers/interfaces/logic/IUserEligibilityLogic";
 
 export class MediaBorrowingLogic extends IMediaBorrowingLogic {
     constructor(
         @Inject() dbContext : IDbContext,
+        @Inject() userEligibilityLogic : IUserEligibilityLogic,
         @Inject() mediaInventoryLogic : IMediaInventoryLogic,
         @Inject() mediaBorrowingDateValidator : IMediaBorrowingDateValidator
     ) {
@@ -19,6 +21,7 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         this.dbContext = dbContext
         this.mediaInventoryLogic = mediaInventoryLogic
         this.mediaBorrowingDateValidator = mediaBorrowingDateValidator
+        this.userEligibilityLogic = userEligibilityLogic
     }
 
     public async BorrowMediaItem(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<Message<boolean>> {
@@ -27,7 +30,7 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         try {
             const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
 
-            await this.validateUserId(mediaBorrowingRecord.userId, result)
+            await this.validateUserEligibility(mediaBorrowingRecord, result)
             await this.verifyMediaItemIsAvailable(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId, result)
             await this.validateBorrowingDates(mediaBorrowingRecord.startDate, mediaBorrowingRecord.endDate, mediaBorrowingRecord.branchId, result)
             await this.rejectIfUserIsAlreadyBorrowingMediaItem(mediaBorrowingRecord, result)
@@ -70,12 +73,16 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         }
     }
 
-    private async validateUserId(userId : number, result : Message<boolean>) {
-        const userRepository = await this.dbContext.getUserRepository()
-        const hasUserResult = await userRepository.hasUser(userId)
+    private async validateUserEligibility(mediaBorrowingRecord : MediaBorrowingRecord, result : Message<boolean>) {
+        const { userId, mediaId, branchId } = mediaBorrowingRecord
+        const userEligibilityResult = await this.userEligibilityLogic.isUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
         
-        if (!hasUserResult.value) {
-            result.addError(new InvalidUserError(`User ${userId} does not exist.`))
+        if (!userEligibilityResult.value) {
+            result.addError(new InvalidUserError(`User ${userId} is not eligible to borrow media item ${mediaId} from branch ${branchId}.`))
+        }
+
+        if (userEligibilityResult.hasErrors()) {
+            result.addErrorsFromMessage(userEligibilityResult)
         }
     }
 
