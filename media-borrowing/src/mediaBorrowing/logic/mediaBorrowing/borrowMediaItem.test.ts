@@ -2,7 +2,6 @@ import 'reflect-metadata'
 import { IDbContext } from '../../../db/interfaces/dbContext';
 import { IMediaBorrowingRepository } from '../../interfaces/data/repositories';
 import { IUserRepository } from '../../../amlUsers/interfaces/data/repositories/IUserRepository';
-import { IMediaRepository } from '../../../mediaInventory/interfaces/data/repositories';
 import { IMediaBorrowingLogic } from '../../interfaces/logic/mediaBorrowing/IMediaBorrowingLogic';
 import { IMediaBorrowingDateValidator } from '../../interfaces/logic/mediaBorrowingDateValidation/IMediaBorrowingDateValidator';
 import { Message } from '../../../shared/messaging/Message';
