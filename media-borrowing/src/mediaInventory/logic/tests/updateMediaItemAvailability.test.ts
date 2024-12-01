@@ -25,7 +25,6 @@ beforeEach(() => {
     // Setup repositories
     mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
     mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(genericMediaItem)
-    mockMediaRepository.updateMediaItem.mockResolvedValue(new Message(true))
 
     // Setup db context
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>

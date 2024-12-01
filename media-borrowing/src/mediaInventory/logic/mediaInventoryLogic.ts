@@ -38,7 +38,7 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
             const mediaItem = await this.getMediaItem(mediaId, branchId)
 
             mediaItem.availability += 1
-            await this.updateMediaItem(mediaItem, result)
+            await this.updateMediaItem(mediaItem)
 
             if (!result.hasErrors()) {
                 result.value = true
@@ -62,7 +62,7 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
             const mediaItem = await this.getMediaItem(mediaId, branchId)
 
             mediaItem.availability -= 1
-            await this.updateMediaItem(mediaItem, result)
+            await this.updateMediaItem(mediaItem)
 
             if (!result.hasErrors()) {
                 result.value = true
@@ -72,6 +72,7 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
             } 
         } catch(e) {
             result.addError(e as Error)
+            result.value = false
             this.dbContext.rollback()
         } finally {
             return result
@@ -89,14 +90,8 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
         }
     }
 
-    private async updateMediaItem(mediaItem : MediaItem, result : Message<boolean>) {
+    private async updateMediaItem(mediaItem : MediaItem) {
         const mediaRepository = await this.dbContext.getMediaRepository()
-        const updateResult = await mediaRepository.updateMediaItem(mediaItem)
-
-        if (updateResult.hasErrors()) {
-            result.addErrorsFromMessage(updateResult)
-        } else if (updateResult.value == false) {
-            result.addError(new Error(`Media item ${mediaItem.mediaId} at branch ${mediaItem.branchId} could not be updated.`))
-        }
+        await mediaRepository.updateMediaItem(mediaItem)
     }
  }
