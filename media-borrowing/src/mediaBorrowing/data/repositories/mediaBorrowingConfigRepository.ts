@@ -9,7 +9,7 @@ export class MediaBorrowingConfigRepository extends IMediaBorrowingConfigReposit
         this.uow = uow
     }
 
-    public async getRenewalLimit() : Promise<Message<number>> {
+    public async getRenewalLimit() : Promise<number | null> {
         const result = new Message(false)
 
         return new Promise(() => null)

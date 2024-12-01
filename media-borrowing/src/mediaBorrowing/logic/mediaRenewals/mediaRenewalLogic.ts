@@ -62,13 +62,11 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
 
     private async verifyRenewalLimitIsNotExceeded(renewals : number, branchId : number, result : Message<boolean>) {
         const mediaBorrowingConfigRepository = await this.dbContext.getMediaBorrowingConfigRepository()
-        const renewalsLimitResult = await mediaBorrowingConfigRepository.getRenewalLimit(branchId)
-        const renewalsLimit = renewalsLimitResult.value
+        const renewalsLimit = await mediaBorrowingConfigRepository.getRenewalLimit(branchId)
 
         if (renewalsLimit == null) {
             result.addError(new Error(`Could not retrieve media borrowing config : max renewals.`))
-        }
-        else if (renewals >= renewalsLimit) {
+        } else if (renewals >= renewalsLimit) {
             result.addError(new MaxRenewalsExceededError(`Maximum amount of renewals is ${renewalsLimit}.`))
         }
     }

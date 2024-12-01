@@ -77,14 +77,12 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
     private async validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest : BorrowingDateValidationRequest, result : Message<boolean>) {
         const { startDate, endDate, branchId } = borrowingDateValidationRequest
         const mediaBorrowingConfigRepository = await this.dbContext.getMediaBorrowingConfigRepository()
-        const maxDurationResult = await mediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays(branchId)
+        const maxDuration = await mediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays(branchId)
 
-        if (maxDurationResult.hasErrors()) {
-            result.addErrorsFromMessage(maxDurationResult)
-        } else if (maxDurationResult.value == null) {
+        if (maxDuration == null) {
             result.addError(new Error(`Could not find max borrowing duration for branch ${branchId}`))
-        } else if (this.getDifferenceInDays(startDate, endDate) > maxDurationResult.value) {
-            result.addError(new MaxBorrowingPeriodExceededError(`Max borrowing duration at branch ${branchId} is ${maxDurationResult.value} days.`))
+        } else if (this.getDifferenceInDays(startDate, endDate) > maxDuration) {
+            result.addError(new MaxBorrowingPeriodExceededError(`Max borrowing duration at branch ${branchId} is ${maxDuration} days.`))
         }
     }
 

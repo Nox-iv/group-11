@@ -43,8 +43,8 @@ beforeEach(() => {
     mockBranchRepository.getOpeningHoursById.mockResolvedValue(new Message(genericBranchOpeningHours))
 
     mockMediaBorrowingConfigRepository = new IMediaBorrowingConfigRepository as jest.Mocked<IMediaBorrowingConfigRepository>
-    mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(new Message(2))
-    mockMediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays.mockResolvedValue(new Message(14))
+    mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(2)
+    mockMediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays.mockResolvedValue(14)
 
     // Setup db context
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>
@@ -116,7 +116,7 @@ describe("A borrowing/renewal request is rejected if...", () => {
     })
 
     test("the requested borrowing duration exceeds the maximum borrowing duration", async () => {
-        mockMediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays.mockResolvedValue(new Message(10))
+        mockMediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays.mockResolvedValue(10)
 
         const result = await mediaBorrowingDateValidator.validateBorrowingDates(getBorrowingDateValidationRequest())
 

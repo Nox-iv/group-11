@@ -53,7 +53,7 @@ beforeEach(() => {
     mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(new Message(genericMediaBorrowingRecord))
 
     mockMediaBorrowingConfigRepository = new IMediaBorrowingConfigRepository as jest.Mocked<IMediaBorrowingConfigRepository>
-    mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(new Message(5))
+    mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(5)
 
     // Setup mock DB context.
     mockDbContext = new IDbContext() as jest.Mocked<IDbContext>;
@@ -79,7 +79,7 @@ describe("A user cannot renew a borrowed media item if...", () => {
 
     test("they have reached the renewal limit.", async () => {
         genericMediaBorrowingRecord.renewals = 1
-        mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(new Message(1))
+        mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(1)
 
         const result = await mediaRenewalLogic.renewMediaItem(genericMediaRenewalRequest)
 
