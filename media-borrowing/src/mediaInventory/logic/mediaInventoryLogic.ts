@@ -12,7 +12,22 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
     }
 
     public async isMediaItemAvailableAtBranch(mediaId : number, branchId : number) : Promise<Message<boolean>> {
-        return new Message(true)
+        const result = new Message(false)
+
+        try {
+            const mediaItem = await this.getMediaItem(mediaId, branchId)
+
+            if (mediaItem.availability > 0) {
+                result.value = true
+            }
+
+            this.dbContext.commit()
+        } catch(e) {
+            result.addError(e as Error)
+            this.dbContext.rollback()
+        } finally {
+            return result
+        }
     }
 
     public async incrementMediaItemAvailabilityAtBranch(mediaId : number, branchId : number) : Promise<Message<boolean>> {

@@ -1,18 +1,18 @@
 import 'reflect-metadata'
-import { Message } from "../../shared/messaging/Message"
-import { IDbContext } from "../../db/interfaces/dbContext"
-import { MediaItem } from "../data/models"
-import { IMediaRepository } from "../interfaces/data/repositories"
-import { InvalidMediaError } from "./errors/invalidMediaError"
-import { MediaInventoryLogic } from "./mediaInventoryLogic"
+import { Message } from "../../../shared/messaging/Message"
+import { IDbContext } from "../../../db/interfaces/dbContext"
+import { MediaItem } from "../../data/models"
+import { IMediaRepository } from "../../interfaces/data/repositories"
+import { InvalidMediaError } from "../errors/invalidMediaError"
+import { MediaInventoryLogic } from "../mediaInventoryLogic"
 
 let genericMediaItem : MediaItem
 let mockMediaRepository : jest.Mocked<IMediaRepository>
 let mockDbContext : jest.Mocked<IDbContext>
 let mediaInventoryLogic : MediaInventoryLogic
 
-jest.mock("../interfaces/data/repositories")
-jest.mock("../../db/interfaces/dbContext")
+jest.mock("../../interfaces/data/repositories")
+jest.mock("../../../db/interfaces/dbContext")
 
 beforeEach(() => {
     // Setup data
