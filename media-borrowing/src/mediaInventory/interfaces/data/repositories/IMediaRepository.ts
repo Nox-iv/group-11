@@ -3,7 +3,7 @@ import { MediaItem } from "../../../data/models";
 import { NotImplementedError } from "../../../../shared/errors/notImplementedError";
 
 export class IMediaRepository {
-    public getByMediaAndBranchId(mediaId: number, branchId : number) : Promise<Message<MediaItem>> {
+    public getItemByMediaAndBranchId(mediaId: number, branchId : number) : Promise<Message<MediaItem>> {
         throw new NotImplementedError()
     }
 

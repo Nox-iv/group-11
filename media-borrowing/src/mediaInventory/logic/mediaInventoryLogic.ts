@@ -78,7 +78,7 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
 
     private async getMediaItem(mediaId : number, branchId : number) : Promise<MediaItem> {
         const mediaRepository = await this.dbContext.getMediaRepository()
-        const mediaItemResult = await mediaRepository.getByMediaAndBranchId(mediaId, branchId)
+        const mediaItemResult = await mediaRepository.getItemByMediaAndBranchId(mediaId, branchId)
 
         if (mediaItemResult.value != null) {
             return mediaItemResult.value

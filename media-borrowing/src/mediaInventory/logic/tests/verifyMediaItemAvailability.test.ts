@@ -24,7 +24,7 @@ beforeEach(() => {
 
     // Setup repositories
     mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
-    mockMediaRepository.getByMediaAndBranchId.mockResolvedValue(new Message(genericMediaItem))
+    mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(new Message(genericMediaItem))
 
     // Setup db context
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>
@@ -52,7 +52,7 @@ describe("The correct availability status is returned when...", () => {
 
 describe("If the given media-branch combination is invalid...", () => {
     test("an error is returned in the result", async () => {
-        mockMediaRepository.getByMediaAndBranchId.mockResolvedValue(new Message<MediaItem>(null))
+        mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(new Message<MediaItem>(null))
 
         const result = await mediaInventoryLogic.isMediaItemAvailableAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)
 
