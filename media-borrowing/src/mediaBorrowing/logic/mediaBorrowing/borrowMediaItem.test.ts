@@ -12,19 +12,21 @@ import { InvalidMediaError } from '../../../mediaInventory/logic/errors/invalidM
 import { MediaBorrowingLogic, InvalidBorrowingRecordError, UnavailableMediaItemError } from '.';
 import { MediaItem } from '../../../mediaInventory/data/models';
 import { InvalidBorrowingDateError } from '../mediaBorrowingDateValidation/errors/invalidBorrowingDateError';
+import { IMediaInventoryLogic } from '../../../mediaInventory/interfaces/logic/IMediaInventoryLogic';
 
 jest.mock('../../../db/interfaces/dbContext')
 jest.mock('../../interfaces/data/repositories')
 jest.mock('../../../amlUsers/interfaces/data/repositories/IUserRepository')
 jest.mock('../../../mediaInventory/interfaces/data/repositories')
+jest.mock('../../../mediaInventory/interfaces/logic/IMediaInventoryLogic')
 jest.mock('../../interfaces/logic/mediaBorrowingDateValidation/IMediaBorrowingDateValidator')
 
 
 let mockMediaBorrowingRepository : jest.Mocked<IMediaBorrowingRepository>;
 let mockUserRepository : jest.Mocked<IUserRepository>
-let mockMediaRepository : jest.Mocked<IMediaRepository>
 let mockDbContext : jest.Mocked<IDbContext>
 let mockMediaBorrowingDateValidator : jest.Mocked<IMediaBorrowingDateValidator>
+let mockMediaInventoryLogic : jest.Mocked<IMediaInventoryLogic>
 let mediaBorrowingLogic : IMediaBorrowingLogic
 let genericMediaBorrowingRecord : MediaBorrowingRecord
 let genericMediaItem : MediaItem
@@ -59,23 +61,21 @@ beforeEach(() => {
     mockUserRepository = new IUserRepository as jest.Mocked<IUserRepository>
     mockUserRepository.hasUser.mockResolvedValue(new Message(true))
 
-    mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
-    mockMediaRepository.branchHasMediaItem.mockResolvedValue(new Message(true))
-    mockMediaRepository.getByMediaAndBranchId.mockResolvedValue(new Message(genericMediaItem))
-    mockMediaRepository.updateMediaItem.mockResolvedValue(new Message(true))
-
     // Setup mock DB context.
     mockDbContext = new IDbContext() as jest.Mocked<IDbContext>;
     mockDbContext.getMediaBorrowingRepository.mockResolvedValue(mockMediaBorrowingRepository)
     mockDbContext.getUserRepository.mockResolvedValue(mockUserRepository)
-    mockDbContext.getMediaRepository.mockResolvedValue(mockMediaRepository)
 
     // Setup logic dependencies
     mockMediaBorrowingDateValidator = new IMediaBorrowingDateValidator as jest.Mocked<IMediaBorrowingDateValidator>
     mockMediaBorrowingDateValidator.validateBorrowingDates.mockResolvedValue(new Message(true))
 
+    mockMediaInventoryLogic = new IMediaInventoryLogic as jest.Mocked<IMediaInventoryLogic>
+    mockMediaInventoryLogic.isMediaItemAvailableAtBranch.mockResolvedValue(new Message(true))
+    mockMediaInventoryLogic.incrementMediaItemAvailabilityAtBranch.mockResolvedValue(new Message(true))
+
     // Setup media borrowing logic.
-    mediaBorrowingLogic = new MediaBorrowingLogic(mockDbContext, mockMediaBorrowingDateValidator)
+    mediaBorrowingLogic = new MediaBorrowingLogic(mockDbContext, mockMediaInventoryLogic, mockMediaBorrowingDateValidator)
 });
 
 describe("A media item cannot be borrowed if ...", () => {
@@ -97,8 +97,8 @@ describe("A media item cannot be borrowed if ...", () => {
         expect(result.value).toBe(false)
     })
 
-    test("the provided media ID does not exist.", async () => {
-        mockMediaRepository.getByMediaAndBranchId.mockResolvedValue(new Message())
+    test("the provided media item does not exist.", async () => {
+        mockMediaInventoryLogic.isMediaItemAvailableAtBranch.mockResolvedValue(new Message<boolean>(false, [new InvalidMediaError()]))
 
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
@@ -116,7 +116,7 @@ describe("A media item cannot be borrowed if ...", () => {
     })
 
     test("the requested media item is unavailable at the given branch location.", async () => {
-        genericMediaItem.availability = 0
+        mockMediaInventoryLogic.isMediaItemAvailableAtBranch.mockResolvedValue(new Message(false))
         
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
@@ -126,19 +126,17 @@ describe("A media item cannot be borrowed if ...", () => {
 })  
 
 describe("When a media item is borrowed by a user...", () => {
-    test("the media borrowing databse is updated", async () => {
+    test("the media borrowing database is updated", async () => {
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
-        expect(mockMediaBorrowingRepository.insertBorrowingRecord).toHaveBeenCalled()
+        expect(mockMediaBorrowingRepository.insertBorrowingRecord).toHaveBeenCalledWith(genericMediaBorrowingRecord)
         expect(result.value).toBe(true)
     })
 
     test("the media item's availability is updated", async () => {
-        const expectedAvailability = genericMediaItem.availability - 1
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
         expect(result.value).toBe(true)
-        expect(genericMediaItem.availability).toBe(expectedAvailability)
-        expect(mockMediaRepository.updateMediaItem).toHaveBeenCalledWith(genericMediaItem)
+        expect(mockMediaInventoryLogic.decrementMediaItemAvailabilityAtBranch).toHaveBeenCalledWith(genericMediaItem.mediaId, genericMediaItem.branchId)
     })
 })
