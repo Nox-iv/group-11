@@ -8,4 +8,8 @@ export class IBranchRepository {
     getOpeningHoursById(branchId : number) : Promise<Message<BranchOpeningHours>> {
         throw new NotImplementedError()
     }
+
+    getBranchLocationId(branchId : number) : Promise<number> {
+        throw new NotImplementedError()
+    }
 }
