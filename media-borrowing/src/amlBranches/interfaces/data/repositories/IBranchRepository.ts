@@ -9,7 +9,7 @@ export class IBranchRepository {
         throw new NotImplementedError()
     }
 
-    getBranchLocationId(branchId : number) : Promise<number> {
+    getBranchLocationId(branchId : number) : Promise<number | null> {
         throw new NotImplementedError()
     }
 }

@@ -7,7 +7,7 @@ export class IUserRepository {
         throw new NotImplementedError()
     }
 
-    public getUser(userId : number) : Promise<User> {
+    public getUser(userId : number) : Promise<User | null> {
         throw new NotImplementedError()
     }
  }

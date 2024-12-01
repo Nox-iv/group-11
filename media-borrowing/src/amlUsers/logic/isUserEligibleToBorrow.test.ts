@@ -4,6 +4,9 @@ import { IUserRepository } from "../interfaces/data/repositories/IUserRepository
 import { IUserEligibilityLogic } from "../interfaces/logic/IUserEligibilityLogic"
 import { UserEligibilityLogic } from "./UserEligibilityLogic"
 import { User } from "../data/models/user"
+import { InvalidUserError } from "../invalidUserError"
+import { InvalidLocationError } from "./errors/invalidLocationError"
+import { InvalidBranchError } from "../../amlBranches/logic/errors/invalidBranchError"
 
 jest.mock("../../db/interfaces/dbContext")
 jest.mock("../interfaces/data/repositories/IUserRepository")
@@ -56,6 +59,25 @@ describe("A user is not eligible to borrow an item if...", () => {
         const result = await userEligibilityLogic.IsUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
 
         expect(result.value).toBe(false)
+        expect(result.errors[0]).toBeInstanceOf(InvalidLocationError)
+    })
+
+    test("the given user does not exist", async () => {
+        mockUserRepository.getUser.mockResolvedValue(null)
+
+        const result = await userEligibilityLogic.IsUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
+
+        expect(result.value).toBe(false)
+        expect(result.errors[0]).toBeInstanceOf(InvalidUserError)
+    })
+
+    test("the given branch does not exist", async () => {
+        mockBranchRepository.getBranchLocationId.mockResolvedValue(null)
+
+        const result = await userEligibilityLogic.IsUserEligibleToBorrowMediaItemAtBranch(userId, mediaId, branchId)
+
+        expect(result.value).toBe(false)
+        expect(result.errors[0]).toBeInstanceOf(InvalidBranchError)
     })
 })
 

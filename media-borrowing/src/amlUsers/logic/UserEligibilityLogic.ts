@@ -3,6 +3,8 @@ import { Message } from "../../shared/messaging/Message"
 import { IUserEligibilityLogic } from "../interfaces/logic/IUserEligibilityLogic"
 import { User } from "../data/models/user"
 import { InvalidLocationError } from "./errors/invalidLocationError"
+import { InvalidUserError } from "../invalidUserError"
+import { InvalidBranchError } from "../../amlBranches/logic/errors/invalidBranchError"
 
 export class UserEligibilityLogic extends IUserEligibilityLogic {
     constructor(dbContext : IDbContext) {
@@ -24,6 +26,7 @@ export class UserEligibilityLogic extends IUserEligibilityLogic {
             }
         } catch (e) {
             result.addError(e as Error)
+            result.value = false
             this.dbContext.rollback()
         } finally {
             return result
@@ -32,14 +35,22 @@ export class UserEligibilityLogic extends IUserEligibilityLogic {
 
     private async getUser(userId : number) : Promise<User> {
         const userRepository = await this.dbContext.getUserRepository()
-        return await userRepository.getUser(userId)
+        const user = await userRepository.getUser(userId)
+
+        if (user == null) {
+            throw new InvalidUserError(`User ${userId} does not exist.`)
+        }
+
+        return user
     }
 
     private async verifyUserIsInSameCityAsBranch(userLocationId : number, branchId : number, result : Message<boolean>) : Promise<void> {
         const branchRepository = await this.dbContext.getBranchRepository()
         const branchLocationId = await branchRepository.getBranchLocationId(branchId)
 
-        if (!(branchLocationId == userLocationId)) {
+        if (branchLocationId == null) {
+            throw new InvalidBranchError(`Could not find a location associated with branch ${branchId}`)
+        } else if (branchLocationId != userLocationId) {
             result.addError(new InvalidLocationError(`User's location ${userLocationId} does not match branch's location ${branchLocationId}`))
         }
     }
