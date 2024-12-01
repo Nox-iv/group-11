@@ -1,6 +1,5 @@
 import 'reflect-metadata'
 import { IMediaBorrowingRepository } from '../../interfaces/data/repositories'
-import { IMediaRepository } from '../../../mediaInventory/interfaces/data/repositories'
 import { IDbContext } from '../../../db/interfaces/dbContext'
 import { IMediaReturnLogic } from '../../interfaces/logic/mediaReturns/IMediaReturnLogic'
 import { InvalidBorrowingRecordError } from '../mediaBorrowing'
@@ -8,14 +7,15 @@ import { MediaReturnLogic } from './mediaReturnLogic'
 import { Message } from '../../../shared/messaging/Message'
 import { MediaBorrowingRecord } from '../../data/models'
 import { MediaItem } from '../../../mediaInventory/data/models'
+import { IMediaInventoryLogic } from '../../../mediaInventory/interfaces/logic/IMediaInventoryLogic'
 
 jest.mock('../../interfaces/data/repositories')
-jest.mock('../../../mediaInventory/interfaces/data/repositories')
+jest.mock('../../../mediaInventory/interfaces/logic/IMediaInventoryLogic')
 jest.mock('../../../db/interfaces/dbContext')
 
 let mockMediaBorrowingRepository : jest.Mocked<IMediaBorrowingRepository>
-let mockMediaRepository : jest.Mocked<IMediaRepository>
 let mockDbContext : jest.Mocked<IDbContext>
+let mockMediaInventoryLogic : jest.Mocked<IMediaInventoryLogic>
 let mediaReturnLogic : IMediaReturnLogic
 let mediaBorrowingRecordId : number
 let genericMediaBorrowingRecord : MediaBorrowingRecord
@@ -49,17 +49,15 @@ beforeEach(() => {
     mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(new Message(genericMediaBorrowingRecord))
     mockMediaBorrowingRepository.archiveBorrowingRecord.mockResolvedValue(new Message(true))
 
-    mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
-    mockMediaRepository.getByMediaAndBranchId.mockResolvedValue(new Message(genericMediaItem))
-    mockMediaRepository.updateMediaItem.mockResolvedValue(new Message(true))
-
     // Setup db context
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>
     mockDbContext.getMediaBorrowingRepository.mockResolvedValue(mockMediaBorrowingRepository)
-    mockDbContext.getMediaRepository.mockResolvedValue(mockMediaRepository)
 
     // Setup logic
-    mediaReturnLogic = new MediaReturnLogic(mockDbContext)
+    mockMediaInventoryLogic = new IMediaInventoryLogic as jest.Mocked<IMediaInventoryLogic>
+    mockMediaInventoryLogic.incrementMediaItemAvailabilityAtBranch.mockResolvedValue(new Message(true))
+
+    mediaReturnLogic = new MediaReturnLogic(mockDbContext, mockMediaInventoryLogic)
 })
 
 describe("A media item cannot be returned by user if...", () => {
@@ -74,12 +72,10 @@ describe("A media item cannot be returned by user if...", () => {
 
 describe("When a media item is returned by a user...", () => {
     test("the media item's availability count is updated.", async () => {
-        const expectedAvailability = genericMediaItem.availability + 1
         const result = await mediaReturnLogic.returnMediaItem(mediaBorrowingRecordId)
 
         expect(result.value).toBe(true)
-        expect(genericMediaItem.availability).toBe(expectedAvailability)
-        expect(mockMediaRepository.updateMediaItem).toHaveBeenLastCalledWith(genericMediaItem)
+        expect(mockMediaInventoryLogic.incrementMediaItemAvailabilityAtBranch).toHaveBeenCalledWith(genericMediaItem.mediaId, genericMediaItem.branchId)
     })
 
     test("the associated media borrowing record is archived", async () => {

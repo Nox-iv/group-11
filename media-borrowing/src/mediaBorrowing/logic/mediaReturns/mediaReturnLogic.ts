@@ -1,15 +1,17 @@
-import { Inject } from "typedi";
 import { IMediaReturnLogic } from "../../interfaces/logic/mediaReturns/IMediaReturnLogic";
 import { IDbContext } from "../../../db/interfaces/dbContext";
 import { Message } from "../../../shared/messaging/Message";
 import { InvalidBorrowingRecordError } from "../mediaBorrowing";
-import { MediaBorrowingRecord } from "../../data/models";
-import { MediaItem } from "../../../mediaInventory/data/models/MediaItem";
+import { IMediaInventoryLogic } from "../../../mediaInventory/interfaces/logic/IMediaInventoryLogic";
 
 export class MediaReturnLogic extends IMediaReturnLogic {
-    constructor (@Inject() dbContext : IDbContext) {
+    constructor (
+        dbContext : IDbContext,
+        mediaInventoryLogic : IMediaInventoryLogic
+    ) {
         super()
         this.dbContext = dbContext
+        this.mediaInventoryLogic = mediaInventoryLogic
     }
 
     public async returnMediaItem(mediaBorrowingRecordId : number) : Promise<Message<boolean>> {
@@ -21,11 +23,17 @@ export class MediaReturnLogic extends IMediaReturnLogic {
 
             if (mediaBorrowingRecordResult.hasErrors()) {
                 result.addErrorsFromMessage(mediaBorrowingRecordResult)
-            } else if (mediaBorrowingRecordResult.value == null) {
-                result.addError(new InvalidBorrowingRecordError(`Media borrowing record ${mediaBorrowingRecordId} does not exist.`))
-            } else {
+            } 
+
+            if (mediaBorrowingRecordResult.value == null) {
+                result.addError(new InvalidBorrowingRecordError(`Media borrowing record ${mediaBorrowingRecordId} does not exist.`)) 
+            } 
+            
+            if (mediaBorrowingRecordResult.value != null && !mediaBorrowingRecordResult.hasErrors()) {
+                const {mediaId, branchId} = mediaBorrowingRecordResult.value
+
                 await this.archiveMediaBorrowingRecord(mediaBorrowingRecordId, result)
-                await this.incrementMediaItemAvailability(mediaBorrowingRecordResult.value, result)
+                await this.updateMediaItemAvailability(mediaId, branchId, result)
             }
 
             if (!result.hasErrors()) {
@@ -54,32 +62,11 @@ export class MediaReturnLogic extends IMediaReturnLogic {
         }
     }
 
-    private async incrementMediaItemAvailability(mediaBorrowingRecord : MediaBorrowingRecord, result : Message<boolean>) : Promise<void> {
-        const mediaItemResult = await this.getMediaItem(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId)
+    private async updateMediaItemAvailability(mediaId : number, branchId : number, result : Message<boolean>) : Promise<void> {
+        const updateResult = await this.mediaInventoryLogic.incrementMediaItemAvailabilityAtBranch(mediaId, branchId)
 
-        if (mediaItemResult.hasErrors()) {
-            result.addErrorsFromMessage(mediaItemResult)
-        } else if (mediaItemResult.value == null) {
-            result.addError(new Error(`Media item ${mediaBorrowingRecord.mediaId} at branch ${mediaBorrowingRecord.branchId} could not be found.`))
-        } else {
-            const mediaItem = mediaItemResult.value
-            const mediaRepository = await this.dbContext.getMediaRepository()
-
-            mediaItem.availability += 1
-
-            const updateResult = await mediaRepository.updateMediaItem(mediaItem)
-            if (updateResult.hasErrors()) {
-                result.addErrorsFromMessage(updateResult)
-            } else if (updateResult.value == false) {
-                result.addError(new Error(`Media item ${mediaBorrowingRecord.mediaId} at branch ${mediaBorrowingRecord.branchId} could not be updated.`))
-            } 
+        if (updateResult.hasErrors()) {
+            result.addErrorsFromMessage(updateResult)
         }
-    }
-
-    private async getMediaItem(mediaId : number, branchId : number) : Promise<Message<MediaItem>> {
-        const mediaRepository = await this.dbContext.getMediaRepository()
-        const mediaItemResult = await mediaRepository.getByMediaAndBranchId(mediaId, branchId)
-
-        return mediaItemResult
-    }
-}
+    }   
+ }
