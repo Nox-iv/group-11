@@ -4,7 +4,7 @@ import { IMediaBorrowingLogic } from "../../interfaces/logic/mediaBorrowing/IMed
 import { IDbContext } from "../../../db/interfaces/dbContext";
 import { Inject } from "typedi";
 import { InvalidUserError } from "../../../amlUsers/invalidUserError";
-import { InvalidMediaError } from "../../../mediaInventory/logic/invalidMediaError";
+import { InvalidMediaError } from "../../../mediaInventory/logic/errors/invalidMediaError";
 import { InvalidBorrowingRecordError } from "./errors/invalidBorrowingRecordError";
 import { MediaItem } from "../../../mediaInventory/data/models/MediaItem";
 import { IMediaBorrowingDateValidator } from "../../interfaces/logic/mediaBorrowingDateValidation/IMediaBorrowingDateValidator";

@@ -8,7 +8,7 @@ import { IMediaBorrowingDateValidator } from '../../interfaces/logic/mediaBorrow
 import { Message } from '../../../shared/messaging/Message';
 import { MediaBorrowingRecord } from '../../data/models';
 import { InvalidUserError } from '../../../amlUsers/invalidUserError';
-import { InvalidMediaError } from '../../../mediaInventory/logic/invalidMediaError';
+import { InvalidMediaError } from '../../../mediaInventory/logic/errors/invalidMediaError';
 import { MediaBorrowingLogic, InvalidBorrowingRecordError, UnavailableMediaItemError } from '.';
 import { MediaItem } from '../../../mediaInventory/data/models';
 import { InvalidBorrowingDateError } from '../mediaBorrowingDateValidation/errors/invalidBorrowingDateError';
