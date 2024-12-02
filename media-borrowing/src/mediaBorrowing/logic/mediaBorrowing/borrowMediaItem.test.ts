@@ -42,6 +42,7 @@ beforeEach(() => {
     }
 
     genericMediaItem = {
+        mediaItemId: 1,
         mediaId: 1,
         branchId: 1,
         availability: 1

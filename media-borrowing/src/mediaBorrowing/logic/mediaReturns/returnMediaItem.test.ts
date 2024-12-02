@@ -39,6 +39,7 @@ beforeEach(() => {
     genericMediaBorrowingRecord.endDate.setDate(genericMediaBorrowingRecord.startDate.getDate() + 14)
 
     genericMediaItem = {
+        mediaItemId : 1,
         mediaId : 1,
         branchId : 1,
         availability : 1

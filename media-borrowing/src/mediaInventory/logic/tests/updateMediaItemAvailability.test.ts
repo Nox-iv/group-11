@@ -17,6 +17,7 @@ jest.mock("../../../db/interfaces/dbContext")
 beforeEach(() => {
     // Setup data
     genericMediaItem = {
+        mediaItemId : 1,
         mediaId : 1,
         branchId : 1,
         availability : 1
