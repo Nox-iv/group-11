@@ -11,6 +11,9 @@ export class UserRepository extends IUserRepository {
     }
 
     public async getUser(userId : number) : Promise<User> {
-        return {} as User
+        const connection = this.uow.getTransaction().getConnection()
+        const user = await connection.query<User>("SELECT * FROM users WHERE id = $1", [userId])
+
+        return user[0]
     }
 } 
