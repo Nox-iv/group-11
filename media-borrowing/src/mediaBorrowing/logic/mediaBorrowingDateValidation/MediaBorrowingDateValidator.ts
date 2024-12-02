@@ -16,18 +16,23 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
         const result = new Message(false)
         const {startDate, endDate, branchId} = borrowingDateValidationRequest
 
-        this.validateDateRangeAgainstMinimumBorrowingDuration(startDate, endDate, result)
-        await this.validateDateRangeAgainstBranchOpeningHours(startDate, endDate, branchId, result)
-        await this.validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest, result)
+        try {
+            this.validateDateRangeAgainstMinimumBorrowingDuration(startDate, endDate, result)
+            await this.validateDateRangeAgainstBranchOpeningHours(startDate, endDate, branchId, result)
+            await this.validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest, result)
 
-        if(!result.hasErrors()) {
-            result.value = true
-            this.dbContext.commit()
-        } else {
+            if(!result.hasErrors()) {
+                result.value = true
+                this.dbContext.commit()
+            } else {
+                this.dbContext.rollback()
+            }
+        } catch(e) {
+            result.addError(e as Error)
             this.dbContext.rollback()
+        } finally {
+            return result
         }
-
-        return result 
     }
 
     private validateDateRangeAgainstMinimumBorrowingDuration(startDate : Date, endDate : Date, result : Message<boolean>) {
