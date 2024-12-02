@@ -92,6 +92,6 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
 
     private async updateMediaItem(mediaItem : MediaItem) {
         const mediaRepository = await this.dbContext.getMediaRepository()
-        await mediaRepository.updateMediaItem(mediaItem)
+        await mediaRepository.updateMediaItemAvailability(mediaItem)
     }
  }

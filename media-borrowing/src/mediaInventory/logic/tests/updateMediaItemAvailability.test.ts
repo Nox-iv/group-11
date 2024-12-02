@@ -1,5 +1,4 @@
 import 'reflect-metadata'
-import { Message } from "../../../shared/messaging/Message"
 import { IDbContext } from "../../../db/interfaces/dbContext"
 import { MediaItem } from "../../data/models"
 import { IMediaRepository } from "../../interfaces/data/repositories"
@@ -58,7 +57,7 @@ describe("A media item's availability is correctly updated when...", () => {
 
         expect(result.value).toBe(true)
         expect(genericMediaItem.availability).toBe(expectedAvailability)
-        expect(mockMediaRepository.updateMediaItem).toHaveBeenCalledWith(genericMediaItem)
+        expect(mockMediaRepository.updateMediaItemAvailability).toHaveBeenCalledWith(genericMediaItem)
     })
 
     test("the media item's availability is decremented", async () => {
@@ -68,6 +67,6 @@ describe("A media item's availability is correctly updated when...", () => {
 
         expect(result.value).toBe(true)
         expect(genericMediaItem.availability).toBe(expectedAvailability)
-        expect(mockMediaRepository.updateMediaItem).toHaveBeenCalledWith(genericMediaItem)
+        expect(mockMediaRepository.updateMediaItemAvailability).toHaveBeenCalledWith(genericMediaItem)
     })
 })

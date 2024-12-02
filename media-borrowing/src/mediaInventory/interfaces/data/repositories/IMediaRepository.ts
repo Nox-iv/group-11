@@ -6,7 +6,7 @@ export class IMediaRepository {
         throw new NotImplementedError()
     }
 
-    public updateMediaItem(mediaItem : MediaItem) : Promise<void> {
+    public updateMediaItemAvailability(mediaItem : MediaItem) : Promise<void> {
         throw new NotImplementedError()
     }
 }

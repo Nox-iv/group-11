@@ -1,8 +1,6 @@
 import { IMediaRepository } from "../../interfaces/data/repositories";
 import { IUnitOfWork } from "../../../db/interfaces/uow";
 import { MediaItem } from "../models";
-import { NotImplementedError } from "../../../shared/errors/notImplementedError";
-import { Message } from "../../../shared/messaging/Message";
 
 export class MediaRepository extends IMediaRepository {
     private uow : IUnitOfWork
@@ -21,5 +19,14 @@ export class MediaRepository extends IMediaRepository {
         }
 
         return result[0]
+    }
+
+    public async updateMediaItemAvailability(mediaItem : MediaItem) : Promise<void> {
+        const connection = this.uow.getTransaction().getConnection()
+
+        await connection.command(
+            `UPDATE MediaItems SET availability = $1 WHERE id = $2`,
+            [mediaItem.availability, mediaItem.mediaItemId]
+        )
     }
 } 
