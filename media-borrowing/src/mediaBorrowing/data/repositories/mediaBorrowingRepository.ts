@@ -17,7 +17,7 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
         const conn = this.getConnection()
 
         await conn.command(
-            `INSERT INTO media_borrowing_records (
+            `INSERT INTO MediaBorrowingRecords (
                 userId, 
                 mediaId, 
                 branchId, 
@@ -37,7 +37,27 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
     }
 
     public async updateBorrowingRecord(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<void> {
+        const conn = this.getConnection()
 
+        await conn.command(
+            `UPDATE MediaBorrowingRecords SET 
+                userId = $1, 
+                mediaId = $2, 
+                branchId = $3, 
+                startDate = $4, 
+                endDate = $5, 
+                renewals = $6
+            WHERE mediaBorrowingRecordId = $7`,
+            [
+                mediaBorrowingRecord.userId,
+                mediaBorrowingRecord.mediaId,
+                mediaBorrowingRecord.branchId,
+                mediaBorrowingRecord.startDate,
+                mediaBorrowingRecord.endDate,
+                mediaBorrowingRecord.renewals,
+                mediaBorrowingRecord.mediaBorrowingRecordId
+            ]
+        )
     }
 
     public doesBorrowingRecordExist(userId : number, mediaId: number, branchId : number) : Promise<boolean> {
