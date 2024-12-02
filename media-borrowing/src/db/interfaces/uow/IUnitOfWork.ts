@@ -4,7 +4,7 @@ import { NotImplementedError } from "../../../shared/errors/notImplementedError"
 export class IUnitOfWork {
     constructor() {}
 
-    getTransaction() : IDbTransaction | null {
+    getTransaction() : IDbTransaction {
         throw new NotImplementedError()
     }
 
