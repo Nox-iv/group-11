@@ -4,7 +4,7 @@ import { IMediaBorrowingReader } from '../interfaces/logic/IMediaBorrowingReader
 export class MediaBorrowingReaderApi {
     constructor(private readonly mediaBorrowingReader: IMediaBorrowingReader) {}
 
-    async getMediaBorrowingRecords(req: Request, res: Response): Promise<void> {
+    async getMediaBorrowingRecordsForUser(req: Request, res: Response): Promise<void> {
         try {
             const userId = parseInt(req.params.userId);
             const offset = parseInt(req.query.offset as string ?? '0');
