@@ -1,6 +1,5 @@
 import { IUserRepository } from "../../interfaces/data/repositories/IUserRepository";
 import { IUnitOfWork } from "../../../db/interfaces/uow";
-import { Message } from "../../../shared/messaging/Message";
 import { User } from "../models/user";
 
 export class UserRepository extends IUserRepository {
