@@ -71,8 +71,6 @@ beforeEach(() => {
     mockMediaInventoryLogic.isMediaItemAvailableAtBranch.mockResolvedValue(new Message(true))
     mockMediaInventoryLogic.incrementMediaItemAvailabilityAtBranch.mockResolvedValue(new Message(true))
 
-    
-
     // Setup media borrowing logic.
     mediaBorrowingLogic = new MediaBorrowingLogic(mockDbContext, mockUserEligibilityLogic, mockMediaInventoryLogic, mockMediaBorrowingDateValidator)
 });
@@ -137,5 +135,13 @@ describe("When a media item is borrowed by a user...", () => {
 
         expect(result.value).toBe(true)
         expect(mockMediaInventoryLogic.decrementMediaItemAvailabilityAtBranch).toHaveBeenCalledWith(genericMediaItem.mediaId, genericMediaItem.branchId)
+    })
+
+    test("the renewals field is set to 0", async () => {
+        genericMediaBorrowingRecord.renewals = 1
+        const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
+
+        expect(result.value).toBe(true)
+        expect(genericMediaBorrowingRecord.renewals).toBe(0)
     })
 })

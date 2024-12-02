@@ -36,6 +36,7 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
             await this.rejectIfUserIsAlreadyBorrowingMediaItem(mediaBorrowingRecord, result)
     
             if (!result.hasErrors()) {
+                mediaBorrowingRecord.renewals = 0
                 await mediaBorrowingRepository.insertBorrowingRecord(mediaBorrowingRecord)
                 await this.mediaInventoryLogic.decrementMediaItemAvailabilityAtBranch(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId)
                 this.dbContext.commit()
