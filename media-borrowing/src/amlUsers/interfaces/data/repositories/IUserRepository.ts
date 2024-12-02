@@ -3,10 +3,6 @@ import { NotImplementedError } from "../../../../shared/errors/notImplementedErr
 import { User } from "../../../data/models/user";
 
 export class IUserRepository {
-    hasUser(userId: number) : Promise<Message<boolean>> {
-        throw new NotImplementedError()
-    }
-
     public getUser(userId : number) : Promise<User | null> {
         throw new NotImplementedError()
     }

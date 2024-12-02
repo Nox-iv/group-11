@@ -11,12 +11,6 @@ export class UserRepository extends IUserRepository {
         this.uow = uow
     }
 
-    hasUser(userId: number): Promise<Message<boolean>> {
-        const result = new Message(false)
-
-        return new Promise(() => null)
-    }
-
     public async getUser(userId : number) : Promise<User> {
         return {} as User
     }
