@@ -11,8 +11,12 @@ export class UnitOfWork extends IUnitOfWork {
         this.connection = transaction.getConnection()
     }
 
-    getTransaction() : IDbTransaction | null {
-        return this.transaction ?? null
+    getTransaction() : IDbTransaction {
+        if (this.transaction == null) {
+            throw new Error("Transaction not found.")
+        }
+
+        return this.transaction
     }
 
     commit() : void {
