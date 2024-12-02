@@ -12,7 +12,14 @@ export class MediaRepository extends IMediaRepository {
         this.uow = uow
     }
 
-    public getItemByMediaAndBranchId(mediaId: number, branchId : number) : Promise<MediaItem | null> {
-        throw new NotImplementedError()
+    public async getItemByMediaAndBranchId(mediaId: number, branchId : number) : Promise<MediaItem | null> {
+        const connection = this.uow.getTransaction().getConnection()
+        const result = await connection.query<MediaItem>("SELECT * FROM MediaItems WHERE id = $1 AND branch_id = $2", [mediaId, branchId])
+
+        if (result.length == 0) {
+            return null
+        }
+
+        return result[0]
     }
 } 
