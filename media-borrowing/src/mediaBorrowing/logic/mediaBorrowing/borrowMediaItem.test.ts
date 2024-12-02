@@ -55,7 +55,7 @@ beforeEach(() => {
 
     // Setup mock repositories.
     mockMediaBorrowingRepository = new IMediaBorrowingRepository() as jest.Mocked<IMediaBorrowingRepository>
-    mockMediaBorrowingRepository.hasBorrowingRecord.mockResolvedValue(false)
+    mockMediaBorrowingRepository.hasMediaBorrowingRecord.mockResolvedValue(false)
 
     // Setup mock DB context.
     mockDbContext = new IDbContext() as jest.Mocked<IDbContext>;
@@ -105,7 +105,7 @@ describe("A media item cannot be borrowed if ...", () => {
     })
 
     test("the user is already borrowing the requested media item.", async () => {
-        mockMediaBorrowingRepository.hasBorrowingRecord.mockResolvedValue(true)
+        mockMediaBorrowingRepository.hasMediaBorrowingRecord.mockResolvedValue(true)
 
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
@@ -127,7 +127,7 @@ describe("When a media item is borrowed by a user...", () => {
     test("the media borrowing database is updated", async () => {
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
-        expect(mockMediaBorrowingRepository.insertBorrowingRecord).toHaveBeenCalledWith(genericMediaBorrowingRecord)
+        expect(mockMediaBorrowingRepository.insertMediaBorrowingRecord).toHaveBeenCalledWith(genericMediaBorrowingRecord)
         expect(result.value).toBe(true)
     })
 

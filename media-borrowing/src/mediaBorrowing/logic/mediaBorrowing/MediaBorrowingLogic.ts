@@ -37,7 +37,7 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
     
             if (!result.hasErrors()) {
                 mediaBorrowingRecord.renewals = 0
-                await mediaBorrowingRepository.insertBorrowingRecord(mediaBorrowingRecord)
+                await mediaBorrowingRepository.insertMediaBorrowingRecord(mediaBorrowingRecord)
                 await this.mediaInventoryLogic.decrementMediaItemAvailabilityAtBranch(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId)
                 this.dbContext.commit()
                 result.value = true
@@ -91,7 +91,7 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         const {userId, mediaId, branchId} = mediaBorrowingRecord
         const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
 
-        if (await mediaBorrowingRepository.hasBorrowingRecord(userId, mediaId, branchId)) {
+        if (await mediaBorrowingRepository.hasMediaBorrowingRecord(userId, mediaId, branchId)) {
             result.addError(new InvalidBorrowingRecordError(`User ${userId} is already borrowing media item ${mediaId}`))
         }
     }

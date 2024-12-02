@@ -50,7 +50,7 @@ beforeEach(() => {
     // Setup mock repositories.
     mockMediaBorrowingRepository = new IMediaBorrowingRepository() as jest.Mocked<IMediaBorrowingRepository>
 
-    mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(genericMediaBorrowingRecord)
+    mockMediaBorrowingRepository.getMediaBorrowingRecordById.mockResolvedValue(genericMediaBorrowingRecord)
 
     mockMediaBorrowingConfigRepository = new IMediaBorrowingConfigRepository as jest.Mocked<IMediaBorrowingConfigRepository>
     mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(5)
@@ -69,7 +69,7 @@ beforeEach(() => {
 
 describe("A user cannot renew a borrowed media item if...", () => {
     test("they are not actively borrowing the media item.", async () => {
-        mockMediaBorrowingRepository.getBorrowingRecordById.mockResolvedValue(null)
+        mockMediaBorrowingRepository.getMediaBorrowingRecordById.mockResolvedValue(null)
 
         const result = await mediaRenewalLogic.renewMediaItem(genericMediaRenewalRequest)
 
@@ -113,6 +113,6 @@ describe("When a media borrowing record is renewed...", () => {
         const result = await mediaRenewalLogic.renewMediaItem(genericMediaRenewalRequest)
 
         expect(result.value).toBe(true)
-        expect(mockMediaBorrowingRepository.updateBorrowingRecord).toHaveBeenCalledWith(genericMediaBorrowingRecord)
+        expect(mockMediaBorrowingRepository.updateMediaBorrowingRecord).toHaveBeenCalledWith(genericMediaBorrowingRecord)
     })
 })

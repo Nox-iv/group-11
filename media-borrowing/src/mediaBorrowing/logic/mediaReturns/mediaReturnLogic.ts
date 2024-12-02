@@ -19,12 +19,12 @@ export class MediaReturnLogic extends IMediaReturnLogic {
 
         try {
             const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
-            const mediaBorrowingRecord = await mediaBorrowingRepository.getBorrowingRecordById(mediaBorrowingRecordId)
+            const mediaBorrowingRecord = await mediaBorrowingRepository.getMediaBorrowingRecordById(mediaBorrowingRecordId)
 
             if (mediaBorrowingRecord == null) {
                 result.addError(new InvalidBorrowingRecordError(`Media borrowing record ${mediaBorrowingRecordId} does not exist.`)) 
             } else {
-                await mediaBorrowingRepository.archiveBorrowingRecord(mediaBorrowingRecordId)
+                await mediaBorrowingRepository.archiveMediaBorrowingRecord(mediaBorrowingRecordId)
                 await this.updateMediaItemAvailability(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId, result)
             }
 
