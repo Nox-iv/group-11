@@ -6,7 +6,7 @@ import { InvalidBorrowingRecordError } from '../mediaBorrowing'
 import { MediaReturnLogic } from './mediaReturnLogic'
 import { Message } from '../../../shared/messaging/Message'
 import { MediaBorrowingRecord } from '../../data/models'
-import { MediaItem } from '../../../mediaInventory/data/models'
+import { MediaInventoryRecord } from '../../../mediaInventory/data/models'
 import { IMediaInventoryLogic } from '../../../mediaInventory/interfaces/logic/IMediaInventoryLogic'
 
 jest.mock('../../interfaces/data/repositories')
@@ -19,7 +19,7 @@ let mockMediaInventoryLogic : jest.Mocked<IMediaInventoryLogic>
 let mediaReturnLogic : IMediaReturnLogic
 let mediaBorrowingRecordId : number
 let genericMediaBorrowingRecord : MediaBorrowingRecord
-let genericMediaItem : MediaItem
+let genericMediaInventoryRecord : MediaInventoryRecord
 
 beforeEach(() => {
     // Setup data
@@ -38,8 +38,8 @@ beforeEach(() => {
     genericMediaBorrowingRecord.endDate = genericMediaBorrowingRecord.startDate
     genericMediaBorrowingRecord.endDate.setDate(genericMediaBorrowingRecord.startDate.getDate() + 14)
 
-    genericMediaItem = {
-        mediaItemId : 1,
+    genericMediaInventoryRecord = {
+        mediaInventoryId : 1,
         mediaId : 1,
         branchId : 1,
         availability : 1
@@ -76,7 +76,7 @@ describe("When a media item is returned by a user...", () => {
         const result = await mediaReturnLogic.returnMediaItem(mediaBorrowingRecordId)
 
         expect(result.value).toBe(true)
-        expect(mockMediaInventoryLogic.incrementMediaItemAvailabilityAtBranch).toHaveBeenCalledWith(genericMediaItem.mediaId, genericMediaItem.branchId)
+        expect(mockMediaInventoryLogic.incrementMediaItemAvailabilityAtBranch).toHaveBeenCalledWith(genericMediaInventoryRecord.mediaId, genericMediaInventoryRecord.branchId)
     })
 
     test("the associated media borrowing record is archived", async () => {

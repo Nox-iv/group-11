@@ -1,3 +1,3 @@
-import { MediaItem } from "./MediaItem";
+import { MediaInventoryRecord } from "./MediaInventoryRecord";
 
-export { MediaItem }
+export { MediaInventoryRecord }

@@ -1,5 +1,5 @@
-export interface MediaItem {
-    mediaItemId: number,
+export interface MediaInventoryRecord {
+    mediaInventoryId: number,
     mediaId: number,
     branchId: number,
     availability: number,

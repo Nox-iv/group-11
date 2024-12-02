@@ -1,6 +1,6 @@
 import { Inject } from "typedi"
 import { Message } from "../../shared/messaging/Message"
-import { MediaItem } from "../data/models"
+import { MediaInventoryRecord } from "../data/models"
 import { IMediaInventoryLogic } from "../interfaces/logic/IMediaInventoryLogic"
 import { IDbContext } from "../../db/interfaces/dbContext"
 import { InvalidMediaError } from "./errors/invalidMediaError"
@@ -79,9 +79,9 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
         }
     }
 
-    private async getMediaItem(mediaId : number, branchId : number) : Promise<MediaItem> {
-        const mediaRepository = await this.dbContext.getMediaRepository()
-        const mediaItem = await mediaRepository.getItemByMediaAndBranchId(mediaId, branchId)
+    private async getMediaItem(mediaId : number, branchId : number) : Promise<MediaInventoryRecord> {
+        const mediaInventoryRepository = await this.dbContext.getMediaInventoryRepository()
+        const mediaItem = await mediaInventoryRepository.getInventoryByMediaAndBranchId(mediaId, branchId)
 
         if (mediaItem != null) {
             return mediaItem
@@ -90,8 +90,8 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
         }
     }
 
-    private async updateMediaItem(mediaItem : MediaItem) {
-        const mediaRepository = await this.dbContext.getMediaRepository()
-        await mediaRepository.updateMediaItemAvailability(mediaItem)
+    private async updateMediaItem(mediaInventoryRecord : MediaInventoryRecord) {
+        const mediaInventoryRepository = await this.dbContext.getMediaInventoryRepository()
+        await mediaInventoryRepository.updateMediaItemAvailability(mediaInventoryRecord)
     }
  }

@@ -2,10 +2,10 @@ import { Inject } from "typedi"
 import { IUnitOfWorkFactory } from "../interfaces/uow"
 import { IDbContext } from "../interfaces/dbContext"
 import { IMediaBorrowingRepository, IMediaBorrowingConfigRepository } from  "../../mediaBorrowing/interfaces/data/repositories"
-import { IMediaRepository } from "../../mediaInventory/interfaces/data/repositories"
+import { IMediaInventoryRepository } from "../../mediaInventory/interfaces/data/repositories"
 import { IUserRepository } from "../../amlUsers/interfaces/data/repositories/IUserRepository"
 import { MediaBorrowingRepository, MediaBorrowingConfigRepository } from "../../mediaBorrowing/data/repositories"
-import { MediaRepository } from "../../mediaInventory/data/repositories"
+import { MediaInventoryRepository } from "../../mediaInventory/data/repositories"
 import { UserRepository } from "../../amlUsers/data/repositories"
 
 
@@ -18,7 +18,7 @@ export class DbContext extends IDbContext {
         this.unitOfWork = null
         this.mediaBorrowingRepository = null
         this.userRepository = null
-        this.mediaRepository = null
+        this.mediaInventoryRepository = null
         this.mediaBorrowingConfigRepository = null
     }
 
@@ -38,12 +38,12 @@ export class DbContext extends IDbContext {
         return this.userRepository
     }
 
-    public async getMediaRepository(): Promise<IMediaRepository> {
-        if (this.mediaRepository == null) {
-            this.mediaRepository = new MediaRepository(await this.getUnitOfWork())
+    public async getMediaInventoryRepository(): Promise<IMediaInventoryRepository> {
+        if (this.mediaInventoryRepository == null) {
+            this.mediaInventoryRepository = new MediaInventoryRepository(await this.getUnitOfWork())
         }
 
-        return this.mediaRepository
+        return this.mediaInventoryRepository
     }
 
     public async getMediaBorrowingConfigRepository() : Promise<IMediaBorrowingConfigRepository> {
@@ -92,7 +92,7 @@ export class DbContext extends IDbContext {
         this.unitOfWork = null
         this.mediaBorrowingRepository = null
         this.userRepository = null
-        this.mediaRepository = null 
+        this.mediaInventoryRepository = null 
         this.mediaBorrowingConfigRepository = null
     }
 }

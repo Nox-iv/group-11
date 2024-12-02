@@ -1,13 +1,12 @@
 import 'reflect-metadata'
-import { Message } from "../../../shared/messaging/Message"
 import { IDbContext } from "../../../db/interfaces/dbContext"
-import { MediaItem } from "../../data/models"
-import { IMediaRepository } from "../../interfaces/data/repositories"
+import { MediaInventoryRecord } from "../../data/models"
+import { IMediaInventoryRepository } from "../../interfaces/data/repositories"
 import { InvalidMediaError } from "../errors/invalidMediaError"
 import { MediaInventoryLogic } from "../mediaInventoryLogic"
 
-let genericMediaItem : MediaItem
-let mockMediaRepository : jest.Mocked<IMediaRepository>
+let genericMediaInventoryRecord : MediaInventoryRecord
+let mockMediaInventoryRepository : jest.Mocked<IMediaInventoryRepository>
 let mockDbContext : jest.Mocked<IDbContext>
 let mediaInventoryLogic : MediaInventoryLogic
 
@@ -16,20 +15,20 @@ jest.mock("../../../db/interfaces/dbContext")
 
 beforeEach(() => {
     // Setup data
-    genericMediaItem = {
-        mediaItemId : 1,
+    genericMediaInventoryRecord = {
+        mediaInventoryId : 1,
         mediaId : 1,
         branchId : 1,
         availability : 1
     }
 
     // Setup repositories
-    mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
-    mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(genericMediaItem)
+    mockMediaInventoryRepository = new IMediaInventoryRepository as jest.Mocked<IMediaInventoryRepository>
+    mockMediaInventoryRepository.getInventoryByMediaAndBranchId.mockResolvedValue(genericMediaInventoryRecord)
 
     // Setup db context
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>
-    mockDbContext.getMediaRepository.mockResolvedValue(mockMediaRepository)
+    mockDbContext.getMediaInventoryRepository.mockResolvedValue(mockMediaInventoryRepository)
 
     // Setup logic
     mediaInventoryLogic = new MediaInventoryLogic(mockDbContext)
@@ -37,25 +36,25 @@ beforeEach(() => {
 
 describe("The correct availability status is returned when...", () => {
     test("a media item is unavailable", async () => {
-        genericMediaItem.availability = 0
+        genericMediaInventoryRecord.availability = 0
 
-        const result = await mediaInventoryLogic.isMediaItemAvailableAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)
+        const result = await mediaInventoryLogic.isMediaItemAvailableAtBranch(genericMediaInventoryRecord.mediaId, genericMediaInventoryRecord.branchId)
 
         expect(result.value).toBe(false)
         expect(result.errors.length).toBe(0)
     })
 
     test("a media item is available", async () => {
-        const result = await mediaInventoryLogic.isMediaItemAvailableAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)
+        const result = await mediaInventoryLogic.isMediaItemAvailableAtBranch(genericMediaInventoryRecord.mediaId, genericMediaInventoryRecord.branchId)
         expect(result.value).toBe(true)
     })
 })
 
 describe("If the given media-branch combination is invalid...", () => {
     test("an error is returned in the result", async () => {
-        mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(null)
+        mockMediaInventoryRepository.getInventoryByMediaAndBranchId.mockResolvedValue(null)
 
-        const result = await mediaInventoryLogic.isMediaItemAvailableAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)
+        const result = await mediaInventoryLogic.isMediaItemAvailableAtBranch(genericMediaInventoryRecord.mediaId, genericMediaInventoryRecord.branchId)
 
         expect(result.value).toBe(false)
         expect(result.errors[0]).toBeInstanceOf(InvalidMediaError)

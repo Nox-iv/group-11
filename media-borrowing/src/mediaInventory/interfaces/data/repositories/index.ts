@@ -1,3 +1,3 @@
-import { IMediaRepository } from "./IMediaRepository";
+import { IMediaInventoryRepository } from "./IMediaInventoryRepository";
 
-export { IMediaRepository }
+export { IMediaInventoryRepository }

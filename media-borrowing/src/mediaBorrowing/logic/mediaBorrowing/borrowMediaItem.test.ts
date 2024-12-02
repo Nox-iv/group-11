@@ -8,7 +8,7 @@ import { MediaBorrowingRecord } from '../../data/models';
 import { InvalidUserError } from '../../../amlUsers/logic/errors/invalidUserError';
 import { InvalidMediaError } from '../../../mediaInventory/logic/errors/invalidMediaError';
 import { MediaBorrowingLogic, InvalidBorrowingRecordError, UnavailableMediaItemError } from '.';
-import { MediaItem } from '../../../mediaInventory/data/models';
+import { MediaInventoryRecord } from '../../../mediaInventory/data/models';
 import { InvalidBorrowingDateError } from '../mediaBorrowingDateValidation/errors/invalidBorrowingDateError';
 import { IMediaInventoryLogic } from '../../../mediaInventory/interfaces/logic/IMediaInventoryLogic';
 import { IUserEligibilityLogic } from '../../../amlUsers/interfaces/logic/IUserEligibilityLogic';
@@ -27,7 +27,7 @@ let mockMediaInventoryLogic : jest.Mocked<IMediaInventoryLogic>
 let mockUserEligibilityLogic : jest.Mocked<IUserEligibilityLogic>
 let mediaBorrowingLogic : IMediaBorrowingLogic
 let genericMediaBorrowingRecord : MediaBorrowingRecord
-let genericMediaItem : MediaItem
+let genericMediaInventoryRecord : MediaInventoryRecord
 
 beforeEach(() => {
     // Setup data.
@@ -41,8 +41,8 @@ beforeEach(() => {
         renewals: 0
     }
 
-    genericMediaItem = {
-        mediaItemId: 1,
+    genericMediaInventoryRecord = {
+        mediaInventoryId: 1,
         mediaId: 1,
         branchId: 1,
         availability: 1
@@ -135,7 +135,7 @@ describe("When a media item is borrowed by a user...", () => {
         const result = await mediaBorrowingLogic.BorrowMediaItem(genericMediaBorrowingRecord)
 
         expect(result.value).toBe(true)
-        expect(mockMediaInventoryLogic.decrementMediaItemAvailabilityAtBranch).toHaveBeenCalledWith(genericMediaItem.mediaId, genericMediaItem.branchId)
+        expect(mockMediaInventoryLogic.decrementMediaItemAvailabilityAtBranch).toHaveBeenCalledWith(genericMediaInventoryRecord.mediaId, genericMediaInventoryRecord.branchId)
     })
 
     test("the renewals field is set to 0", async () => {

@@ -1,11 +1,10 @@
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
 import { IMediaBorrowingRepository } from "../../../mediaBorrowing/interfaces/data/repositories"
 import { IMediaBorrowingConfigRepository } from "../../../mediaBorrowing/interfaces/data/repositories";
-import { IMediaRepository } from "../../../mediaInventory/interfaces/data/repositories";
+import { IMediaInventoryRepository } from "../../../mediaInventory/interfaces/data/repositories";
 import { IBranchRepository } from "../../../amlBranches/interfaces/data/repositories";
 import { IUserRepository } from "../../../amlUsers/interfaces/data/repositories/IUserRepository";
 import { IUnitOfWork, IUnitOfWorkFactory } from "../uow";
-import { IMediaBorrowingReaderRepository } from "../../../mediaBorrowingReader/interfaces/data/repositories/IMediaBorrowingReaderRepository";
 
 export class IDbContext {
     //@ts-ignore 
@@ -21,7 +20,7 @@ export class IDbContext {
     protected userRepository : IUserRepository | null
 
     //@ts-ignore 
-    protected mediaRepository : IMediaRepository | null
+    protected mediaInventoryRepository : IMediaInventoryRepository | null
 
     //@ts-ignore
     protected mediaBorrowingConfigRepository : IMediaBorrowingConfigRepository | null
@@ -39,7 +38,7 @@ export class IDbContext {
         throw new NotImplementedError()
     }
 
-    public getMediaRepository() : Promise<IMediaRepository> {
+    public getMediaInventoryRepository() : Promise<IMediaInventoryRepository> {
         throw new NotImplementedError()
     }
 

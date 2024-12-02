@@ -1,12 +1,12 @@
 import 'reflect-metadata'
 import { IDbContext } from "../../../db/interfaces/dbContext"
-import { MediaItem } from "../../data/models"
-import { IMediaRepository } from "../../interfaces/data/repositories"
+import { MediaInventoryRecord } from "../../data/models"
+import { IMediaInventoryRepository } from "../../interfaces/data/repositories"
 import { InvalidMediaError } from "../errors/invalidMediaError"
 import { MediaInventoryLogic } from "../mediaInventoryLogic"
 
-let genericMediaItem : MediaItem
-let mockMediaRepository : jest.Mocked<IMediaRepository>
+let genericMediaInventoryRecord : MediaInventoryRecord
+let mockMediaInventoryRepository : jest.Mocked<IMediaInventoryRepository>
 let mockDbContext : jest.Mocked<IDbContext>
 let mediaInventoryLogic : MediaInventoryLogic
 
@@ -15,20 +15,20 @@ jest.mock("../../../db/interfaces/dbContext")
 
 beforeEach(() => {
     // Setup data
-    genericMediaItem = {
-        mediaItemId : 1,
+    genericMediaInventoryRecord = {
+        mediaInventoryId : 1,
         mediaId : 1,
         branchId : 1,
         availability : 1
     }
 
     // Setup repositories
-    mockMediaRepository = new IMediaRepository as jest.Mocked<IMediaRepository>
-    mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(genericMediaItem)
+    mockMediaInventoryRepository = new IMediaInventoryRepository as jest.Mocked<IMediaInventoryRepository>
+    mockMediaInventoryRepository.getInventoryByMediaAndBranchId.mockResolvedValue(genericMediaInventoryRecord)
 
     // Setup db context
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>
-    mockDbContext.getMediaRepository.mockResolvedValue(mockMediaRepository)
+    mockDbContext.getMediaInventoryRepository.mockResolvedValue(mockMediaInventoryRepository)
 
 
     // Setup logic
@@ -37,10 +37,10 @@ beforeEach(() => {
 
 describe("A media item's availability cannot be updated if...", () => {
     test("the media-branch combination is invalid", async () => {
-        mockMediaRepository.getItemByMediaAndBranchId.mockResolvedValue(null)
+        mockMediaInventoryRepository.getInventoryByMediaAndBranchId.mockResolvedValue(null)
 
-        const incrementResult = await mediaInventoryLogic.incrementMediaItemAvailabilityAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)
-        const decrementResult = await mediaInventoryLogic.decrementMediaItemAvailabilityAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)
+        const incrementResult = await mediaInventoryLogic.incrementMediaItemAvailabilityAtBranch(genericMediaInventoryRecord.mediaId, genericMediaInventoryRecord.branchId)
+        const decrementResult = await mediaInventoryLogic.decrementMediaItemAvailabilityAtBranch(genericMediaInventoryRecord.mediaId, genericMediaInventoryRecord.branchId)
 
         expect(incrementResult.value).toBe(false)
         expect(decrementResult.value).toBe(false)
@@ -51,22 +51,22 @@ describe("A media item's availability cannot be updated if...", () => {
 
 describe("A media item's availability is correctly updated when...", () => {
     test("the media item's availability is incremented", async () => {
-        const expectedAvailability = genericMediaItem.availability + 1
+        const expectedAvailability = genericMediaInventoryRecord.availability + 1
 
-        const result = await mediaInventoryLogic.incrementMediaItemAvailabilityAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)
+        const result = await mediaInventoryLogic.incrementMediaItemAvailabilityAtBranch(genericMediaInventoryRecord.mediaId, genericMediaInventoryRecord.branchId)
 
         expect(result.value).toBe(true)
-        expect(genericMediaItem.availability).toBe(expectedAvailability)
-        expect(mockMediaRepository.updateMediaItemAvailability).toHaveBeenCalledWith(genericMediaItem)
+        expect(genericMediaInventoryRecord.availability).toBe(expectedAvailability)
+        expect(mockMediaInventoryRepository.updateMediaItemAvailability).toHaveBeenCalledWith(genericMediaInventoryRecord)
     })
 
     test("the media item's availability is decremented", async () => {
-        const expectedAvailability = genericMediaItem.availability - 1
+        const expectedAvailability = genericMediaInventoryRecord.availability - 1
 
-        const result = await mediaInventoryLogic.decrementMediaItemAvailabilityAtBranch(genericMediaItem.mediaId, genericMediaItem.branchId)
+        const result = await mediaInventoryLogic.decrementMediaItemAvailabilityAtBranch(genericMediaInventoryRecord.mediaId, genericMediaInventoryRecord.branchId)
 
         expect(result.value).toBe(true)
-        expect(genericMediaItem.availability).toBe(expectedAvailability)
-        expect(mockMediaRepository.updateMediaItemAvailability).toHaveBeenCalledWith(genericMediaItem)
+        expect(genericMediaInventoryRecord.availability).toBe(expectedAvailability)
+        expect(mockMediaInventoryRepository.updateMediaItemAvailability).toHaveBeenCalledWith(genericMediaInventoryRecord)
     })
 })
