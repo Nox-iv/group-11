@@ -5,6 +5,7 @@ import { IMediaRepository } from "../../../mediaInventory/interfaces/data/reposi
 import { IBranchRepository } from "../../../amlBranches/interfaces/data/repositories";
 import { IUserRepository } from "../../../amlUsers/interfaces/data/repositories/IUserRepository";
 import { IUnitOfWork, IUnitOfWorkFactory } from "../uow";
+import { IMediaBorrowingReaderRepository } from "../../../mediaBorrowingReader/interfaces/data/repositories/IMediaBorrowingReaderRepository";
 
 export class IDbContext {
     //@ts-ignore 
