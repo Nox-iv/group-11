@@ -11,7 +11,15 @@ export class MediaBorrowingConfigRepository extends IMediaBorrowingConfigReposit
 
     public async getRenewalLimit(branchId : number) : Promise<number | null> {
         const connection = this.uow.getTransaction().getConnection()
-        const result = await connection.query<number>("SELECT renewalLimit FROM Branch_MediaBorrowingConfig WHERE branchId = $1", [branchId])
+        const result = await connection.query<number>(`
+            SELECT 
+                MediaBorrowingConfig.renewalLimit 
+            FROM 
+                Branch_MediaBorrowingConfig 
+            INNER JOIN
+                MediaBorrowingConfig ON MediaBorrowingConfig.mediaBorrowingConfigId = Branch_MediaBorrowingConfig.mediaBorrowingConfigId
+            WHERE 
+                branchId = $1`, [branchId])
 
         if (result.length == 0) {
             return null
@@ -22,7 +30,15 @@ export class MediaBorrowingConfigRepository extends IMediaBorrowingConfigReposit
 
     public async getMaximumBorrowingDurationInDays(branchId : number) : Promise<number | null>  {
         const connection = this.uow.getTransaction().getConnection()
-        const result = await connection.query<number>("SELECT maximumBorrowingDurationInDays FROM Branch_MediaBorrowingConfig WHERE branchId = $1", [branchId])
+        const result = await connection.query<number>(`
+            SELECT 
+                MediaBorrowingConfig.maximumBorrowingDurationInDays 
+            FROM 
+                Branch_MediaBorrowingConfig 
+            INNER JOIN
+                MediaBorrowingConfig ON MediaBorrowingConfig.mediaBorrowingConfigId = Branch_MediaBorrowingConfig.mediaBorrowingConfigId
+            WHERE 
+                branchId = $1`, [branchId])
 
         if (result.length == 0) {
             return null
