@@ -1,4 +1,4 @@
 import { MediaBorrowingRecord } from "./MediaBorrowingRecord";
-import { BranchOpeningHours} from "./BranchOpeningHours";
+import { BranchOpeningHours} from "../../../amlBranches/data/models/BranchOpeningHours";
 
 export { MediaBorrowingRecord, BranchOpeningHours}

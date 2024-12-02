@@ -4,7 +4,7 @@ import { IMediaBorrowingDateValidator } from '../../../interfaces/logic/mediaBor
 import { IBranchRepository } from '../../../../amlBranches/interfaces/data/repositories'
 import { InvalidBorrowingDateError, MediaBorrowingDateValidator } from ".."
 import { IDbContext } from '../../../../db/interfaces/dbContext'
-import { BranchOpeningHours } from "../../../data/models/BranchOpeningHours"
+import { BranchOpeningHours } from "../../../../amlBranches/data/models/BranchOpeningHours"
 import { Message } from "../../../../shared/messaging/Message"
 import { IMediaBorrowingConfigRepository } from '../../../interfaces/data/repositories'
 import { MaxBorrowingPeriodExceededError } from '../../mediaBorrowingConfig'
