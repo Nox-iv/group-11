@@ -1,0 +1,17 @@
+const express = require("express");
+const router = express.Router();
+const subscriptionController = require("../controllers/subscriptionController");
+
+// Get subscription list
+router.get("/", subscriptionController.getSubscriptionList);
+
+// Member subscribes to library system
+router.post("/", subscriptionController.subscribeToLibrary);
+
+// Member upgrade or downgrade subscription
+router.put("/", subscriptionController.updateSubscription);
+
+// Member remove subscription
+router.delete("/", subscriptionController.removeSubscription);
+
+module.exports = router;

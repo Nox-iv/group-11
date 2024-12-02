@@ -9,6 +9,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "madr": "^4.0.0"
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
+    "madr": "^4.0.0",
+    "nodemon": "^3.1.7"
   }
 }

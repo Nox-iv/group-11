@@ -1,0 +1,34 @@
+@startuml user-profile
+left to right direction
+
+rectangle "<<service>> \n User Service" {
+    (Update personal details) as update_personal_details
+    (Add/Update permissions scope) as add_update_scope
+    (Remove permissions scope) as remove_scope
+    (Assign permissions scope \nto user role) as assign_scope
+    (Add user role) as add_role
+    (Update user role) as update_role
+    (Delete user role) as delete_role
+    (Assign user role) as assign_role
+    (Search user profiles) as search_profiles
+}
+
+:    <<person>> \n AML Member: as aml_member 
+:          <<person>> \n System Administrator: as sys_admin
+
+aml_member -d- update_personal_details
+
+sys_admin -u- add_update_scope
+sys_admin -u- remove_scope
+sys_admin -u- assign_scope
+sys_admin -u- add_role
+sys_admin -u- update_role
+sys_admin -u- delete_role
+sys_admin -u- assign_role
+sys_admin -u- search_profiles
+
+add_role -r-> assign_scope: <<Include>>
+
+
+
+@enduml

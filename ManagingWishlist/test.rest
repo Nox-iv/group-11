@@ -9,23 +9,23 @@ POST http://localhost:5000/wishlists
 Content-Type: application/json
 
 {
-    "wishlistName": "Research",
-    "member_id": 6
+    "wishlistName": "Business",
+    "member_id": 8
 }
 
 ### Add media to wishlist
-POST http://localhost:5000/wishlists/18/media
+POST http://localhost:5000/wishlists/16/media
 Content-Type: application/json
 
 {
-    "media_id": 5 
+    "media_id": 1
 }
 
 ### Remove media from a wishlist
-DELETE http://localhost:5000/wishlists/4/media/2
+DELETE http://localhost:5000/wishlists/16/media/1
 
 ### Delete a wishlist
-DELETE http://localhost:5000/wishlists/1
+DELETE http://localhost:5000/wishlists/4
 
 ### Get a specific wishlist with media details
-GET http://localhost:5000/wishlists/3
+GET http://localhost:5000/wishlists/17

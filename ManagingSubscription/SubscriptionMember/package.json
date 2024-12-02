@@ -1,0 +1,22 @@
+{
+  "name": "subscriptionmember",
+  "version": "1.0.0",
+  "main": "documentation/ManagingSubscription/SubscriptionMember/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.7.8",
+    "cors": "^2.8.5",
+    "express": "^4.21.1",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
