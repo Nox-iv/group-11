@@ -19,6 +19,7 @@ export class DbContext extends IDbContext {
         this.mediaBorrowingRepository = null
         this.userRepository = null
         this.mediaRepository = null
+        this.mediaBorrowingConfigRepository = null
     }
 
     public async getMediaBorrowingRepository() : Promise<IMediaBorrowingRepository> {
@@ -91,5 +92,7 @@ export class DbContext extends IDbContext {
         this.unitOfWork = null
         this.mediaBorrowingRepository = null
         this.userRepository = null
+        this.mediaRepository = null 
+        this.mediaBorrowingConfigRepository = null
     }
 }
