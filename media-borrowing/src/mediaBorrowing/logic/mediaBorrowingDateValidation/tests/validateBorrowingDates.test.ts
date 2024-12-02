@@ -40,7 +40,7 @@ beforeEach(() => {
 
     // Setup repositories
     mockBranchRepository = new IBranchRepository as jest.Mocked<IBranchRepository>
-    mockBranchRepository.getOpeningHoursById.mockResolvedValue(new Message(genericBranchOpeningHours))
+    mockBranchRepository.getOpeningHoursById.mockResolvedValue(genericBranchOpeningHours)
 
     mockMediaBorrowingConfigRepository = new IMediaBorrowingConfigRepository as jest.Mocked<IMediaBorrowingConfigRepository>
     mockMediaBorrowingConfigRepository.getRenewalLimit.mockResolvedValue(2)

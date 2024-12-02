@@ -1,11 +1,13 @@
 import { BranchOpeningHours } from "../../../../mediaBorrowing/data/models";
-import { Message } from "../../../../shared/messaging/Message";
+import { IUnitOfWork } from "../../../../db/interfaces/uow";
 import { NotImplementedError } from "../../../../shared/errors/notImplementedError";
 
 export class IBranchRepository {
+    //@ts-ignore
+    protected uow : IUnitOfWork
     constructor() {}
 
-    getOpeningHoursById(branchId : number) : Promise<Message<BranchOpeningHours>> {
+    getOpeningHoursById(branchId : number) : Promise<BranchOpeningHours | null> {
         throw new NotImplementedError()
     }
 

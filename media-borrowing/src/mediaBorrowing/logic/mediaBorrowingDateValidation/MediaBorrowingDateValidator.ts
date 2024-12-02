@@ -46,21 +46,19 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
 
     private async validateDateRangeAgainstBranchOpeningHours(startDate : Date, endDate : Date, branchId : number, result : Message<boolean>) {
         const branchRepository = await this.dbContext.getBranchRepository()
-        const branchOpeningHoursResult = await branchRepository.getOpeningHoursById(branchId)
+        const branchOpeningHours = await branchRepository.getOpeningHoursById(branchId)
 
-        if (branchOpeningHoursResult.value != null) {
-            if (!this.dateIsWithinOpeningHours(startDate, branchOpeningHoursResult.value)) {
+        if (branchOpeningHours == null) {
+            result.addError(new Error(`Could not find opening hours for branch ${branchId}`))
+        } else {
+            if (!this.dateIsWithinOpeningHours(startDate, branchOpeningHours)) {
                 result.addError(new InvalidBorrowingDateError(`Invalid start date/time : start time must be within branch ${branchId}'s opening hours.`))
             }
 
-            if (!this.dateIsWithinOpeningHours(endDate, branchOpeningHoursResult.value)) {
+            if (!this.dateIsWithinOpeningHours(endDate, branchOpeningHours)) {
                 result.addError(new InvalidBorrowingDateError(`Invalid end date/time : end time must be within branch ${branchId}'s opening hours.`))
             }
-        } else if (branchOpeningHoursResult.hasErrors()) {
-            result.addErrorsFromMessage(branchOpeningHoursResult)
-        } else {
-            result.addError(new Error(`Could not find opening hours for branch ${branchId}`))
-        }
+        } 
     }
 
     private dateIsWithinOpeningHours(date : Date, openingHours: BranchOpeningHours) : boolean {
