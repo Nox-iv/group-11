@@ -7,6 +7,7 @@ import { IUnitOfWorkFactory } from "../../db/interfaces/uow/IUnitOfWorkFactory";
 import Container from "typedi";
 import { DbContextFactory } from "../../db/dbContext/dbContextFactory";
 import { IDbContextFactory } from "../../db/interfaces/dbContext/IDbContextFactory";
+import { setupApi } from "./api";
 
 export function setup(dbConnectionPool : Pool) {
     const dbConnectionFactory = new DbConnectionFactory(dbConnectionPool)
@@ -17,6 +18,8 @@ export function setup(dbConnectionPool : Pool) {
     const dbContextFactory = new DbContextFactory()
     Container.set(IDbContextFactory, dbContextFactory)
 
+    // API setup must be called last
     setupMediaBorrowing(dbContextFactory)
     setupMediaBorrowingReader(dbConnectionFactory)
+    setupApi()
 }
