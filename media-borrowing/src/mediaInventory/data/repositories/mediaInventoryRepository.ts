@@ -3,8 +3,6 @@ import { MediaInventoryRecord } from "../models";
 import { IMediaInventoryRepository } from "../../interfaces/data/repositories/IMediaInventoryRepository";
 
 export class MediaInventoryRepository extends IMediaInventoryRepository {
-    private uow : IUnitOfWork
-    
     constructor(uow : IUnitOfWork) {
         super()
         this.uow = uow
