@@ -1,9 +1,23 @@
-const functions = require('@google-cloud/functions-framework');
+import functions from '@google-cloud/functions-framework';
+import { Pool } from 'pg';
+import { GetMediaBorrowingRecordsForUser } from './app/handlers/mediaBorrowingReader';
+import { borrowMediaItem, renewMediaItemHandler, returnMediaItemHandler } from './app/handlers/mediaBorrowing';
+import { setup } from './app/setup';
+import { requestContextMiddleware } from './app/middleware/context/requestContextMiddleware';
 
-// Register an HTTP function with the Functions Framework
-functions.http('myHttpFunction', (req: any, res: any) => {
-  // Your code here
+const pool = new Pool();
 
-  // Send an HTTP response
-  res.send('OK');
-});
+setup(pool);
+
+const runMiddleware = (handler: functions.HttpFunction): functions.HttpFunction => {
+    return async (req, res) => {
+        await requestContextMiddleware(req, res, async () => {
+            await handler(req, res);
+        });
+    };
+};
+
+functions.http('borrowMediaItem', runMiddleware(borrowMediaItem));
+functions.http('renewMediaItem', runMiddleware(renewMediaItemHandler));
+functions.http('returnMediaItem', runMiddleware(returnMediaItemHandler));
+functions.http('GetMediaBorrowingRecordsForUser', runMiddleware(GetMediaBorrowingRecordsForUser));
