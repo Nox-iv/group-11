@@ -1,4 +1,4 @@
-import { IDbTransaction, IDbConnection } from "../interfaces/connection";
+import { IDbTransaction } from "../interfaces/connection";
 import { IUnitOfWork } from "../interfaces/uow";
 
 export class UnitOfWork extends IUnitOfWork {

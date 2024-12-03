@@ -1,10 +1,11 @@
 import { IUnitOfWork } from "./IUnitOfWork";
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
+import { IDbConnectionFactory } from "../connection/IDbConnectionFactory";
 
 export class IUnitOfWorkFactory
 {
     //@ts-ignore
-    protected dbConnectionFactory : DbConnectionFactory
+    protected dbConnectionFactory : IDbConnectionFactory
     
     constructor() {}
 

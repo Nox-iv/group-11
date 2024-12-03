@@ -1,10 +1,10 @@
 import { Inject } from "typedi";
 import { IUnitOfWorkFactory, IUnitOfWork } from "../interfaces/uow";
-import { DbConnectionFactory } from "../connection"
+import { IDbConnectionFactory } from "../interfaces/connection/IDbConnectionFactory";
 import { UnitOfWork } from "./UnitOfWork";
 
 export class UnitOfWorkFactory extends IUnitOfWorkFactory {
-    constructor(@Inject() dbConnectionFactory : DbConnectionFactory) {
+    constructor(@Inject() dbConnectionFactory : IDbConnectionFactory) {
         super()
         this.dbConnectionFactory = dbConnectionFactory
     }
