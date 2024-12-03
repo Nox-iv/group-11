@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import { IBranchRepository } from "../../amlBranches/interfaces/data/repositories"
 import { IDbContext } from "../../db/interfaces/dbContext"
 import { IUserRepository } from "../interfaces/data/repositories/IUserRepository"
@@ -7,8 +8,10 @@ import { User } from "../data/models/user"
 import { InvalidUserError } from "./errors/invalidUserError"
 import { InvalidLocationError } from "./errors/invalidLocationError"
 import { InvalidBranchError } from "../../amlBranches/logic/errors/invalidBranchError"
+import { IDbContextFactory } from "../../db/interfaces/dbContext/IDbContextFactory"
 
 jest.mock("../../db/interfaces/dbContext")
+jest.mock("../../db/interfaces/dbContext/IDbContextFactory")
 jest.mock("../interfaces/data/repositories/IUserRepository")
 jest.mock("../../amlBranches/interfaces/data/repositories")
 
@@ -16,6 +19,7 @@ let userEligibilityLogic : IUserEligibilityLogic
 let mockBranchRepository : jest.Mocked<IBranchRepository>
 let mockUserRepository : jest.Mocked<IUserRepository>
 let mockDbContext : jest.Mocked<IDbContext>
+let mockDbContextFactory : jest.Mocked<IDbContextFactory>
 let user : User
 let userId : number
 let mediaId : number 
@@ -48,8 +52,12 @@ beforeEach(() => {
     mockDbContext.getBranchRepository.mockResolvedValue(mockBranchRepository)
     mockDbContext.getUserRepository.mockResolvedValue(mockUserRepository)
 
+    // Setup db context factory
+    mockDbContextFactory = new IDbContextFactory() as jest.Mocked<IDbContextFactory>
+    mockDbContextFactory.create.mockResolvedValue(mockDbContext)
+
     // Setup logic
-    userEligibilityLogic = new UserEligibilityLogic(mockDbContext)
+    userEligibilityLogic = new UserEligibilityLogic(mockDbContextFactory)
 })
 
 describe("A user is not eligible to borrow an item if...", () => {

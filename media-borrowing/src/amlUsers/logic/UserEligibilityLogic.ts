@@ -5,36 +5,41 @@ import { User } from "../data/models/user"
 import { InvalidLocationError } from "./errors/invalidLocationError"
 import { InvalidUserError } from "./errors/invalidUserError"
 import { InvalidBranchError } from "../../amlBranches/logic/errors/invalidBranchError"
+import { IDbContextFactory } from "../../db/interfaces/dbContext/IDbContextFactory"
+import { Inject, Service } from "typedi"
 
+@Service()
 export class UserEligibilityLogic extends IUserEligibilityLogic {
-    constructor(dbContext : IDbContext) {
+    constructor(@Inject() dbContextFactory : IDbContextFactory) {
         super()
-        this.dbContext = dbContext
+        this.dbContextFactory = dbContextFactory
     }
 
     public async isUserEligibleToBorrowMediaItemAtBranch(userId : number, mediaId : number, branchId : number) : Promise<Message<boolean>> {
         const result = new Message(false)
+        const dbContext = await this.dbContextFactory.create()
+
         try {
-            const user =  await this.getUser(userId)
-            await this.verifyUserIsInSameCityAsBranch(user.locationId, branchId, result)
+            const user =  await this.getUser(userId, dbContext)
+            await this.verifyUserIsInSameCityAsBranch(user.locationId, branchId, dbContext, result)
 
             if (!result.hasErrors()) {
                 result.value = true
-                this.dbContext.commit()
+                await dbContext.commit()
             } else {
-                this.dbContext.rollback()
+                await dbContext.rollback()
             }
         } catch (e) {
             result.addError(e as Error)
             result.value = false
-            this.dbContext.rollback()
+            await dbContext.rollback()
         } finally {
             return result
         }
     }
 
-    private async getUser(userId : number) : Promise<User> {
-        const userRepository = await this.dbContext.getUserRepository()
+    private async getUser(userId : number, dbContext : IDbContext) : Promise<User> {
+        const userRepository = await dbContext.getUserRepository()
         const user = await userRepository.getUser(userId)
 
         if (user == null) {
@@ -44,8 +49,8 @@ export class UserEligibilityLogic extends IUserEligibilityLogic {
         return user
     }
 
-    private async verifyUserIsInSameCityAsBranch(userLocationId : number, branchId : number, result : Message<boolean>) : Promise<void> {
-        const branchRepository = await this.dbContext.getBranchRepository()
+    private async verifyUserIsInSameCityAsBranch(userLocationId : number, branchId : number, dbContext : IDbContext, result : Message<boolean>) : Promise<void> {
+        const branchRepository = await dbContext.getBranchRepository()
         const branchLocationId = await branchRepository.getBranchLocationId(branchId)
 
         if (branchLocationId == null) {

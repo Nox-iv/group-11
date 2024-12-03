@@ -1,10 +1,12 @@
 import { Message } from "../../../shared/messaging/Message";
+import { Service } from "typedi";
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
-import { IDbContext } from "../../../db/interfaces/dbContext";
+import { IDbContextFactory } from "../../../db/interfaces/dbContext/IDbContextFactory";
 
+@Service()
 export class IUserEligibilityLogic {
     //@ts-ignore
-    protected dbContext : IDbContext
+    protected dbContextFactory : IDbContextFactory
 
     constructor() {}
 
