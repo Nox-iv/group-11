@@ -50,15 +50,15 @@ export class IDbContext {
         throw new NotImplementedError()
     }
 
-    public commit() : void {
+    public commit() : Promise<void> {
         throw new NotImplementedError()
     }
 
-    public rollback() : void {
+    public rollback() : Promise<void> {
         throw new NotImplementedError()
     }
 
-    public close() : Promise<void> {
+    public isClosed() : boolean {
         throw new NotImplementedError()
     }
 }

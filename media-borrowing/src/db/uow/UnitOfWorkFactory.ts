@@ -4,15 +4,13 @@ import { DbConnectionFactory } from "../connection"
 import { UnitOfWork } from "./UnitOfWork";
 
 export class UnitOfWorkFactory extends IUnitOfWorkFactory {
-    private DbConnectionFactory : DbConnectionFactory
-
     constructor(@Inject() dbConnectionFactory : DbConnectionFactory) {
         super()
-        this.DbConnectionFactory = dbConnectionFactory
+        this.dbConnectionFactory = dbConnectionFactory
     }
 
     public async Create() : Promise<IUnitOfWork> {
-        const connection = await this.DbConnectionFactory.getDbConnection()
+        const connection = await this.dbConnectionFactory.getDbConnection()
         const transaction = await connection.beginTransaction()
         return new UnitOfWork(transaction);
     }

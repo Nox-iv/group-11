@@ -54,11 +54,11 @@ export class DbContext extends IDbContext {
         return this.mediaBorrowingConfigRepository
     }
 
-    public commit() : void {
+    public async commit() : Promise<void> {
         try
         {
             if (this.unitOfWork) {
-                this.unitOfWork.commit();
+                await this.unitOfWork.commit();
             }
         }
         finally
@@ -67,11 +67,11 @@ export class DbContext extends IDbContext {
         }
     }
 
-    public rollback() : void {
+    public async rollback() : Promise<void> {
         try
         {
             if (this.unitOfWork) {
-                this.unitOfWork.rollback();
+                await this.unitOfWork.rollback();
             }
         }
         finally
@@ -80,7 +80,10 @@ export class DbContext extends IDbContext {
         }
     }
 
-    public async close() : Promise<void> {
+    public isClosed() : boolean {
+        return this.unitOfWork == null
+    }
+
 
     private async getUnitOfWork() {
         if (this.unitOfWork == null) {

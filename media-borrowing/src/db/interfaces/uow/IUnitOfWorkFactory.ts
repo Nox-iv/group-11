@@ -3,9 +3,12 @@ import { NotImplementedError } from "../../../shared/errors/notImplementedError"
 
 export class IUnitOfWorkFactory
 {
+    //@ts-ignore
+    protected dbConnectionFactory : DbConnectionFactory
+    
     constructor() {}
 
-    Create() : Promise<IUnitOfWork> {
+    public Create() : Promise<IUnitOfWork> {
         throw new NotImplementedError();
     }
 }

@@ -8,11 +8,11 @@ export class DbTransaction extends IDbTransaction {
         this.connection = connection
     }
        
-    getConnection() : IDbConnection {
+    public getConnection() : IDbConnection {
         return this.connection
     }
 
-    async commit() : Promise<void> {
+    public async commit() : Promise<void> {
         try {
             await this.connection.query("COMMIT")
         } catch (e) {
@@ -21,7 +21,7 @@ export class DbTransaction extends IDbTransaction {
         } 
     }
 
-    async rollback() : Promise<void> {
+    public async rollback() : Promise<void> {
         try {
             await this.connection.query("ROLLBACK")
         } catch(e) {

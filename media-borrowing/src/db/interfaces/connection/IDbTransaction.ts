@@ -4,15 +4,15 @@ import { NotImplementedError } from "../../../shared/errors/notImplementedError"
 export class IDbTransaction {
     constructor() {}
 
-    getConnection() : IDbConnection {
+    public getConnection() : IDbConnection {
         throw new NotImplementedError()
     }
 
-    commit() : void {
+    public commit() : Promise<void> {
         throw new NotImplementedError()
     }
 
-    rollback() : void {
+    public rollback() : Promise<void> {
         throw new NotImplementedError()
     }
 

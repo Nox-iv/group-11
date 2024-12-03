@@ -2,16 +2,13 @@ import { IDbTransaction, IDbConnection } from "../interfaces/connection";
 import { IUnitOfWork } from "../interfaces/uow";
 
 export class UnitOfWork extends IUnitOfWork {
-    private transaction : IDbTransaction | null
-    private connection : IDbConnection
-
     constructor(transaction : IDbTransaction) {
         super()
         this.transaction = transaction
         this.connection = transaction.getConnection()
     }
 
-    getTransaction() : IDbTransaction {
+    public getTransaction() : IDbTransaction {
         if (this.transaction == null) {
             throw new Error("Transaction not found.")
         }
@@ -19,7 +16,7 @@ export class UnitOfWork extends IUnitOfWork {
         return this.transaction
     }
 
-    commit() : void {
+    public async commit() : Promise<void> {
         try {
             this.transaction?.commit()
         } catch (e) {
@@ -31,7 +28,7 @@ export class UnitOfWork extends IUnitOfWork {
         }
     }
 
-    rollback() : void {
+    public async rollback() : Promise<void> {
         try {
             this.transaction?.rollback()
         } catch (e) {

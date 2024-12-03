@@ -1,18 +1,25 @@
-import { IDbTransaction } from "../connection"
+import { IDbConnection, IDbTransaction } from "../connection"
 import { NotImplementedError } from "../../../shared/errors/notImplementedError"
 
 export class IUnitOfWork {
+
+    //@ts-ignore
+    protected transaction : IDbTransaction | null
+    
+    //@ts-ignore
+    protected connection : IDbConnection
+
     constructor() {}
 
-    getTransaction() : IDbTransaction {
+    public getTransaction() : IDbTransaction {
         throw new NotImplementedError()
     }
 
-    commit() : void {
+    public commit() : Promise<void> {
         throw new NotImplementedError()
     }
 
-    rollback() : void {
+    public rollback() : Promise<void> {
         throw new NotImplementedError()
     }
 }

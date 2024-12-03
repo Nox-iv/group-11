@@ -12,7 +12,13 @@ export async function requestContextMiddleware(req: Request, res: Response, next
         try {
             await next();
         } finally {
-            await container.get(IDbContext).close();
+            const dbContext = container.get(IDbContext)
+            if (!dbContext.isClosed()) {
+                await dbContext.rollback()
+                RequestContext.cleanup();
+                res.status(500).send("Transaction has not been closed - data changes rolled back.")
+            }
+
             RequestContext.cleanup();
         }
     });
