@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import { IMediaBorrowingConfigRepository, IMediaBorrowingRepository } from '../../interfaces/data/repositories';
-import { IDbContext } from '../../../db/interfaces/dbContext';
+import { IDbContext, IDbContextFactory } from '../../../db/interfaces/dbContext';
 import { IMediaRenewalLogic } from '../../interfaces/logic/mediaRenewals/IMediaRenewalLogic';
 import { MediaBorrowingRecord } from '../../data/models';
 import { Message } from '../../../shared/messaging/Message';
@@ -19,6 +19,7 @@ let mockMediaBorrowingRepository : jest.Mocked<IMediaBorrowingRepository>;
 let mockMediaBorrowingConfigRepository : jest.Mocked<IMediaBorrowingConfigRepository>
 let mockDbContext : jest.Mocked<IDbContext>
 let mockMediaBorrowingDateValidator : jest.Mocked<IMediaBorrowingDateValidator>
+let mockDbContextFactory : jest.Mocked<IDbContextFactory>
 let mediaRenewalLogic : IMediaRenewalLogic
 let genericMediaBorrowingRecord : MediaBorrowingRecord
 let genericMediaRenewalRequest : MediaRenewalRequest
@@ -60,11 +61,15 @@ beforeEach(() => {
     mockDbContext.getMediaBorrowingRepository.mockResolvedValue(mockMediaBorrowingRepository)
     mockDbContext.getMediaBorrowingConfigRepository.mockResolvedValue(mockMediaBorrowingConfigRepository)
 
+    // Setup db context factory.
+    mockDbContextFactory = new IDbContextFactory() as jest.Mocked<IDbContextFactory>
+    mockDbContextFactory.create.mockResolvedValue(mockDbContext)
+
     // Setup logic.
     mockMediaBorrowingDateValidator = new IMediaBorrowingDateValidator() as jest.Mocked<IMediaBorrowingDateValidator>
     mockMediaBorrowingDateValidator.validateBorrowingDates.mockResolvedValue(new Message(true))
 
-    mediaRenewalLogic = new MediaRenewalLogic(mockDbContext, mockMediaBorrowingDateValidator)
+    mediaRenewalLogic = new MediaRenewalLogic(mockDbContextFactory, mockMediaBorrowingDateValidator)
 })
 
 describe("A user cannot renew a borrowed media item if...", () => {

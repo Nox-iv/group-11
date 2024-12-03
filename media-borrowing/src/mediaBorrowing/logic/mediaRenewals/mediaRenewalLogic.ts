@@ -1,7 +1,7 @@
 import { IMediaRenewalLogic } from "../../interfaces/logic/mediaRenewals/IMediaRenewalLogic";
 import { Message } from "../../../shared/messaging/Message";
 import { Inject } from "typedi";
-import { IDbContext } from "../../../db/interfaces/dbContext";
+import { IDbContext, IDbContextFactory } from "../../../db/interfaces/dbContext";
 import { InvalidBorrowingDateError } from "../mediaBorrowingDateValidation";
 import { MaxRenewalsExceededError } from "../mediaBorrowingConfig";
 import { InvalidBorrowingRecordError } from "../mediaBorrowing";
@@ -11,26 +11,27 @@ import { BorrowingDateValidationRequest } from "../mediaBorrowingDateValidation/
 
 export class MediaRenewalLogic extends IMediaRenewalLogic {
     constructor(
-        @Inject() dbContext : IDbContext,
+        @Inject() dbContextFactory : IDbContextFactory,
         @Inject() mediaBorrowingDateValidator : IMediaBorrowingDateValidator
     ) {
         super()
-        this.dbContext = dbContext
+        this.dbContextFactory = dbContextFactory
         this.mediaBorrowingDateValidator = mediaBorrowingDateValidator
     }
 
     public async renewMediaItem(mediaRenewalRequest : MediaRenewalRequest) : Promise<Message<boolean>> {
         const result = new Message(false)
+        const dbContext = await this.dbContextFactory.create()
 
         try {
-            const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
+            const mediaBorrowingRepository = await dbContext.getMediaBorrowingRepository()
 
             const mediaBorrowingRecord = await mediaBorrowingRepository.getMediaBorrowingRecordById(mediaRenewalRequest.mediaBorrowingRecordId)
     
             if (mediaBorrowingRecord == null) {
                 result.addError(new InvalidBorrowingRecordError(`Media Borrowing Record ${mediaRenewalRequest.mediaBorrowingRecordId} does not exist.`))
             } else {
-                await this.verifyRenewalLimitIsNotExceeded(mediaBorrowingRecord.renewals, mediaBorrowingRecord.branchId, result)
+                await this.verifyRenewalLimitIsNotExceeded(mediaBorrowingRecord.renewals, mediaBorrowingRecord.branchId, dbContext, result)
 
                 const borrowingDateValidationRequest : BorrowingDateValidationRequest = {
                     startDate : mediaBorrowingRecord.endDate,
@@ -47,22 +48,22 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
                     await mediaBorrowingRepository.updateMediaBorrowingRecord(mediaBorrowingRecord)
                     
                     result.value = true
-                    this.dbContext.commit()
+                    await dbContext.commit()
                 } else {
-                    this.dbContext.rollback()
+                    await dbContext.rollback()
                 }
             }
 
         } catch (e) {
             result.addError(e as Error)
-            this.dbContext.rollback()
+            await dbContext.rollback()
         } finally {
             return result
         }
     }
 
-    private async verifyRenewalLimitIsNotExceeded(renewals : number, branchId : number, result : Message<boolean>) {
-        const mediaBorrowingConfigRepository = await this.dbContext.getMediaBorrowingConfigRepository()
+    private async verifyRenewalLimitIsNotExceeded(renewals : number, branchId : number, dbContext : IDbContext, result : Message<boolean>) {
+        const mediaBorrowingConfigRepository = await dbContext.getMediaBorrowingConfigRepository()
         const renewalsLimit = await mediaBorrowingConfigRepository.getRenewalLimit(branchId)
 
         if (renewalsLimit == null) {
