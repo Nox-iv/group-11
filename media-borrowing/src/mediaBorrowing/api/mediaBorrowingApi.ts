@@ -66,22 +66,51 @@ export class MediaBorrowingApi {
     private parseBorrowingRequest(req: Request): MediaBorrowingRecord {
         const { userId, mediaId, branchId, startDate, endDate } = req.body;
 
-        if (!userId || !mediaId || !branchId || !startDate || !endDate) {
-            throw new RequestParsingError('Missing required fields for borrowing request');
+        if (!userId) {
+            throw new RequestParsingError('Missing required field: userId');
+        }
+        if (!mediaId) {
+            throw new RequestParsingError('Missing required field: mediaId');
+        }
+        if (!branchId) {
+            throw new RequestParsingError('Missing required field: branchId');
+        }
+        if (!startDate) {
+            throw new RequestParsingError('Missing required field: startDate');
+        }
+        if (!endDate) {
+            throw new RequestParsingError('Missing required field: endDate');
         }
 
         const parsedUserId = parseInt(userId);
         const parsedMediaId = parseInt(mediaId);
         const parsedBranchId = parseInt(branchId);
-        const parsedStartDate = new Date(startDate);
-        const parsedEndDate = new Date(endDate);
 
-        if (isNaN(parsedUserId) || isNaN(parsedMediaId) || isNaN(parsedBranchId)) {
-            throw new RequestParsingError('Invalid numeric values provided');
+        if (isNaN(parsedUserId)) {
+            throw new RequestParsingError('Invalid user ID.');
         }
 
-        if (parsedStartDate.toString() === 'Invalid Date' || parsedEndDate.toString() === 'Invalid Date') {
-            throw new RequestParsingError('Invalid date format');
+        if (isNaN(parsedMediaId)) {
+            throw new RequestParsingError('Invalid media ID.');
+        }   
+
+        if (isNaN(parsedBranchId)) {
+            throw new RequestParsingError('Invalid branch ID.');
+        }
+
+        let parsedStartDate: Date;
+        let parsedEndDate: Date;
+
+        try {
+            parsedStartDate = new Date(startDate);
+        } catch (error) {
+            throw new RequestParsingError('Invalid start date format.');
+        }
+
+        try {
+            parsedEndDate = new Date(endDate);
+        } catch (error) {
+            throw new RequestParsingError('Invalid end date format.');
         }
 
         return {
@@ -98,18 +127,24 @@ export class MediaBorrowingApi {
     private parseRenewalRequest(req: Request): MediaRenewalRequest {
         const { mediaBorrowingRecordId, renewedEndDate } = req.body;
 
-        if (!mediaBorrowingRecordId || !renewedEndDate) {
-            throw new RequestParsingError('Missing required fields for renewal request');
+        if (!mediaBorrowingRecordId) {
+            throw new RequestParsingError('Missing required field: mediaBorrowingRecordId');
+        }
+
+        if (!renewedEndDate) {
+            throw new RequestParsingError('Missing required field: renewedEndDate');
         }
 
         const parsedRecordId = parseInt(mediaBorrowingRecordId);
-        const parsedEndDate = new Date(renewedEndDate);
 
         if (isNaN(parsedRecordId)) {
             throw new RequestParsingError('Invalid media borrowing record ID');
         }
 
-        if (parsedEndDate.toString() === 'Invalid Date') {
+        let parsedEndDate: Date;
+        try {
+            parsedEndDate = new Date(renewedEndDate);
+        } catch (error) {
             throw new RequestParsingError('Invalid renewal date format');
         }
 
@@ -123,14 +158,15 @@ export class MediaBorrowingApi {
         const { mediaBorrowingRecordId } = req.params;
 
         if (!mediaBorrowingRecordId) {
-            throw new RequestParsingError('Missing media borrowing record ID');
+            throw new RequestParsingError('Missing required field: mediaBorrowingRecordId');
         }
 
-        const parsedId = parseInt(mediaBorrowingRecordId);
-        if (isNaN(parsedId)) {
+        const parsedMediaBorrowingRecordId = parseInt(mediaBorrowingRecordId);
+
+        if (isNaN(parsedMediaBorrowingRecordId)) {
             throw new RequestParsingError('Invalid media borrowing record ID format');
         }
 
-        return parsedId;
+        return parsedMediaBorrowingRecordId;
     }
 }

@@ -36,7 +36,7 @@ export class MediaBorrowingReaderApi {
         const limit = parseInt(req.query.limit as string ?? '10');
 
         if (userId) {
-            throw new RequestParsingError('Missing user ID');
+            throw new RequestParsingError('Missing required field: userId');
         }
 
         if (isNaN(userId)) {
