@@ -57,4 +57,8 @@ export class IDbContext {
     public rollback() : void {
         throw new NotImplementedError()
     }
+
+    public close() : Promise<void> {
+        throw new NotImplementedError()
+    }
 }

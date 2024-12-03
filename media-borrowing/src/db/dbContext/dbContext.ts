@@ -80,6 +80,8 @@ export class DbContext extends IDbContext {
         }
     }
 
+    public async close() : Promise<void> {
+
     private async getUnitOfWork() {
         if (this.unitOfWork == null) {
             this.unitOfWork = await this.unitOfWorkFactory.Create()
