@@ -2,12 +2,15 @@ import { Request, Response } from '@google-cloud/functions-framework';
 import { RequestContext } from './requestContext';
 import { IDbContext } from '../../../db/interfaces/dbContext';
 import { DbContext } from '../../../db/dbContext';
+import Container from 'typedi';
+import { IUnitOfWorkFactory } from '../../../db/interfaces/uow/IUnitOfWorkFactory';
 
 export async function requestContextMiddleware(req: Request, res: Response, next: Function) {
     return RequestContext.runWithContext(async () => {
         const container = RequestContext.currentContainer;
         
-        container.set(IDbContext, DbContext);
+        const dbContext = new DbContext(Container.get<IUnitOfWorkFactory>(IUnitOfWorkFactory))
+        container.set(IDbContext, dbContext);
         
         try {
             await next();
