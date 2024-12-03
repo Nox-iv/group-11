@@ -12,12 +12,14 @@ import { MediaInventoryRecord } from '../../../mediaInventory/data/models';
 import { InvalidBorrowingDateError } from '../mediaBorrowingDateValidation/errors/invalidBorrowingDateError';
 import { IMediaInventoryLogic } from '../../../mediaInventory/interfaces/logic/IMediaInventoryLogic';
 import { IUserEligibilityLogic } from '../../../amlUsers/interfaces/logic/IUserEligibilityLogic';
+import { IDbContextFactory } from '../../../db/interfaces/dbContext/IDbContextFactory';
 
 jest.mock('../../../db/interfaces/dbContext')
 jest.mock('../../interfaces/data/repositories')
 jest.mock('../../../mediaInventory/interfaces/logic/IMediaInventoryLogic')
 jest.mock('../../interfaces/logic/mediaBorrowingDateValidation/IMediaBorrowingDateValidator')
 jest.mock('../../../amlUsers/interfaces/logic/IUserEligibilityLogic')
+jest.mock('../../../db/interfaces/dbContext/IDbContextFactory')
 
 
 let mockMediaBorrowingRepository : jest.Mocked<IMediaBorrowingRepository>;
@@ -25,6 +27,7 @@ let mockDbContext : jest.Mocked<IDbContext>
 let mockMediaBorrowingDateValidator : jest.Mocked<IMediaBorrowingDateValidator>
 let mockMediaInventoryLogic : jest.Mocked<IMediaInventoryLogic>
 let mockUserEligibilityLogic : jest.Mocked<IUserEligibilityLogic>
+let mockDbContextFactory : jest.Mocked<IDbContextFactory>
 let mediaBorrowingLogic : IMediaBorrowingLogic
 let genericMediaBorrowingRecord : MediaBorrowingRecord
 let genericMediaInventoryRecord : MediaInventoryRecord
@@ -61,6 +64,10 @@ beforeEach(() => {
     mockDbContext = new IDbContext() as jest.Mocked<IDbContext>;
     mockDbContext.getMediaBorrowingRepository.mockResolvedValue(mockMediaBorrowingRepository)
 
+    // Setup mock db context factory.
+    mockDbContextFactory = new IDbContextFactory() as jest.Mocked<IDbContextFactory>
+    mockDbContextFactory.create.mockResolvedValue(mockDbContext)
+
     // Setup logic dependencies
     mockUserEligibilityLogic = new IUserEligibilityLogic as jest.Mocked<IUserEligibilityLogic> 
     mockUserEligibilityLogic.isUserEligibleToBorrowMediaItemAtBranch.mockResolvedValue(new Message(true))
@@ -73,7 +80,7 @@ beforeEach(() => {
     mockMediaInventoryLogic.incrementMediaItemAvailabilityAtBranch.mockResolvedValue(new Message(true))
 
     // Setup media borrowing logic.
-    mediaBorrowingLogic = new MediaBorrowingLogic(mockDbContext, mockUserEligibilityLogic, mockMediaInventoryLogic, mockMediaBorrowingDateValidator)
+    mediaBorrowingLogic = new MediaBorrowingLogic(mockDbContextFactory, mockUserEligibilityLogic, mockMediaInventoryLogic, mockMediaBorrowingDateValidator)
 });
 
 describe("A media item cannot be borrowed if ...", () => {

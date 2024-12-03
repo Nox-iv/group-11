@@ -1,5 +1,5 @@
 import { Message } from "../../../../shared/messaging/Message";
-import { IDbContext } from "../../../../db/interfaces/dbContext";
+import { IDbContextFactory } from "../../../../db/interfaces/dbContext/IDbContextFactory";
 import { MediaBorrowingRecord } from "../../../data/models";
 import { IMediaBorrowingDateValidator } from "../mediaBorrowingDateValidation/IMediaBorrowingDateValidator";
 import { NotImplementedError } from "../../../../shared/errors/notImplementedError";
@@ -8,7 +8,7 @@ import { IUserEligibilityLogic } from "../../../../amlUsers/interfaces/logic/IUs
 
 export class IMediaBorrowingLogic {
     //@ts-ignore
-    protected dbContext : IDbContext
+    protected dbContextFactory : IDbContextFactory
 
     //@ts-ignore
     protected mediaInventoryLogic : IMediaInventoryLogic
