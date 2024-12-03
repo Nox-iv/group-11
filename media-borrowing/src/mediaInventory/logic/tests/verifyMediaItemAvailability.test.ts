@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import { IDbContext } from "../../../db/interfaces/dbContext"
+import { IDbContext, IDbContextFactory } from "../../../db/interfaces/dbContext"
 import { MediaInventoryRecord } from "../../data/models"
 import { IMediaInventoryRepository } from "../../interfaces/data/repositories"
 import { InvalidMediaError } from "../errors/invalidMediaError"
@@ -8,6 +8,7 @@ import { MediaInventoryLogic } from "../mediaInventoryLogic"
 let genericMediaInventoryRecord : MediaInventoryRecord
 let mockMediaInventoryRepository : jest.Mocked<IMediaInventoryRepository>
 let mockDbContext : jest.Mocked<IDbContext>
+let mockDbContextFactory : jest.Mocked<IDbContextFactory>
 let mediaInventoryLogic : MediaInventoryLogic
 
 jest.mock("../../interfaces/data/repositories")
@@ -30,8 +31,13 @@ beforeEach(() => {
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>
     mockDbContext.getMediaInventoryRepository.mockResolvedValue(mockMediaInventoryRepository)
 
+
+    // Setup db context factory
+    mockDbContextFactory = new IDbContextFactory as jest.Mocked<IDbContextFactory>
+    mockDbContextFactory.create.mockResolvedValue(mockDbContext)
+
     // Setup logic
-    mediaInventoryLogic = new MediaInventoryLogic(mockDbContext)
+    mediaInventoryLogic = new MediaInventoryLogic(mockDbContextFactory)
 })
 
 describe("The correct availability status is returned when...", () => {

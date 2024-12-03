@@ -4,28 +4,30 @@ import { MediaInventoryRecord } from "../data/models"
 import { IMediaInventoryLogic } from "../interfaces/logic/IMediaInventoryLogic"
 import { IDbContext } from "../../db/interfaces/dbContext"
 import { InvalidMediaError } from "./errors/invalidMediaError"
+import { DbContextFactory } from "../../db/dbContext/dbContextFactory"
 
 export class MediaInventoryLogic extends IMediaInventoryLogic {
-    constructor(@Inject() dbContext : IDbContext) {
+    constructor(@Inject() dbContextFactory : DbContextFactory) {
         super()
-        this.dbContext = dbContext
+        this.dbContextFactory = dbContextFactory
     }
 
     public async isMediaItemAvailableAtBranch(mediaId : number, branchId : number) : Promise<Message<boolean>> {
         const result = new Message(false)
+        const dbContext = await this.dbContextFactory.create()
 
         try {
-            const mediaItem = await this.getMediaItem(mediaId, branchId)
+            const mediaItem = await this.getMediaItem(mediaId, branchId, dbContext)
 
             if (mediaItem.availability > 0) {
                 result.value = true
             }
 
-            this.dbContext.commit()
+            await dbContext.commit()
         } catch(e) {
             result.addError(e as Error)
             result.value = false
-            this.dbContext.rollback()
+            await dbContext.rollback()
         } finally {
             return result
         }
@@ -33,23 +35,24 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
 
     public async incrementMediaItemAvailabilityAtBranch(mediaId : number, branchId : number) : Promise<Message<boolean>> {
         const result = new Message(false)
-
+        const dbContext = await this.dbContextFactory.create()
+    
         try {
-            const mediaItem = await this.getMediaItem(mediaId, branchId)
+            const mediaItem = await this.getMediaItem(mediaId, branchId, dbContext)
 
             mediaItem.availability += 1
-            await this.updateMediaItem(mediaItem)
+            await this.updateMediaItem(mediaItem, dbContext)
 
             if (!result.hasErrors()) {
                 result.value = true
-                this.dbContext.commit()
+                await dbContext.commit()
             } else {
-                this.dbContext.rollback()
+                await dbContext.rollback()
             } 
         } catch(e) {
             result.addError(e as Error)
             result.value = false
-            this.dbContext.rollback()
+            await dbContext.rollback()
         } finally {
             return result
         }
@@ -57,30 +60,30 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
 
     public async decrementMediaItemAvailabilityAtBranch(mediaId : number, branchId : number) : Promise<Message<boolean>> {
         const result = new Message(false)
-
+        const dbContext = await this.dbContextFactory.create()
         try {
-            const mediaItem = await this.getMediaItem(mediaId, branchId)
+            const mediaItem = await this.getMediaItem(mediaId, branchId, dbContext)
 
             mediaItem.availability -= 1
-            await this.updateMediaItem(mediaItem)
+            await this.updateMediaItem(mediaItem, dbContext)
 
             if (!result.hasErrors()) {
                 result.value = true
-                this.dbContext.commit()
+                await dbContext.commit()
             } else {
-                this.dbContext.rollback()
+                await dbContext.rollback()
             } 
         } catch(e) {
             result.addError(e as Error)
             result.value = false
-            this.dbContext.rollback()
+            await dbContext.rollback()
         } finally {
             return result
         }
     }
 
-    private async getMediaItem(mediaId : number, branchId : number) : Promise<MediaInventoryRecord> {
-        const mediaInventoryRepository = await this.dbContext.getMediaInventoryRepository()
+    private async getMediaItem(mediaId : number, branchId : number, dbContext : IDbContext) : Promise<MediaInventoryRecord> {
+        const mediaInventoryRepository = await dbContext.getMediaInventoryRepository()
         const mediaItem = await mediaInventoryRepository.getInventoryByMediaAndBranchId(mediaId, branchId)
 
         if (mediaItem != null) {
@@ -90,8 +93,8 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
         }
     }
 
-    private async updateMediaItem(mediaInventoryRecord : MediaInventoryRecord) {
-        const mediaInventoryRepository = await this.dbContext.getMediaInventoryRepository()
+    private async updateMediaItem(mediaInventoryRecord : MediaInventoryRecord, dbContext : IDbContext) {
+        const mediaInventoryRepository = await dbContext.getMediaInventoryRepository()
         await mediaInventoryRepository.updateMediaItemAvailability(mediaInventoryRecord)
     }
  }
