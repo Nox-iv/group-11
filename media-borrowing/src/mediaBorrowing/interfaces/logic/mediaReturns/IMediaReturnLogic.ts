@@ -1,11 +1,11 @@
-import { IDbContext } from "../../../../db/interfaces/dbContext";
+import { IDbContextFactory } from "../../../../db/interfaces/dbContext";
 import { Message } from "../../../../shared/messaging/Message";
 import { NotImplementedError } from "../../../../shared/errors/notImplementedError";
 import { IMediaInventoryLogic } from "../../../../mediaInventory/interfaces/logic/IMediaInventoryLogic";
 
 export class IMediaReturnLogic {
     //@ts-ignore
-    protected dbContext : IDbContext
+    protected dbContextFactory : IDbContextFactory
 
     //@ts-ignore
     protected mediaInventoryLogic : IMediaInventoryLogic

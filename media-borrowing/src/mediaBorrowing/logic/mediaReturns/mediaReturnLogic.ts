@@ -1,24 +1,26 @@
 import { IMediaReturnLogic } from "../../interfaces/logic/mediaReturns/IMediaReturnLogic";
-import { IDbContext } from "../../../db/interfaces/dbContext";
+import { IDbContextFactory } from "../../../db/interfaces/dbContext";
 import { Message } from "../../../shared/messaging/Message";
 import { InvalidBorrowingRecordError } from "../mediaBorrowing";
 import { IMediaInventoryLogic } from "../../../mediaInventory/interfaces/logic/IMediaInventoryLogic";
+import { Inject } from "typedi";
 
 export class MediaReturnLogic extends IMediaReturnLogic {
     constructor (
-        dbContext : IDbContext,
-        mediaInventoryLogic : IMediaInventoryLogic
+        @Inject() dbContextFactory : IDbContextFactory,
+        @Inject() mediaInventoryLogic : IMediaInventoryLogic
     ) {
         super()
-        this.dbContext = dbContext
+        this.dbContextFactory = dbContextFactory
         this.mediaInventoryLogic = mediaInventoryLogic
     }
 
     public async returnMediaItem(mediaBorrowingRecordId : number) : Promise<Message<boolean>> {
         const result = new Message(false)
+        const dbContext = await this.dbContextFactory.create()
 
         try {
-            const mediaBorrowingRepository = await this.dbContext.getMediaBorrowingRepository()
+            const mediaBorrowingRepository = await dbContext.getMediaBorrowingRepository()
             const mediaBorrowingRecord = await mediaBorrowingRepository.getMediaBorrowingRecordById(mediaBorrowingRecordId)
 
             if (mediaBorrowingRecord == null) {
@@ -30,14 +32,14 @@ export class MediaReturnLogic extends IMediaReturnLogic {
 
             if (!result.hasErrors()) {
                 result.value = true
-                this.dbContext.commit()
+                await dbContext.commit()
             } else {
-                this.dbContext.rollback()
+                await dbContext.rollback()
             }
 
         } catch (e) {
             result.addError(e as Error)
-            this.dbContext.rollback()
+            await dbContext.rollback()
         } finally {
             return result
         }

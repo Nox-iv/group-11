@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import { IMediaBorrowingRepository } from '../../interfaces/data/repositories'
-import { IDbContext } from '../../../db/interfaces/dbContext'
+import { IDbContext, IDbContextFactory } from '../../../db/interfaces/dbContext'
 import { IMediaReturnLogic } from '../../interfaces/logic/mediaReturns/IMediaReturnLogic'
 import { InvalidBorrowingRecordError } from '../mediaBorrowing'
 import { MediaReturnLogic } from './mediaReturnLogic'
@@ -16,6 +16,7 @@ jest.mock('../../../db/interfaces/dbContext')
 let mockMediaBorrowingRepository : jest.Mocked<IMediaBorrowingRepository>
 let mockDbContext : jest.Mocked<IDbContext>
 let mockMediaInventoryLogic : jest.Mocked<IMediaInventoryLogic>
+let mockDbContextFactory : jest.Mocked<IDbContextFactory>
 let mediaReturnLogic : IMediaReturnLogic
 let mediaBorrowingRecordId : number
 let genericMediaBorrowingRecord : MediaBorrowingRecord
@@ -54,11 +55,15 @@ beforeEach(() => {
     mockDbContext = new IDbContext as jest.Mocked<IDbContext>
     mockDbContext.getMediaBorrowingRepository.mockResolvedValue(mockMediaBorrowingRepository)
 
+    // Setup db context factory
+    mockDbContextFactory = new IDbContextFactory as jest.Mocked<IDbContextFactory>
+    mockDbContextFactory.create.mockResolvedValue(mockDbContext)
+
     // Setup logic
     mockMediaInventoryLogic = new IMediaInventoryLogic as jest.Mocked<IMediaInventoryLogic>
     mockMediaInventoryLogic.incrementMediaItemAvailabilityAtBranch.mockResolvedValue(new Message(true))
 
-    mediaReturnLogic = new MediaReturnLogic(mockDbContext, mockMediaInventoryLogic)
+    mediaReturnLogic = new MediaReturnLogic(mockDbContextFactory, mockMediaInventoryLogic)
 })
 
 describe("A media item cannot be returned by user if...", () => {
