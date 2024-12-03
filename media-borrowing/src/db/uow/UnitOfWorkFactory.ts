@@ -10,7 +10,7 @@ export class UnitOfWorkFactory extends IUnitOfWorkFactory {
     }
 
     public async Create() : Promise<IUnitOfWork> {
-        const connection = await this.dbConnectionFactory.getDbConnection()
+        const connection = await this.dbConnectionFactory.create()
         const transaction = await connection.beginTransaction()
         return new UnitOfWork(transaction);
     }

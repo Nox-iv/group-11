@@ -1,14 +1,16 @@
-import { IUnitOfWork } from "../../../db/interfaces/uow";
+import { Inject } from "typedi";
 import { IMediaBorrowingReaderRepository } from "../../interfaces/data/repositories/IMediaBorrowingReaderRepository";
 import { MediaBorrowingRecordDetails } from "../models/mediaBorrowingRecordDetails";
+import { IDbConnectionFactory } from "../../../db/interfaces/connection/IDbConnectionFactory";
 
 export class MediaBorrowingRecordReaderRepository extends IMediaBorrowingReaderRepository {
-    constructor(private uow : IUnitOfWork) {
+    constructor(@Inject() dbConnectionFactory : IDbConnectionFactory) {
         super()
+        this.dbConnectionFactory = dbConnectionFactory
     }
 
     public async getMediaBorrowingRecordsByUserId(userId : number, offset : number, limit : number) : Promise<MediaBorrowingRecordDetails[] | null> {
-        const conn = this.uow.getTransaction().getConnection()
+        const conn = await this.dbConnectionFactory.create()
 
         const result = await conn.query<MediaBorrowingRecordDetails>(`
             SELECT 

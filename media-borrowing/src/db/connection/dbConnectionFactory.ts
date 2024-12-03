@@ -9,7 +9,7 @@ export class DbConnectionFactory extends IDbConnectionFactory {
         this.dbConnectionPool = pool
     }
 
-    public async getDbConnection() : Promise<IDbConnection>  {
+    public async create() : Promise<IDbConnection>  {
         return new DbConnection(await this.dbConnectionPool.connect())
     }
 }

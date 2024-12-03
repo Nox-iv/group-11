@@ -6,7 +6,7 @@ export class IDbConnectionFactory {
     //@ts-ignore
     protected dbConnectionPool : Pool
 
-    public getDbConnection() : Promise<IDbConnection> {
+    public create() : Promise<IDbConnection> {
         throw new NotImplementedError()
     }
 }
