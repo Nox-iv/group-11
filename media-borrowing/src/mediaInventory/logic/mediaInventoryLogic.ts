@@ -1,13 +1,12 @@
-import { Inject } from "typedi"
 import { Message } from "../../shared/messaging/Message"
 import { MediaInventoryRecord } from "../data/models"
 import { IMediaInventoryLogic } from "../interfaces/logic/IMediaInventoryLogic"
 import { IDbContext } from "../../db/interfaces/dbContext"
 import { InvalidMediaError } from "./errors/invalidMediaError"
-import { DbContextFactory } from "../../db/dbContext/dbContextFactory"
+import { IDbContextFactory } from "../../db/interfaces/dbContext/IDbContextFactory"
 
 export class MediaInventoryLogic extends IMediaInventoryLogic {
-    constructor(@Inject() dbContextFactory : DbContextFactory) {
+    constructor(dbContextFactory : IDbContextFactory) {
         super()
         this.dbContextFactory = dbContextFactory
     }

@@ -1,11 +1,11 @@
-import { DbContextFactory } from "../../../db/dbContext/dbContextFactory";
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
 import { Message } from "../../../shared/messaging/Message";
+import { IDbContextFactory } from "../../../db/interfaces/dbContext/IDbContextFactory";
 
 export class IMediaInventoryLogic {
     
     //@ts-ignore 
-    protected dbContextFactory : DbContextFactory
+    protected dbContextFactory : IDbContextFactory
 
     constructor() {}
 
