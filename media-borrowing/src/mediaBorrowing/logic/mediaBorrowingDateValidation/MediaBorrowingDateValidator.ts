@@ -3,33 +3,35 @@ import { IMediaBorrowingDateValidator } from '../../interfaces/logic/mediaBorrow
 import { Message } from '../../../shared/messaging/Message'
 import { InvalidBorrowingDateError, BorrowingDateValidationRequest} from "."
 import { BranchOpeningHours } from '../../data/models'
-import { IDbContext } from '../../../db/interfaces/dbContext'
 import { MaxBorrowingPeriodExceededError } from '../mediaBorrowingConfig'
+import { IDbContextFactory } from '../../../db/interfaces/dbContext/IDbContextFactory'
+import { IDbContext } from '../../../db/interfaces/dbContext'
 
 export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
-    constructor(@Inject() dbContext : IDbContext) {
+    constructor(@Inject() dbContextFactory : IDbContextFactory) {
         super()
-        this.dbContext = dbContext
+        this.dbContextFactory = dbContextFactory
     }
 
     public async validateBorrowingDates(borrowingDateValidationRequest : BorrowingDateValidationRequest) : Promise<Message<boolean>> {
         const result = new Message(false)
+        const dbContext = await this.dbContextFactory.create()
         const {startDate, endDate, branchId} = borrowingDateValidationRequest
 
         try {
             this.validateDateRangeAgainstMinimumBorrowingDuration(startDate, endDate, result)
-            await this.validateDateRangeAgainstBranchOpeningHours(startDate, endDate, branchId, result)
-            await this.validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest, result)
+            await this.validateDateRangeAgainstBranchOpeningHours(startDate, endDate, branchId, dbContext, result)
+            await this.validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest, dbContext, result)
 
             if(!result.hasErrors()) {
                 result.value = true
-                this.dbContext.commit()
+                await dbContext.commit()
             } else {
-                this.dbContext.rollback()
+                await dbContext.rollback()
             }
         } catch(e) {
             result.addError(e as Error)
-            this.dbContext.rollback()
+            await dbContext.rollback()
         } finally {
             return result
         }
@@ -49,8 +51,8 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
         return earliestEndDate
     }
 
-    private async validateDateRangeAgainstBranchOpeningHours(startDate : Date, endDate : Date, branchId : number, result : Message<boolean>) {
-        const branchRepository = await this.dbContext.getBranchRepository()
+    private async validateDateRangeAgainstBranchOpeningHours(startDate : Date, endDate : Date, branchId : number, dbContext : IDbContext, result : Message<boolean>) {
+        const branchRepository = await dbContext.getBranchRepository()
         const branchOpeningHours = await branchRepository.getOpeningHoursById(branchId)
 
         if (branchOpeningHours == null) {
@@ -77,9 +79,9 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
         return (date.getHours() * 100) + date.getMinutes() 
     }
 
-    private async validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest : BorrowingDateValidationRequest, result : Message<boolean>) {
+    private async validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest : BorrowingDateValidationRequest, dbContext : IDbContext, result : Message<boolean>) {
         const { startDate, endDate, branchId } = borrowingDateValidationRequest
-        const mediaBorrowingConfigRepository = await this.dbContext.getMediaBorrowingConfigRepository()
+        const mediaBorrowingConfigRepository = await dbContext.getMediaBorrowingConfigRepository()
         const maxDuration = await mediaBorrowingConfigRepository.getMaximumBorrowingDurationInDays(branchId)
 
         if (maxDuration == null) {

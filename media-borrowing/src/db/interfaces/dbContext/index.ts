@@ -1,3 +1,4 @@
 import { IDbContext } from "./IDbContext"
+import { IDbContextFactory } from "./IDbContextFactory"
 
-export { IDbContext }
+export { IDbContext, IDbContextFactory }

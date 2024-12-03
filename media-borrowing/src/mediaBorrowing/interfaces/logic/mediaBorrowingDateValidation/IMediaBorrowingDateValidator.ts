@@ -1,11 +1,11 @@
 import { Message } from "../../../../shared/messaging/Message";
 import { NotImplementedError } from "../../../../shared/errors/notImplementedError";
-import { IDbContext } from "../../../../db/interfaces/dbContext";
+import { IDbContextFactory } from "../../../../db/interfaces/dbContext/IDbContextFactory";
 import { BorrowingDateValidationRequest } from "../../../logic/mediaBorrowingDateValidation";
 
 export class IMediaBorrowingDateValidator {
     //@ts-ignore
-    protected dbContext : IDbContext
+    protected dbContextFactory : IDbContextFactory
 
     constructor() {
     }

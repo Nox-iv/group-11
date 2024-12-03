@@ -3,9 +3,8 @@ import { MediaBorrowingRecord } from '../../../data/models'
 import { IMediaBorrowingDateValidator } from '../../../interfaces/logic/mediaBorrowingDateValidation/IMediaBorrowingDateValidator'
 import { IBranchRepository } from '../../../../amlBranches/interfaces/data/repositories'
 import { InvalidBorrowingDateError, MediaBorrowingDateValidator } from ".."
-import { IDbContext } from '../../../../db/interfaces/dbContext'
+import { IDbContext, IDbContextFactory } from '../../../../db/interfaces/dbContext'
 import { BranchOpeningHours } from "../../../../amlBranches/data/models/BranchOpeningHours"
-import { Message } from "../../../../shared/messaging/Message"
 import { IMediaBorrowingConfigRepository } from '../../../interfaces/data/repositories'
 import { MaxBorrowingPeriodExceededError } from '../../mediaBorrowingConfig'
 
@@ -18,6 +17,7 @@ let genericBranchOpeningHours : BranchOpeningHours
 let mockBranchRepository : jest.Mocked<IBranchRepository>
 let mockMediaBorrowingConfigRepository : jest.Mocked<IMediaBorrowingConfigRepository>
 let mockDbContext : jest.Mocked<IDbContext>
+let mockDbContextFactory : jest.Mocked<IDbContextFactory>   
 let mediaBorrowingDateValidator : IMediaBorrowingDateValidator
 
 
@@ -51,8 +51,12 @@ beforeEach(() => {
     mockDbContext.getBranchRepository.mockResolvedValue(mockBranchRepository)
     mockDbContext.getMediaBorrowingConfigRepository.mockResolvedValue(mockMediaBorrowingConfigRepository)
 
+    // Setup db context factory
+    mockDbContextFactory = new IDbContextFactory as jest.Mocked<IDbContextFactory>
+    mockDbContextFactory.create.mockResolvedValue(mockDbContext)
+
     // Setup media borrowing date validation logic
-    mediaBorrowingDateValidator = new MediaBorrowingDateValidator(mockDbContext)
+    mediaBorrowingDateValidator = new MediaBorrowingDateValidator(mockDbContextFactory)
 })
 
 function getBorrowingDateValidationRequest() {
