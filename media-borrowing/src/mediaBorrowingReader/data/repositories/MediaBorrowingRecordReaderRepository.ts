@@ -2,6 +2,7 @@ import { Inject } from "typedi";
 import { IMediaBorrowingReaderRepository } from "../../interfaces/data/repositories/IMediaBorrowingReaderRepository";
 import { MediaBorrowingRecordDetails } from "../models/mediaBorrowingRecordDetails";
 import { IDbConnectionFactory } from "../../../db/interfaces/connection/IDbConnectionFactory";
+import { BranchOpeningHoursEntity } from "../../../amlBranches/data/entities/BranchOpeningHoursEntity";
 
 export class MediaBorrowingRecordReaderRepository extends IMediaBorrowingReaderRepository {
     constructor(@Inject() dbConnectionFactory : IDbConnectionFactory) {
@@ -12,32 +13,32 @@ export class MediaBorrowingRecordReaderRepository extends IMediaBorrowingReaderR
     public async getMediaBorrowingRecordsByUserId(userId : number, offset : number, limit : number) : Promise<MediaBorrowingRecordDetails[] | null> {
         const conn = await this.dbConnectionFactory.create()
 
-        const result = await conn.query<MediaBorrowingRecordDetails>(`
+        const mediaBorrowingDetails = await conn.query<MediaBorrowingRecordDetails>(`
             SELECT 
                 MediaBorrowingRecords.mediaBorrowingRecordId,
                 MediaBorrowingRecords.startDate,
                 MediaBorrowingRecords.endDate,
                 MediaBorrowingRecords.renewals,
                 Media.mediaId,
+                MediaTypes.mediaTypeName,
                 Media.title,
+                Media.author,
                 Media.assetUrl,
                 Branches.branchId,
-                Branches.name AS branchName,
-                Location.name AS locationName
+                Branches.branchName,
             FROM 
                 MediaBorrowingRecords
             INNER JOIN 
                 Media ON MediaBorrowingRecords.mediaId = Media.mediaId
             INNER JOIN 
-                Branch ON MediaBorrowingRecords.branchId = Branches.branchId
-            INNER JOIN
-                Location ON Branches.locationId = Location.locationId
-            INNER JOIN
+                MediaTypes ON Media.mediaTypeId = MediaTypes.mediaTypeId
+            INNER JOIN 
+                Branches ON MediaBorrowingRecords.branchId = Branches.branchId
             WHERE 
-                userId = $1
+                MediaBorrowingRecords.userId = $1
             OFFSET $2
             LIMIT $3`, [userId, offset, limit])
-
-        return result.length > 0 ? result : null
+        
+        return mediaBorrowingDetails.length > 0 ? mediaBorrowingDetails : [] 
     }
 }
