@@ -1,8 +1,8 @@
 import { Inject } from "typedi";
 import { IMediaBorrowingReaderRepository } from "../../interfaces/data/repositories/IMediaBorrowingReaderRepository";
-import { MediaBorrowingRecordDetails } from "../models/mediaBorrowingRecordDetails";
+import { MediaBorrowingRecordListingDetails } from "../models/mediaBorrowingRecordListingDetails";
 import { IDbConnectionFactory } from "../../../db/interfaces/connection/IDbConnectionFactory";
-import { BranchOpeningHoursEntity } from "../../../amlBranches/data/entities/BranchOpeningHoursEntity";
+
 
 export class MediaBorrowingRecordReaderRepository extends IMediaBorrowingReaderRepository {
     constructor(@Inject() dbConnectionFactory : IDbConnectionFactory) {
@@ -10,10 +10,10 @@ export class MediaBorrowingRecordReaderRepository extends IMediaBorrowingReaderR
         this.dbConnectionFactory = dbConnectionFactory
     }
 
-    public async getMediaBorrowingRecordsByUserId(userId : number, offset : number, limit : number) : Promise<MediaBorrowingRecordDetails[] | null> {
+    public async getMediaBorrowingRecordsByUserId(userId : number, offset : number, limit : number) : Promise<MediaBorrowingRecordListingDetails[] | null> {
         const conn = await this.dbConnectionFactory.create()
 
-        const mediaBorrowingDetails = await conn.query<MediaBorrowingRecordDetails>(`
+        const mediaBorrowingDetails = await conn.query<MediaBorrowingRecordListingDetails>(`
             SELECT 
                 MediaBorrowingRecords.mediaBorrowingRecordId,
                 MediaBorrowingRecords.startDate,

@@ -1,5 +1,5 @@
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
-import { MediaBorrowingRecordDetails } from "../../data/models/mediaBorrowingRecordDetails";
+import { MediaBorrowingRecordListingDetails } from "../../data/models/mediaBorrowingRecordListingDetails";
 import { Message } from "../../../shared/messaging/Message";
 import { IMediaBorrowingReaderRepository } from "../data/repositories/IMediaBorrowingReaderRepository";
 
@@ -10,7 +10,7 @@ export class IMediaBorrowingReader {
 
     constructor() {}
 
-    public getMediaBorrowingRecordsByUserId(userId : number, offset : number , limit : number) : Promise<Message<MediaBorrowingRecordDetails[]>> {
+    public getMediaBorrowingRecordsByUserId(userId : number, offset : number , limit : number) : Promise<Message<MediaBorrowingRecordListingDetails[]>> {
         throw new NotImplementedError()
     }
 }

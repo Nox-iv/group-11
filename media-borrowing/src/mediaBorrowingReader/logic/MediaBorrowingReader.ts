@@ -1,5 +1,5 @@
 import { IMediaBorrowingReader } from "../interfaces/logic/IMediaBorrowingReader"
-import { MediaBorrowingRecordDetails } from "../data/models"
+import { MediaBorrowingRecordListingDetails } from "../data/models"
 import { Message } from "../../shared/messaging/Message"
 import { IMediaBorrowingReaderRepository } from "../interfaces/data/repositories/IMediaBorrowingReaderRepository"
 
@@ -9,14 +9,14 @@ export class MediaBorrowingReader extends IMediaBorrowingReader {
         this.mediaBorrowingReaderRepository = mediaBorrowingReaderRepository
     }
 
-    public async getMediaBorrowingRecordsByUserId(userId : number, offset : number, limit : number) : Promise<Message<MediaBorrowingRecordDetails[]>> {
-        const result = new Message<MediaBorrowingRecordDetails[]>([])
+    public async getMediaBorrowingRecordsByUserId(userId : number, offset : number, limit : number) : Promise<Message<MediaBorrowingRecordListingDetails[]>> {
+        const result = new Message<MediaBorrowingRecordListingDetails[]>([])
 
         try {
-            const mediaBorrowingRecordDetails = await this.mediaBorrowingReaderRepository.getMediaBorrowingRecordsByUserId(userId, offset, limit)
+            const MediaBorrowingRecordListingDetails = await this.mediaBorrowingReaderRepository.getMediaBorrowingRecordsByUserId(userId, offset, limit)
 
-            if (mediaBorrowingRecordDetails != null) {
-                result.value = mediaBorrowingRecordDetails
+            if (MediaBorrowingRecordListingDetails != null) {
+                result.value = MediaBorrowingRecordListingDetails
             } 
         } catch(e) {
             result.addError(e as Error)

@@ -1,6 +1,4 @@
-import { BranchOpeningHours } from "../../../mediaBorrowing/data/models";
-
-export interface MediaBorrowingRecordDetails {
+export interface MediaBorrowingRecordListingDetails {
     mediaBorrowingRecordId : number,
     startDate : Date,
     endDate : Date,

@@ -1,6 +1,6 @@
 import { IDbConnectionFactory } from "../../../../db/interfaces/connection/IDbConnectionFactory";
 import { NotImplementedError } from "../../../../shared/errors/notImplementedError";
-import { MediaBorrowingRecordDetails } from "../../../data/models/mediaBorrowingRecordDetails";
+import { MediaBorrowingRecordListingDetails } from "../../../data/models/mediaBorrowingRecordListingDetails";
 
 export class IMediaBorrowingReaderRepository {
     //@ts-ignore
@@ -8,7 +8,7 @@ export class IMediaBorrowingReaderRepository {
 
     constructor() {}
 
-    public getMediaBorrowingRecordsByUserId(userId : number, offset : number, limit : number) : Promise<MediaBorrowingRecordDetails[] | null> {
+    public getMediaBorrowingRecordsByUserId(userId : number, offset : number, limit : number) : Promise<MediaBorrowingRecordListingDetails[] | null> {
         throw new NotImplementedError()
     }
 }

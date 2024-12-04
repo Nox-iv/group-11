@@ -1,3 +1,3 @@
-import { MediaBorrowingRecordDetails } from "./mediaBorrowingRecordDetails";
+import { MediaBorrowingRecordListingDetails } from "./mediaBorrowingRecordListingDetails";
 
-export { MediaBorrowingRecordDetails}
+export { MediaBorrowingRecordListingDetails}
