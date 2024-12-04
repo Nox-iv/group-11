@@ -13,13 +13,13 @@ export class MediaBorrowingConfigRepository extends IMediaBorrowingConfigReposit
         const connection = this.uow.getTransaction().getConnection()
         const result = await connection.query<number>(`
             SELECT 
-                MediaBorrowingConfig.renewalLimit 
+                mbc.renewalLimit 
             FROM 
-                Branch_MediaBorrowingConfig 
+                Branches b
             INNER JOIN
-                MediaBorrowingConfig ON MediaBorrowingConfig.mediaBorrowingConfigId = Branch_MediaBorrowingConfig.mediaBorrowingConfigId
+                MediaBorrowingConfig mbc ON mbc.mediaBorrowingConfigId = b.mediaBorrowingConfigId
             WHERE 
-                branchId = $1`, [branchId])
+                b.branchId = $1`, [branchId])
 
         if (result.length == 0) {
             return null
@@ -32,13 +32,13 @@ export class MediaBorrowingConfigRepository extends IMediaBorrowingConfigReposit
         const connection = this.uow.getTransaction().getConnection()
         const result = await connection.query<number>(`
             SELECT 
-                MediaBorrowingConfig.maximumBorrowingDurationInDays 
+                mbc.maximumBorrowingDurationInDays 
             FROM 
-                Branch_MediaBorrowingConfig 
+                Branches b
             INNER JOIN
-                MediaBorrowingConfig ON MediaBorrowingConfig.mediaBorrowingConfigId = Branch_MediaBorrowingConfig.mediaBorrowingConfigId
+                MediaBorrowingConfig mbc ON mbc.mediaBorrowingConfigId = b.mediaBorrowingConfigId
             WHERE 
-                branchId = $1`, [branchId])
+                b.branchId = $1`, [branchId])
 
         if (result.length == 0) {
             return null
