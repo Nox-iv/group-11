@@ -73,16 +73,25 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
         return result.length > 0
     }
 
-    public async archiveMediaBorrowingRecord(mediaBorrowingRecordId : number) : Promise<void> {
+    public async archiveMediaBorrowingRecord(mediaBorrowingRecordId : number, returnedOn: Date) : Promise<void> {
         const conn = this.uow.getTransaction().getConnection()
 
         await conn.command(`
-            WITH deleted AS (
+            WITH deletedMediaBorrowingRecord AS (
                 DELETE FROM MediaBorrowingRecords
                 WHERE mediaBorrowingRecordId = $1
                 RETURNING *
             )
-            INSERT INTO ArchivedMediaBorrowingRecords
+            INSERT INTO ArchivedMediaBorrowingRecords (
+                mediaBorrowingRecordId,
+                userId,
+                mediaId, 
+                branchId,
+                startDate,
+                endDate,
+                returnedDate,
+                renewals
+            )
             SELECT 
                 mediaBorrowingRecordId,
                 userId,
@@ -90,9 +99,9 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
                 branchId,
                 startDate,
                 endDate,
-                renewals,
-                CURRENT_TIMESTAMP as archivedAt
-            FROM deleted`, [mediaBorrowingRecordId])
+                $2 as returnedDate,
+                renewals
+            FROM deletedMediaBorrowingRecord`, [mediaBorrowingRecordId, returnedOn])
     }
 
     public async getMediaBorrowingRecordById(mediaBorrowingRecordId : number) : Promise<MediaBorrowingRecord | null> {

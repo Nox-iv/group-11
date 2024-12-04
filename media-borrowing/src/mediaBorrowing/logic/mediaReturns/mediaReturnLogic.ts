@@ -26,7 +26,7 @@ export class MediaReturnLogic extends IMediaReturnLogic {
             if (mediaBorrowingRecord == null) {
                 result.addError(new InvalidBorrowingRecordError(`Media borrowing record ${mediaBorrowingRecordId} does not exist.`)) 
             } else {
-                await mediaBorrowingRepository.archiveMediaBorrowingRecord(mediaBorrowingRecordId)
+                await mediaBorrowingRepository.archiveMediaBorrowingRecord(mediaBorrowingRecordId, new Date())
                 await this.updateMediaItemAvailability(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId, result)
             }
 

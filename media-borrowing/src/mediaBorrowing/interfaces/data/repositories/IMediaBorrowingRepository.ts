@@ -10,7 +10,7 @@ export class IMediaBorrowingRepository {
         throw new NotImplementedError()
     }
 
-    public archiveMediaBorrowingRecord(mediaBorrowingRecordId : number) : Promise<void> {
+    public archiveMediaBorrowingRecord(mediaBorrowingRecordId : number, returnedOn: Date) : Promise<void> {
         throw new NotImplementedError()
     }
 

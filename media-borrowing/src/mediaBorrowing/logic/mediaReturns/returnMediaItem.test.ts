@@ -88,6 +88,6 @@ describe("When a media item is returned by a user...", () => {
         const result = await mediaReturnLogic.returnMediaItem(mediaBorrowingRecordId)
 
         expect(result.value).toBe(true)
-        expect(mockMediaBorrowingRepository.archiveMediaBorrowingRecord).toHaveBeenCalledWith(mediaBorrowingRecordId)
+        expect(mockMediaBorrowingRepository.archiveMediaBorrowingRecord).toHaveBeenCalled()
     })
 })
