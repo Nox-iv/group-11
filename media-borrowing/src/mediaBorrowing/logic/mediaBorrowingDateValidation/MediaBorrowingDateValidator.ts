@@ -68,14 +68,17 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
         } 
     }
 
-    private dateIsWithinOpeningHours(date : Date, openingHours: BranchOpeningHours) : boolean {
+    private dateIsWithinOpeningHours(date : Date, branchOpeningHours: BranchOpeningHours) : boolean {
         const dayOfWeek = date.getDay()
-        const [openingHour, closingHour] = openingHours[dayOfWeek]
-        const hoursIn24hFormat = this.getHoursIn24hFormat(date)
-        return openingHour <= hoursIn24hFormat && hoursIn24hFormat <= closingHour
+        const dayOfWeekOpeningHours = branchOpeningHours.getOpeningHoursForDay(dayOfWeek)
+        const hoursIn24hFormat = this.getTimeIn24hFormat(date)
+        
+        return dayOfWeekOpeningHours.some(([openingHour, closingHour]) => {
+            return openingHour <= hoursIn24hFormat && hoursIn24hFormat <= closingHour
+        })
     }
 
-    private getHoursIn24hFormat(date : Date) : number {
+    private getTimeIn24hFormat(date : Date) : number {
         return (date.getHours() * 100) + date.getMinutes() 
     }
 

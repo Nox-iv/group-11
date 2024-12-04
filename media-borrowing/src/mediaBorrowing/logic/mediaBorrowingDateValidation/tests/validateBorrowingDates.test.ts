@@ -19,6 +19,7 @@ let mockMediaBorrowingConfigRepository : jest.Mocked<IMediaBorrowingConfigReposi
 let mockDbContext : jest.Mocked<IDbContext>
 let mockDbContextFactory : jest.Mocked<IDbContextFactory>   
 let mediaBorrowingDateValidator : IMediaBorrowingDateValidator
+let genericBranchOpeningHoursMap : Map<number, [number, number][]>
 
 
 beforeEach(() => {
@@ -36,7 +37,16 @@ beforeEach(() => {
     genericMediaBorrowingRecord.endDate = new Date(genericMediaBorrowingRecord.startDate)
     genericMediaBorrowingRecord.endDate.setDate(genericMediaBorrowingRecord.startDate.getDate() + 14)
 
-    genericBranchOpeningHours = [[900,1700],[900,1700],[900,1700],[900,1700],[900,1700],[900,1700],[900,1700]]
+    genericBranchOpeningHoursMap = new Map<number, [number, number][]>()
+    genericBranchOpeningHoursMap.set(0, [[900,1700]])
+    genericBranchOpeningHoursMap.set(1, [[900,1700]])
+    genericBranchOpeningHoursMap.set(2, [[900,1700]])
+    genericBranchOpeningHoursMap.set(3, [[900,1700]])
+    genericBranchOpeningHoursMap.set(4, [[900,1700]])
+    genericBranchOpeningHoursMap.set(5, [[900,1700]])
+    genericBranchOpeningHoursMap.set(6, [[900,1700]])
+
+    genericBranchOpeningHours = new BranchOpeningHours(genericBranchOpeningHoursMap)
 
     // Setup repositories
     mockBranchRepository = new IBranchRepository as jest.Mocked<IBranchRepository>
@@ -129,10 +139,24 @@ describe("A borrowing/renewal request is rejected if...", () => {
     })
 })
 
-describe("When a borrowing date range is valid..", () => {
-    test("the validation method returns true.", async() => {
+describe("A media borrowing date range is valid if...", () => {
+    test("the start date and end date are within the branch's opening hours.", async () => {
         const result = await mediaBorrowingDateValidator.validateBorrowingDates(getBorrowingDateValidationRequest())
         expect(result.value).toBe(true)
-        expect(result.hasErrors()).toBe(false)
+    })
+
+    test("the start date & end date are within at least one of the branch's opening periods for the given dates.", async () => {
+        genericBranchOpeningHoursMap.get(genericMediaBorrowingRecord.startDate.getDay())?.push([200, 400])
+        genericBranchOpeningHoursMap.get(genericMediaBorrowingRecord.endDate.getDay())?.push([100, 400])
+        genericMediaBorrowingRecord.startDate.setHours(2)
+        genericMediaBorrowingRecord.endDate.setHours(1)
+
+        const morningResult = await mediaBorrowingDateValidator.validateBorrowingDates(getBorrowingDateValidationRequest())
+        expect(morningResult.value).toBe(true)
+
+        genericMediaBorrowingRecord.startDate.setHours(14)
+        genericMediaBorrowingRecord.endDate.setHours(13)
+        const afternoonResult = await mediaBorrowingDateValidator.validateBorrowingDates(getBorrowingDateValidationRequest())
+        expect(afternoonResult.value).toBe(true)
     })
 })
