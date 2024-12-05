@@ -2,6 +2,7 @@ import { IMediaBorrowingRepository } from "../../interfaces/data/repositories";
 import { IUnitOfWork } from "../../../db/interfaces/uow";
 import { MediaBorrowingRecord } from "../models";
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
+import { MediaBorrowingRecordEntity } from "../entities/mediaBorrowingRecordEntity";
 
 export class MediaBorrowingRepository extends IMediaBorrowingRepository {
     private uow : IUnitOfWork
@@ -107,7 +108,7 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
     public async getMediaBorrowingRecordById(mediaBorrowingRecordId : number) : Promise<MediaBorrowingRecord | null> {
         const conn = this.uow.getTransaction().getConnection()
 
-        const result = await conn.query<MediaBorrowingRecord>(`
+        const result = await conn.query<MediaBorrowingRecordEntity>(`
             SELECT 
                 MediaBorrowingRecords.*
             FROM 
@@ -115,6 +116,20 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
             WHERE 
                 mediaBorrowingRecordId = $1`, [mediaBorrowingRecordId])
 
-        return result.length > 0 ? result[0] : null
+        if (result.length === 0) {
+            return null
+        }
+
+        const mediaBorrowingRecord = result[0]
+
+        return {
+            mediaBorrowingRecordId: mediaBorrowingRecord.mediaborrowingrecordid,
+            userId: mediaBorrowingRecord.userid,
+            mediaId: mediaBorrowingRecord.mediaid,
+            branchId: mediaBorrowingRecord.branchid,
+            startDate: mediaBorrowingRecord.startdate,
+            endDate: mediaBorrowingRecord.enddate,
+            renewals: mediaBorrowingRecord.renewals
+        }
     }
 } 

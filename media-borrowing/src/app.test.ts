@@ -54,8 +54,19 @@ describe('Media Borrowing Integration Tests', () => {
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
 
-      console.log(response.body)
       expect(response.status).toBe(200);
     });
+
+    it('can return a media item', async () => {
+      const response = await supertest(app)
+        .post('/returnMediaItem')
+        .send({
+          mediaBorrowingRecordId: 1
+        })
+
+      console.log(response.body)
+
+      expect(response.status).toBe(200);
+    })
   });
 });

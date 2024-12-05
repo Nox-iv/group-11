@@ -156,11 +156,11 @@ export class MediaBorrowingApi {
     }
 
     private parseReturnRequest(req: Request): number {
-        const { mediaBorrowingRecordId } = req.params;
-
-        if (!mediaBorrowingRecordId) {
+        if (!req.body?.mediaBorrowingRecordId) {
             throw new RequestParsingError('Missing required field: mediaBorrowingRecordId');
         }
+
+        const { mediaBorrowingRecordId } = req.body;
 
         const parsedMediaBorrowingRecordId = parseInt(mediaBorrowingRecordId);
 
