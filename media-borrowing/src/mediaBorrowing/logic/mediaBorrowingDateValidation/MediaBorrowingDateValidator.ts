@@ -25,7 +25,6 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
 
             if(!result.hasErrors()) {
                 result.value = true
-                await dbContext.commit()
             } else {
                 await dbContext.rollback()
             }
@@ -72,7 +71,7 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
         const dayOfWeek = date.getDay()
         const dayOfWeekOpeningHours = branchOpeningHours.getOpeningHoursForDay(dayOfWeek)
         const hoursIn24hFormat = this.getTimeIn24hFormat(date)
-        
+
         return dayOfWeekOpeningHours.some(([openingHour, closingHour]) => {
             return openingHour <= hoursIn24hFormat && hoursIn24hFormat <= closingHour
         })

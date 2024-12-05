@@ -25,7 +25,6 @@ export class UserEligibilityLogic extends IUserEligibilityLogic {
 
             if (!result.hasErrors()) {
                 result.value = true
-                await dbContext.commit()
             } else {
                 await dbContext.rollback()
             }

@@ -1,7 +1,7 @@
 export interface BranchOpeningHoursEntity {
-    branchHoursId : number,
-    branchId : number,
-    dayOfWeek : number,
-    openingHour : number,
-    closingHour : number
+    branchhoursid : number,
+    branchid : number,
+    dayofweek : number,
+    openingtime : number,
+    closingtime : number
 }

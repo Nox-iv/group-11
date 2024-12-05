@@ -21,8 +21,6 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
             if (mediaItem.availability > 0) {
                 result.value = true
             }
-
-            await dbContext.commit()
         } catch(e) {
             result.addError(e as Error)
             result.value = false
@@ -44,7 +42,6 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
 
             if (!result.hasErrors()) {
                 result.value = true
-                await dbContext.commit()
             } else {
                 await dbContext.rollback()
             } 
@@ -68,7 +65,6 @@ export class MediaInventoryLogic extends IMediaInventoryLogic {
 
             if (!result.hasErrors()) {
                 result.value = true
-                await dbContext.commit()
             } else {
                 await dbContext.rollback()
             } 

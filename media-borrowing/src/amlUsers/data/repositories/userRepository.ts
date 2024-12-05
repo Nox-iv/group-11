@@ -13,7 +13,7 @@ export class UserRepository extends IUserRepository {
 
     public async getUser(userId : number) : Promise<User | null> {
         const connection = this.uow.getTransaction().getConnection()
-        const result = await connection.query<UserEntity>("SELECT * FROM Users WHERE id = $1", [userId])
+        const result = await connection.query<UserEntity>("SELECT * FROM Users WHERE userId = $1", [userId])
 
         if (result.length === 0) {
             return null
@@ -22,8 +22,8 @@ export class UserRepository extends IUserRepository {
         const userEntity = result[0]
         
         return {
-            userId : userEntity.userId,
-            locationId : userEntity.locationId
+            userId : userEntity.userid,
+            locationId : userEntity.locationid
         }
     }
 } 
