@@ -7,10 +7,10 @@ services:
     ports:
       - "8080:8080"
     environment:
-      - PGUSER=dev \
-      - PGPASSWORD=dev \
-      - PGHOST=media-borrowing-db \
-      - PGPORT=5432 \
+      - PGUSER=dev
+      - PGPASSWORD=dev
+      - PGHOST=media-borrowing-db
+      - PGPORT=5432
       - PGDATABASE=dev-db
       - DATABASE_URL=postgres://dev:dev@media-borrowing-db:5432/dev-db
     depends_on:

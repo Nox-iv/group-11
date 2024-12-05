@@ -32,6 +32,8 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
         try {
             const mediaBorrowingRepository = await dbContext.getMediaBorrowingRepository()
 
+    
+
             await this.validateUserEligibility(mediaBorrowingRecord, result)
             await this.verifyMediaItemIsAvailable(mediaBorrowingRecord.mediaId, mediaBorrowingRecord.branchId, result)
             await this.validateBorrowingDates(mediaBorrowingRecord.startDate, mediaBorrowingRecord.endDate, mediaBorrowingRecord.branchId, result)
@@ -70,9 +72,7 @@ export class MediaBorrowingLogic extends IMediaBorrowingLogic {
     private async validateBorrowingDates(startDate : Date, endDate : Date, branchId: number ,result : Message<boolean>) {
         const validationResult = await this.mediaBorrowingDateValidator.validateBorrowingDates({startDate, endDate, branchId})
         if (validationResult.hasErrors()) {
-            for(let error of validationResult.errors) {
-                result.addError(error)
-            }
+            result.addErrorsFromMessage(validationResult)
         }
     }
 

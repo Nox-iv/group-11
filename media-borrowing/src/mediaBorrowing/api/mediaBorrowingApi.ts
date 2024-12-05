@@ -21,7 +21,7 @@ export class MediaBorrowingApi {
             const result = await this.mediaBorrowingLogic.BorrowMediaItem(borrowingRecord);
             
             if (result.hasErrors()) {
-                res.status(400).json({ errors: result.errors });
+                res.status(400).json({ errors: result.errors.map(e => e.message) });
                 return;
             }
 
@@ -64,23 +64,24 @@ export class MediaBorrowingApi {
     }
 
     private parseBorrowingRequest(req: Request): MediaBorrowingRecord {
-        const { userId, mediaId, branchId, startDate, endDate } = req.body;
 
-        if (!userId) {
+        if (!req.body?.userId) {
             throw new RequestParsingError('Missing required field: userId');
         }
-        if (!mediaId) {
+        if (!req.body?.mediaId) {
             throw new RequestParsingError('Missing required field: mediaId');
         }
-        if (!branchId) {
+        if (!req.body?.branchId) {
             throw new RequestParsingError('Missing required field: branchId');
         }
-        if (!startDate) {
+        if (!req.body?.startDate) {
             throw new RequestParsingError('Missing required field: startDate');
         }
-        if (!endDate) {
+        if (!req.body?.endDate) {
             throw new RequestParsingError('Missing required field: endDate');
         }
+
+        const { userId, mediaId, branchId, startDate, endDate } = req.body;
 
         const parsedUserId = parseInt(userId);
         const parsedMediaId = parseInt(mediaId);

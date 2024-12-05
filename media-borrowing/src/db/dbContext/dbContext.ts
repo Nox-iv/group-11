@@ -7,6 +7,8 @@ import { IUserRepository } from "../../amlUsers/interfaces/data/repositories/IUs
 import { MediaBorrowingRepository, MediaBorrowingConfigRepository } from "../../mediaBorrowing/data/repositories"
 import { MediaInventoryRepository } from "../../mediaInventory/data/repositories"
 import { UserRepository } from "../../amlUsers/data/repositories"
+import { IBranchRepository } from "../../amlBranches/interfaces/data/repositories"
+import { BranchRepository } from "../../amlBranches/data/repositories/branchRepository"
 
 
 export class DbContext extends IDbContext {
@@ -20,6 +22,7 @@ export class DbContext extends IDbContext {
         this.userRepository = null
         this.mediaInventoryRepository = null
         this.mediaBorrowingConfigRepository = null
+        this.branchRepository = null
     }
 
     public async getMediaBorrowingRepository() : Promise<IMediaBorrowingRepository> {
@@ -52,6 +55,14 @@ export class DbContext extends IDbContext {
         }
 
         return this.mediaBorrowingConfigRepository
+    }
+
+    public async getBranchRepository() : Promise<IBranchRepository> {
+        if (this.branchRepository == null) {
+            this.branchRepository = new BranchRepository(await this.getUnitOfWork())
+        }
+
+        return this.branchRepository
     }
 
     public async commit() : Promise<void> {
@@ -99,5 +110,6 @@ export class DbContext extends IDbContext {
         this.userRepository = null
         this.mediaInventoryRepository = null 
         this.mediaBorrowingConfigRepository = null
+        this.branchRepository = null
     }
 }

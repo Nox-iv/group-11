@@ -1,3 +1,4 @@
+import 'reflect-metadata'
 import { Pool } from "pg";
 import { DbConnectionFactory } from "../../db/connection/dbConnectionFactory";
 import { UnitOfWorkFactory } from "../../db/uow/UnitOfWorkFactory";
