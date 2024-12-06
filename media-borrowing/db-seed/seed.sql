@@ -52,6 +52,22 @@ INSERT INTO Branches (
     'manchestercentral@library.com'
 );
 
+INSERT INTO Branches (
+    locationId,
+    branchName,
+    mediaBorrowingConfigId,
+    address,
+    phoneNumber,
+    email
+) VALUES (
+    2,
+    'Manchester South Library',
+    2,
+    '101 South St',
+    '01234567893',
+    'manchestersouth@library.com'
+);
+
 DO $$ 
 DECLARE
     branch_id INT;
@@ -148,6 +164,15 @@ INSERT INTO Media (
     2, 'Inception', 'Christopher Nolan', 'https://example.com/inception.mp4'
 );
 
+INSERT INTO Media (
+    mediaTypeId,
+    title,
+    author,
+    assetUrl
+) VALUES (
+    1, 'The Hobbit', 'J.R.R. Tolkien', 'https://example.com/the-hobbit.pdf'
+);
+
 INSERT INTO MediaInventory (
     mediaId,
     branchId,
@@ -178,4 +203,28 @@ INSERT INTO MediaInventory (
     availability
 ) VALUES (
     1, 3, 10
+);
+
+INSERT INTO MediaInventory (
+    mediaId,
+    branchId,
+    availability
+) VALUES (
+    2, 3, 0
+);
+
+INSERT INTO MediaInventory (
+    mediaId,
+    branchId,
+    availability
+) VALUES (
+    3, 3, 10
+);
+
+INSERT INTO MediaInventory (
+    mediaId,
+    branchId,
+    availability
+) VALUES (
+    3, 4, 10
 );

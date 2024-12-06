@@ -59,18 +59,18 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
         )
     }
 
-    public async hasMediaBorrowingRecord(userId : number, mediaId: number, branchId : number) : Promise<boolean> {
+    public async hasMediaBorrowingRecordForMediaItem(userId : number, mediaId: number) : Promise<boolean> {
         const conn = this.uow.getTransaction().getConnection()
 
-        const result = await conn.query<number>(`
-            SELECT 1 
+        const result = await conn.query<{ found: number }>(`
+            SELECT 1
             FROM 
                 MediaBorrowingRecords 
             WHERE 
                 userId = $1 
-                AND mediaId = $2 
-                AND branchId = $3`, [userId, mediaId, branchId])
+                AND mediaId = $2`, [userId, mediaId])
 
+        console.log(result)
         return result.length > 0
     }
 

@@ -132,7 +132,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(response.status).toBe(200);
     })
 
-    it('an item unavailable to borrow at one branch is available to borrow at another', async () => {
+    it('a item is unavailable to borrow at a branch, so the user borrows it from another branch', async () => {
       // First attempt should fail as item is already borrowed
       let response = await supertest(app)
         .post('/borrowMediaItem')
@@ -166,4 +166,146 @@ describe('Media Borrowing Integration Tests', () => {
       expect(response.status).toBe(200);
     })
   });
+
+  describe('Borrowing a media item fails when...', () => {
+    it('the item is unavailable to borrow at the selected branch', async () => {
+      const response = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: '3',
+          mediaId: '2',
+          branchId: '3',
+          startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(),
+          endDate: new Date(new Date().setHours(10, 0, 0, 0) + 1000 * 60 * 60 * 24 * 6).toISOString()
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+
+      expect(response.status).toBe(400);
+    })
+
+    it('the media borrowing start date is outside the branch opening hours', async () => {
+      const response = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: '3',
+          mediaId: '1',
+          branchId: '3',
+          startDate: new Date(new Date().setHours(20, 0, 0, 0)).toISOString(),
+          endDate: new Date(new Date().setHours(20, 0, 0, 0) + 1000 * 60 * 60 * 24 * 6).toISOString()
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+
+      expect(response.status).toBe(400);
+    })
+
+    it('the media borrowing end date is outside the branch opening hours', async () => {
+      const response = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: '3',
+          mediaId: '1',
+          branchId: '3',
+          startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(),
+          endDate: new Date(new Date().setHours(2, 0, 0, 0) + 1000 * 60 * 60 * 24 * 6).toISOString()
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+
+      expect(response.status).toBe(400);
+    })
+
+    it('the media borrowing length is greater than the maximum allowed', async () => {
+      const response = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: '3',
+          mediaId: '1',
+          branchId: '3',
+          startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(),
+          endDate: new Date(new Date().setHours(10, 0, 0, 0) + 1000 * 60 * 60 * 24 * 15).toISOString()
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+
+      expect(response.status).toBe(400);
+    })
+
+    it('a user is attempting to borrow a media item from a branch in a city where they are not eligible to borrow from', async () => {
+      const response = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: '3',
+          mediaId: '3',
+          branchId: '1',
+          startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(),
+          endDate: new Date(new Date().setHours(10, 0, 0, 0) + 1000 * 60 * 60 * 24 * 6).toISOString()
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+
+      expect(response.status).toBe(400);
+    })
+
+    it('a user attempts to borrow an item that does not exist at their selected branch', async () => {
+      const response = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: '3',
+          mediaId: '2',
+          branchId: '3',
+          startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(),
+          endDate: new Date(new Date().setHours(10, 0, 0, 0) + 1000 * 60 * 60 * 24 * 6).toISOString()
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+
+      expect(response.status).toBe(400);
+    })  
+
+    it('a user borrows a media item and then attempts to borrow the same item again', async () => {
+      const borrowResponse = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: '3',
+          mediaId: '3',
+          branchId: '3',
+          startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(),
+          endDate: new Date(new Date().setHours(10, 0, 0, 0) + 1000 * 60 * 60 * 24 * 6).toISOString()
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+
+      const response = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: '3',
+          mediaId: '3',
+          branchId: '3',
+          startDate: new Date(new Date().setHours(11, 0, 0, 0)).toISOString(),
+          endDate: new Date(new Date().setHours(10, 0, 0, 0) + 1000 * 60 * 60 * 24 * 7).toISOString()
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+
+      expect(response.status).toBe(400);
+    })
+
+    it('a user attempts to borrow a media item that they are already borrowing, but from a different branch', async () => {
+      const response = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: '3',
+          mediaId: '3',
+          branchId: '4',
+          startDate: new Date(new Date().setHours(10, 0, 0, 0)).toISOString(),
+          endDate: new Date(new Date().setHours(10, 0, 0, 0) + 1000 * 60 * 60 * 24 * 6).toISOString()
+        })
+        .set('Content-Type', 'application/json')
+        .set('Accept', 'application/json')
+
+      expect(response.status).toBe(400);
+    })
+  })
 });

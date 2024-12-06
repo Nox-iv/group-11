@@ -14,7 +14,7 @@ export class IMediaBorrowingRepository {
         throw new NotImplementedError()
     }
 
-    public hasMediaBorrowingRecord(userId : number, mediaId: number, branchId : number) : Promise<boolean> {
+    public hasMediaBorrowingRecordForMediaItem(userId : number, mediaId: number) : Promise<boolean> {
         throw new NotImplementedError()
     }
 
