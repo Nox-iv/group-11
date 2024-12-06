@@ -5,14 +5,14 @@ import * as functions from '@google-cloud/functions-framework';
 import express from 'express';
 import bodyParser from 'body-parser';
 import { borrowMediaItem, renewMediaItemHandler, returnMediaItemHandler } from './app/handlers/mediaBorrowing';
-import { GetMediaBorrowingRecordsForUser } from './app/handlers/mediaBorrowingReader';
+import { getMediaBorrowingRecordsForUser } from './app/handlers/mediaBorrowingReader';
 import { requestContextMiddleware } from './app/middleware/context/requestContextMiddleware';
 import { Request as GCloudRequest, Response as GCloudResponse } from '@google-cloud/functions-framework';
-
 
 //TODO: Current test setup works but is fragile - clean up tests and use a more reliable seeding method.
 describe('Media Borrowing Integration Tests', () => {
   let app: express.Application;
+
   let pool: Pool;
   let baseDate: Date;
   let mediaBorrowingId: number = 0;
@@ -63,8 +63,7 @@ describe('Media Borrowing Integration Tests', () => {
     app.post('/borrowMediaItem', withMiddleware(borrowMediaItem));
     app.post('/renewMediaItem', withMiddleware(renewMediaItemHandler));
     app.post('/returnMediaItem', withMiddleware(returnMediaItemHandler));
-    app.get('/GetMediaBorrowingRecordsForUser', withMiddleware(GetMediaBorrowingRecordsForUser));
-
+    app.get('/getMediaBorrowingRecordsForUser/:userId', withMiddleware(getMediaBorrowingRecordsForUser));
   });
 
   describe('Media borrowing, renewals, and returns', () => {
@@ -686,7 +685,63 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(returnResponse.status).toBe(200);
     })
+
+    it('A user can request a list of their borrowed media items', async () => {
+      // Borrow two media items
+      const borrowResponse1 = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: DATABASE.USERS.SHEFFIELD_USER_1,
+          mediaId: DATABASE.MEDIA.INCEPTION,
+          branchId: DATABASE.BRANCHES.SHEFFIELD_CENTRAL,
+          startDate: new Date(baseDate.setUTCHours(15, 0, 0, 0)).toISOString(),
+          endDate: new Date(baseDate.setUTCHours(15, 0, 0, 0) + 1000 * 60 * 60 * 24 * 7).toISOString()
+        })
+  
+      expect(borrowResponse1.status).toBe(200);
+      const mediaBorrowingRecordId1 = DATABASE.MEDIA_BORROWING_ID();
+  
+      const borrowResponse2 = await supertest(app)
+        .post('/borrowMediaItem')
+        .send({
+          userId: DATABASE.USERS.SHEFFIELD_USER_1,
+          mediaId: DATABASE.MEDIA.GATSBY,
+          branchId: DATABASE.BRANCHES.SHEFFIELD_CENTRAL,
+          startDate: new Date(baseDate.setUTCHours(15, 0, 0, 0)).toISOString(),
+          endDate: new Date(baseDate.setUTCHours(15, 0, 0, 0) + 1000 * 60 * 60 * 24 * 7).toISOString()
+        })
+  
+      expect(borrowResponse2.status).toBe(200);
+      const mediaBorrowingRecordId2 = DATABASE.MEDIA_BORROWING_ID();
+  
+      const getBorrowedMediaItemsResponse = await supertest(app)
+        .get(`/getMediaBorrowingRecordsForUser/${DATABASE.USERS.SHEFFIELD_USER_1}`)
+        .query({
+          limit: 10,
+          offset: 0
+        })
+  
+      expect(getBorrowedMediaItemsResponse.status).toBe(200);
+      expect(getBorrowedMediaItemsResponse.body.length).toBe(2);
+      expect(getBorrowedMediaItemsResponse.body[0].mediaBorrowingRecordId).toBe(mediaBorrowingRecordId2);
+      expect(getBorrowedMediaItemsResponse.body[1].mediaBorrowingRecordId).toBe(mediaBorrowingRecordId1);
+  
+      const returnResponse1 = await supertest(app)
+        .post('/returnMediaItem')
+        .send({
+          mediaBorrowingRecordId: mediaBorrowingRecordId1
+        })
+  
+      expect(returnResponse1.status).toBe(200);
+  
+      const returnResponse2 = await supertest(app)
+        .post('/returnMediaItem')
+        .send({
+          mediaBorrowingRecordId: mediaBorrowingRecordId2
+        })
+  
+      expect(returnResponse2.status).toBe(200);
+    })
   })
 });
-
  

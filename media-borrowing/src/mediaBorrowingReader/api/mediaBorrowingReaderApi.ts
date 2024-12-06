@@ -35,7 +35,7 @@ export class MediaBorrowingReaderApi {
         const offset = parseInt(req.query.offset as string ?? '0');
         const limit = parseInt(req.query.limit as string ?? '10');
 
-        if (userId) {
+        if (!userId) {
             throw new RequestParsingError('Missing required field: userId');
         }
 
