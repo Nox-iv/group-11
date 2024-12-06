@@ -25,13 +25,10 @@ export class UserEligibilityLogic extends IUserEligibilityLogic {
 
             if (!result.hasErrors()) {
                 result.value = true
-            } else {
-                await dbContext.rollback()
-            }
+            } 
         } catch (e) {
             result.addError(e as Error)
             result.value = false
-            await dbContext.rollback()
         } finally {
             return result
         }

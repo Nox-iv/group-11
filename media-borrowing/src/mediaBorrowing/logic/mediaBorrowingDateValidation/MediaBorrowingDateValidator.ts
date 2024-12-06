@@ -25,12 +25,9 @@ export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
 
             if(!result.hasErrors()) {
                 result.value = true
-            } else {
-                await dbContext.rollback()
-            }
+            } 
         } catch(e) {
             result.addError(e as Error)
-            await dbContext.rollback()
         } finally {
             return result
         }
