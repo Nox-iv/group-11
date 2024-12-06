@@ -118,7 +118,7 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
         if (result.length === 0) {
             return null
         }
-
+        
         const mediaBorrowingRecord = result[0]
 
         return {

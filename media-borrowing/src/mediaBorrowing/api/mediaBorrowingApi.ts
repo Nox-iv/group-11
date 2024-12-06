@@ -53,7 +53,7 @@ export class MediaBorrowingApi {
             const result = await this.mediaReturnLogic.returnMediaItem(recordId);
             
             if (result.hasErrors()) {
-                res.status(400).json({ errors: result.errors });
+                res.status(400).json({ errors: result.errors.map(e => e.message) });
                 return;
             }
 

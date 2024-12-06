@@ -202,7 +202,7 @@ INSERT INTO MediaInventory (
     branchId,
     availability
 ) VALUES (
-    1, 3, 10
+    2, 2, 2
 );
 
 INSERT INTO MediaInventory (
@@ -210,7 +210,7 @@ INSERT INTO MediaInventory (
     branchId,
     availability
 ) VALUES (
-    2, 3, 0
+    1, 3, 10
 );
 
 INSERT INTO MediaInventory (

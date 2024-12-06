@@ -27,9 +27,9 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
             const mediaBorrowingRepository = await dbContext.getMediaBorrowingRepository()
 
             const mediaBorrowingRecord = await mediaBorrowingRepository.getMediaBorrowingRecordById(mediaRenewalRequest.mediaBorrowingRecordId)
-    
             if (mediaBorrowingRecord == null) {
                 result.addError(new InvalidBorrowingRecordError(`Media Borrowing Record ${mediaRenewalRequest.mediaBorrowingRecordId} does not exist.`))
+                await dbContext.rollback()
             } else {
                 await this.verifyRenewalLimitIsNotExceeded(mediaBorrowingRecord.renewals, mediaBorrowingRecord.branchId, dbContext, result)
 
@@ -51,9 +51,8 @@ export class MediaRenewalLogic extends IMediaRenewalLogic {
                     await dbContext.commit()
                 } else {
                     await dbContext.rollback()
-                }
+                }    
             }
-
         } catch (e) {
             result.addError(e as Error)
             await dbContext.rollback()
