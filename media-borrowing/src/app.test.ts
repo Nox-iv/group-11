@@ -146,7 +146,6 @@ describe('Media Borrowing Integration Tests', () => {
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
 
-      console.log(response.body);
       expect(response.status).toBe(400);
 
       // Try borrowing from another branch
@@ -162,7 +161,6 @@ describe('Media Borrowing Integration Tests', () => {
         .set('Content-Type', 'application/json')
         .set('Accept', 'application/json')
 
-      console.log(response.body);
       expect(response.status).toBe(200);
     })
   });

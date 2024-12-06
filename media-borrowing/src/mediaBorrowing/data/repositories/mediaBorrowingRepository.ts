@@ -70,7 +70,6 @@ export class MediaBorrowingRepository extends IMediaBorrowingRepository {
                 userId = $1 
                 AND mediaId = $2`, [userId, mediaId])
 
-        console.log(result)
         return result.length > 0
     }
 
