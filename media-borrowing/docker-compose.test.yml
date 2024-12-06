@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  node-app-test:
+    container_name: media-borrowing-app
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PGUSER=test-user
+      - PGPASSWORD=test-password
+      - PGHOST=postgres-test-db
+      - PGPORT=5432
+      - PGDATABASE=test-db
+      - DATABASE_URL=postgres://test-user:test-password@postgres-test-db:5432/test-db
+    depends_on:
+      postgres-test-db:
+        condition: service_healthy
+    restart: always
+    command: >
+      sh -c "
+             pnpm migrate:up;
+             psql -d test-db -f db-seed/seed.sql;
+             pnpm test:api;
+             psql -d test-db -f db-seed/teardown.sql;"
+
+  postgres-test-db:
+    image: postgres:13
+    volumes:
+      - aml-media-borrowing-dev-postgres-test-data:/var/lib/postgresql/test-data
+    environment:
+      - POSTGRES_USER=test-user
+      - POSTGRES_PASSWORD=test-password
+      - POSTGRES_DB=test-db
+      - PGPORT=5432
+      - PGHOST=postgres-test-db
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  aml-media-borrowing-dev-postgres-test-data:
+    driver: local
