@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
     "build": "rimraf ./build && npx tsc",
     "start": "npm run build && npx functions-framework --source=./build/index.js --target=myHttpFunction",
     "migrate:up": "node-pg-migrate up",
