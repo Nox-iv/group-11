@@ -31,7 +31,12 @@ export class MediaInventoryRepository extends IMediaInventoryRepository {
         const connection = this.uow.getTransaction().getConnection()
 
         await connection.command(
-            `UPDATE MediaInventory SET availability = $1 WHERE mediaInventoryId = $2`,
+            `UPDATE
+                MediaInventory
+            SET
+                availability = $1
+            WHERE
+                mediaInventoryId = $2`,
             [mediaInventoryRecord.availability, mediaInventoryRecord.mediaInventoryId]
         )
     }
