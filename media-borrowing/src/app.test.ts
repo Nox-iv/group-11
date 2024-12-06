@@ -707,7 +707,7 @@ describe('Media Borrowing Integration Tests', () => {
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
           mediaId: DATABASE.MEDIA.GATSBY,
           branchId: DATABASE.BRANCHES.SHEFFIELD_CENTRAL,
-          startDate: new Date(baseDate.setUTCHours(15, 0, 0, 0)).toISOString(),
+          startDate: new Date(baseDate.setUTCHours(15, 10, 0,0)).toISOString(),
           endDate: new Date(baseDate.setUTCHours(15, 0, 0, 0) + 1000 * 60 * 60 * 24 * 7).toISOString()
         })
   
