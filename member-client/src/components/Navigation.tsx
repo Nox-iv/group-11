@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Toolbar, IconButton, Typography, Link, useMediaQuery } from "@mui/material";
+import { Box, Toolbar, IconButton, Typography, Link, useMediaQuery, ButtonGroup } from "@mui/material";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import PersonIcon from '@mui/icons-material/Person';
 import SearchIcon from '@mui/icons-material/Search';
@@ -20,8 +20,8 @@ export default function Navigation() {
     }, [isMobile]);
 
     return (
-        <Box sx={{ width: '100%' }}>
-            <AppBar position="static" sx={{ height: '100px' }}>
+        <Box>
+            <AppBar position="static" sx={{ height: '100px'}}>
                 <Toolbar>
                     {(!isMobile || (isMobile && hideSearch)) && (
                         <>
@@ -30,18 +30,22 @@ export default function Navigation() {
                                     <img src={'../../public/logo.png'} height={100} alt="Logo" />
                                 </Link>
                             </Typography>
-                            <Search width="400px" hidden={hideSearch} />
-                            {isMobile && (
-                                <IconButton onClick={() => setHideSearch(!hideSearch)}>
-                                    <SearchIcon />
-                                </IconButton>
-                            )}
-                            <IconButton>
-                                <NotificationsIcon />
-                            </IconButton>
-                            <IconButton>
-                                <PersonIcon />
-                            </IconButton>
+                            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <Search width="400px" hidden={hideSearch} />
+                                <ButtonGroup sx={{marginLeft: '8px'}}>
+                                    {isMobile && (
+                                        <IconButton onClick={() => setHideSearch(!hideSearch)}>
+                                            <SearchIcon />
+                                        </IconButton>
+                                    )}
+                                    <IconButton>
+                                        <NotificationsIcon />
+                                    </IconButton>
+                                    <IconButton>
+                                        <PersonIcon />
+                                    </IconButton>
+                                </ButtonGroup>
+                            </Box>
                         </>
                     )}
                     {isMobile && !hideSearch && (

@@ -2,10 +2,9 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { Box } from '@mui/material';
-import Navigation from './components/Navigation';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import Home from './pages/Home';
+import './global.css';
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -24,9 +23,7 @@ const theme = createTheme({
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <Box>
-        <Navigation />
-      </Box>
+      <Home />
     </ThemeProvider>
   )
 }
