@@ -9,7 +9,7 @@ export default function ResultCard() {
   return (
     <Card sx={{ width: '100%' }}>
       <CardActionArea sx={{ display: 'flex', flexDirection: 'row' }}>
-        <Box sx={{ width: '25%'}}>
+        <Box sx={{ width: '20%'}}>
             <CardMedia
                 component="img"
                 height="140"
@@ -23,6 +23,7 @@ export default function ResultCard() {
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             Static Description
+            species, ranging across all continents except Antarctica
           </Typography>
         </CardContent>
       </CardActionArea>
