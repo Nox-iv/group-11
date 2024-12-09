@@ -11,7 +11,6 @@ const style = {
   flexDirection: 'column',
   alignItems: 'center',
   gap: 4,
-  spacing: 2,
   position: 'absolute',
   top: '50%',
   left: '50%',
@@ -51,10 +50,16 @@ export default function BookingModal({disabled}: {disabled: boolean}) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <Box sx={{textAlign: 'center'}}>
+          <Box sx={{textAlign: 'left'}}>
             <Typography variant="h4">Booking Confirmation</Typography>
-            <Typography variant="h6">Media Item: {mediaItem.title}</Typography>
-            <Typography variant="h6">Branch: {branch.name}</Typography>
+            <Box sx={{ display: 'flex', flexDirection: 'row'}}>
+              <Typography variant="h6">Media Item: </Typography>
+              <Typography marginTop={0.6} marginLeft={1} variant="body1">{mediaItem.title}</Typography>
+            </Box>
+            <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+              <Typography variant="h6">Branch: </Typography>
+              <Typography marginTop={0.5} marginLeft={1} variant="body1">{branch.name}</Typography>
+            </Box>
           </Box>
           <Box>
             <DateTimeRangePicker
@@ -64,8 +69,8 @@ export default function BookingModal({disabled}: {disabled: boolean}) {
               onEndDateChange={setEndDate}
             />
           </Box>
-          <Box sx={{width: '50%', textAlign: 'center'}}>
-            <Button variant="contained" color="primary" onClick={handleClose}>Confirm</Button>
+          <Box sx={{width: '100%', height: '50px', textAlign: 'center'}}>
+            <Button sx={{width: '100%', height: '100%', marginTop: 1}} variant="contained" color="primary" onClick={handleClose}>Confirm</Button>
           </Box>
         </Box>
       </Modal>
