@@ -1,6 +1,7 @@
-import { Box, Typography,Paper, List, ListItem, ListItemText, Button, useMediaQuery} from "@mui/material";
+import { Box, Typography,Paper, List, ListItem, ListItemText, useMediaQuery} from "@mui/material";
 import Navigation from "../components/Navigation";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import BookingModal from "../components/BookingModal";
 
 export default function Details() {
 
@@ -90,12 +91,7 @@ export default function Details() {
                                         />
                                         <Typography>{branch.name}</Typography>
                                     </Box>
-                                    <Button 
-                                        variant="contained" 
-                                        disabled={!branch.available}
-                                    >
-                                        Book
-                                    </Button>
+                                    <BookingModal disabled={!branch.available} />
                                 </Paper>
                             </Box>
                         ))}
