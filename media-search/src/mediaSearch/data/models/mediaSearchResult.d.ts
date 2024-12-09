@@ -11,7 +11,7 @@ export interface MediaSearchResult {
 }
 
 interface MediaStock {
-    branchId : number,
-    branchName : string,
+    locationId : number,
+    locationName : string,
     stockCount : number
 }
