@@ -7,17 +7,17 @@ import CloseIcon from '@mui/icons-material/Close';
 import Search from './Search';
 import AppBar from "@mui/material/AppBar";
 
-export default function Navigation() {
-    const [hideSearch, setHideSearch] = useState(false);
+export default function Navigation({ searchHidden = false }: { searchHidden?: boolean }) {
+    const [hideSearch, setHideSearch] = useState(searchHidden);
     const isMobile = useMediaQuery('(max-width:630px)');
 
     useEffect(() => {
-        if (isMobile) {
+        if (isMobile || searchHidden) {
             setHideSearch(true);
         } else {
             setHideSearch(false);
         }
-    }, [isMobile]);
+    }, [isMobile, searchHidden]);
 
     return (
         <Box>

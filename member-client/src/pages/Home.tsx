@@ -118,7 +118,7 @@ export default function Home() {
                         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <Typography marginLeft={2} variant="h4">Books</Typography>
                             <IconButton>
-                                <ArrowForwardIcon sx={{ color: 'black' }} />
+                                <ArrowForwardIcon />
                             </IconButton>
                         </Box>
                         <MultiCarousel items={books} />
@@ -127,7 +127,7 @@ export default function Home() {
                         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <Typography marginLeft={2} variant="h4">Films</Typography>
                             <IconButton>
-                                <ArrowForwardIcon sx={{ color: 'black' }} />
+                                <ArrowForwardIcon />
                             </IconButton>
                         </Box>
                         <MultiCarousel items={films} />
@@ -136,7 +136,7 @@ export default function Home() {
                         <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                             <Typography marginLeft={2} variant="h4">Games</Typography>
                             <IconButton>
-                                <ArrowForwardIcon sx={{ color: 'black' }} />
+                                <ArrowForwardIcon />
                             </IconButton>
                         </Box>
                         <MultiCarousel items={games} />

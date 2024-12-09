@@ -1,14 +1,44 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router'
-import App from './App.tsx'
+
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import './global.css';
+
+import Home from './pages/Home.tsx'
+import MediaSearch from './pages/MediaSearch.tsx'
+
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#ffffff',
+    },
+    secondary: {
+      main: '#f50057',
+    },
+    text: {
+      secondary: '#929292',
+    },
+  },
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-      </Routes>
-    </BrowserRouter>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <BrowserRouter>
+        <Routes>
+        <Route path="/" element={<Home />} />
+          <Route path="/search" element={<MediaSearch />} />
+        </Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   </StrictMode>,
 )
