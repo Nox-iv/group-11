@@ -37,6 +37,7 @@ export const DateTimeRangePicker = ({
         value={startDate}
         onChange={handleStartDateChange}
         maxDate={endDate || undefined}
+        maxTime={endDate || undefined}
       />
       <Typography>-</Typography>
       <DateTimePicker
@@ -44,6 +45,7 @@ export const DateTimeRangePicker = ({
         value={endDate}
         onChange={handleEndDateChange}
         minDate={startDate || undefined}
+        minTime={startDate || undefined}
       />
     </Box>
   );
