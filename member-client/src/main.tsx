@@ -13,7 +13,7 @@ import './global.css';
 
 import Home from './pages/Home.tsx'
 import MediaSearch from './pages/MediaSearch.tsx'
-
+import Details from './pages/Details.tsx'
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -35,8 +35,9 @@ createRoot(document.getElementById('root')!).render(
       <CssBaseline />
       <BrowserRouter>
         <Routes>
-        <Route path="/" element={<Home />} />
+          <Route path="/" element={<Home />} />
           <Route path="/search" element={<MediaSearch />} />
+          <Route path="/details" element={<Details />} />
         </Routes>
       </BrowserRouter>
     </ThemeProvider>
