@@ -9,7 +9,7 @@ import AppBar from "@mui/material/AppBar";
 
 export default function Navigation() {
     const [hideSearch, setHideSearch] = useState(false);
-    const isMobile = useMediaQuery('(max-width:600px)');
+    const isMobile = useMediaQuery('(max-width:630px)');
 
     useEffect(() => {
         if (isMobile) {
