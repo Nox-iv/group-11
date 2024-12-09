@@ -1,6 +1,7 @@
 import Navigation from "../components/Navigation";
-import { Box, Typography } from "@mui/material";
+import { Box, IconButton, Typography } from "@mui/material";
 import MultiCarousel from "../components/MultiCarousel";
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 export default function Home() {
     const books = [
@@ -113,12 +114,33 @@ export default function Home() {
                     gap: 2,
                     padding: 2,
                 }}>
-                    <Typography variant="h4">Books</Typography>
-                    <MultiCarousel items={books} />
-                    <Typography variant="h4">Films</Typography>
-                    <MultiCarousel items={films} />
-                    <Typography variant="h4">Games</Typography>
-                    <MultiCarousel items={games} />
+                    <Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                            <Typography marginLeft={2} variant="h4">Books</Typography>
+                            <IconButton>
+                                <ArrowForwardIcon sx={{ color: 'black' }} />
+                            </IconButton>
+                        </Box>
+                        <MultiCarousel items={books} />
+                    </Box>
+                    <Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                            <Typography marginLeft={2} variant="h4">Films</Typography>
+                            <IconButton>
+                                <ArrowForwardIcon sx={{ color: 'black' }} />
+                            </IconButton>
+                        </Box>
+                        <MultiCarousel items={films} />
+                    </Box>
+                    <Box>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                            <Typography marginLeft={2} variant="h4">Games</Typography>
+                            <IconButton>
+                                <ArrowForwardIcon sx={{ color: 'black' }} />
+                            </IconButton>
+                        </Box>
+                        <MultiCarousel items={games} />
+                    </Box>
                 </Box>
             </Box>
         </>
