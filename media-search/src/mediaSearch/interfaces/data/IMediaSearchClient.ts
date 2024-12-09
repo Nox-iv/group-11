@@ -1,11 +1,14 @@
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
 import { MediaSearchResult } from "../../data/models/mediaSearchResult";
-import { MediaSearchParams } from "../dto/MediaSearchParams";
+import { MediaSearchClientParams } from "../dto/MediaSearchClientParams";
 
-export class IMediaSearchClient {
+export default class IMediaSearchClient {
+    //@ts-ignore
+    protected client: Client;
+    
     constructor() {}
 
-    public searchMedia(searchParams: MediaSearchParams): Promise<MediaSearchResult[]> {
+    public searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult[]> {
         throw new NotImplementedError();
     }
 }

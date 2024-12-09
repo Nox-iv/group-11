@@ -25,6 +25,7 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.16.2"
+    "@elastic/elasticsearch": "^8.16.2",
+    "@types/elasticsearch": "^5.0.43"
   }
 }

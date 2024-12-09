@@ -8,6 +8,9 @@ dependencies:
   '@elastic/elasticsearch':
     specifier: ^8.16.2
     version: 8.16.2
+  '@types/elasticsearch':
+    specifier: ^5.0.43
+    version: 5.0.43
 
 devDependencies:
   '@google-cloud/functions-framework':
@@ -769,6 +772,10 @@ packages:
   /@types/cookiejar@2.1.5:
     resolution: {integrity: sha512-he+DHOWReW0nghN24E1WUqM0efK4kI9oTqDm6XmK8ZPe2djZ90BSNdGnIyCLzCPw7/pogPlGbzI2wHGGmi4O/Q==}
     dev: true
+
+  /@types/elasticsearch@5.0.43:
+    resolution: {integrity: sha512-N+MpzURpDCWd7zaJ7CE1aU+nBSeAABLhDE0lGodQ0LLftx7ku6hjTXLr9OAFZLSXiWL3Xxx8jts485ynrcm5NA==}
+    dev: false
 
   /@types/express-serve-static-core@4.19.6:
     resolution: {integrity: sha512-N4LZ2xG7DatVqhCZzOGb1Yi5lMbXSZcmdLDe9EzSndPV2HpWYWzRbaerl2n27irrm94EPpprqa8KpskPT085+A==}
