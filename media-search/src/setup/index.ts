@@ -1,5 +1,5 @@
-import { elasticSearchClient } from '../elasticsearch/elasticSearchClient';
-import MediaSearchClient from '../mediaSearch/data/elasticsearch/mediaSearchClient';
+import { elasticSearchClient } from '../elasticsearch/client/elasticSearchClient';
+import MediaSearchClient from '../mediaSearch/data/clients/mediaSearchClient';
 import MediaSearchLogic from '../mediaSearch/logic/mediaSearchLogic';
 import MediaSearchApi from '../mediaSearch/api/mediaSearchApi';
 
