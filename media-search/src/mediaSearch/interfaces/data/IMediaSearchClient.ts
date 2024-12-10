@@ -1,5 +1,5 @@
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
-import { MediaSearchResult } from "../../data/models/mediaSearchResult";
+import { MediaSearchResult } from "../../data/documents/mediaSearchResult";
 import { MediaSearchClientParams } from "../dto/MediaSearchClientParams";
 
 export default class IMediaSearchClient {

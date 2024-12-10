@@ -1,5 +1,5 @@
 import IMediaSearchClient from "../../interfaces/data/IMediaSearchClient";
-import { MediaSearchResult } from "../models/mediaSearchResult";
+import { MediaSearchResult } from "../documents/mediaSearchResult";
 import { MediaSearchClientParams } from "../../interfaces/dto/MediaSearchClientParams";
 import { Client } from "@elastic/elasticsearch";
 import { estypes } from "@elastic/elasticsearch";

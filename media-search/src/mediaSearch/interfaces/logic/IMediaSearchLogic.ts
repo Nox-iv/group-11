@@ -1,6 +1,6 @@
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
 import { MediaSearchLogicParams } from "../dto/MediaSearchLogicParams";
-import { MediaSearchResult } from "../../data/models/mediaSearchResult";
+import { MediaSearchResult } from "../../data/documents/mediaSearchResult";
 import IMediaSearchClient from "../data/IMediaSearchClient";
 import { Message } from "../../../shared/messaging/message";
 export default class IMediaSearchLogic {

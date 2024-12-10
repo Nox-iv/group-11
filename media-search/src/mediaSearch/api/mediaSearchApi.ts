@@ -1,5 +1,5 @@
 import { Message } from "../../shared/messaging/message";
-import { MediaSearchResult } from "../data/models/mediaSearchResult";
+import { MediaSearchResult } from "../data/documents/mediaSearchResult";
 import { MediaSearchLogicParams } from "../interfaces/dto/MediaSearchLogicParams";
 import IMediaSearchLogic from "../interfaces/logic/IMediaSearchLogic";
 import { Request, Response } from "express";

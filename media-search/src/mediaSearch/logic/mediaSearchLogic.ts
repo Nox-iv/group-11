@@ -1,6 +1,6 @@
 import IMediaSearchClient from "../interfaces/data/IMediaSearchClient";
 import { MediaSearchLogicParams } from "../interfaces/dto/MediaSearchLogicParams";
-import { MediaSearchResult } from "../data/models/mediaSearchResult";
+import { MediaSearchResult } from "../data/documents/mediaSearchResult";
 import IMediaSearchLogic from "../interfaces/logic/IMediaSearchLogic";
 import { Message } from "../../shared/messaging/message";
 
