@@ -1,11 +1,4 @@
-import express from 'express';
+import app from './app';
 import functions from '@google-cloud/functions-framework';
-import setup from './setup';
-
-const app = express();
-
-const { mediaSearchApi } = setup();
-
-app.get('/search', mediaSearchApi.searchMedia);
 
 functions.http('mediaSearch', app);
