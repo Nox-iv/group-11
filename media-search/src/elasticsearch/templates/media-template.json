@@ -1,59 +1,53 @@
 {
   "index_patterns": ["m_index"],
-  "priority": 300,
-  "template": {
-    "mappings": {
-        "doc": {
-            "properties": {
-                "mediaId": {
-                  "type": "keyword"
-                },
-                "title": {
-                  "type": "text"
-                },
-                "type": {
-                  "type": "text"
-                },
-                "author": {
-                  "type": "text"
-                },
-                "description": {
-                  "type": "text"
-                },
-                "releaseDate": {
-                  "type": "date"
-                },
-                "imageUrl": {
-                  "type": "text",
-                  "index": false
-                },
-                "genres": {
-                  "type": "array"
-                },
-                "stock": {
-                  "type": "nested",
-                  "properties": {
-                    "locationId": {
-                      "type": "keyword"
-                    },
-                    "locationName": {
-                      "type": "text"
-                    },
-                    "stockCount": {
-                      "type": "integer",
-                    }
-                  }
-                }
-              }
-            },
+  "mappings": {
+    "properties": {
+      "mediaId": {
+        "type": "keyword"
+      },
+      "title": {
+        "type": "text"
+      },
+      "type": {
+        "type": "text"
+      },
+      "author": {
+        "type": "text"
+      },
+      "description": {
+        "type": "text"
+      },
+      "releaseDate": {
+        "type": "date"
+      },
+      "imageUrl": {
+        "type": "text",
+        "index": false
+      },
+      "genres": {
+        "type": "keyword"
+      },
+      "stock": {
+        "type": "nested",
+        "properties": {
+          "locationId": {
+            "type": "keyword"
+          },
+          "locationName": {
+            "type": "text"
+          },
+          "stockCount": {
+            "type": "integer"
+          }
         }
+      }
     }
-    "settings":{
-      "number_of_shards": 1,
-      "number_of_replicas": 1
-    },
-    "aliases":{
-      "media":{}
-    }
+  },
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+  },
+  "aliases": {
+    "media": {}
   }
 }

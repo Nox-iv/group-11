@@ -1,11 +1,10 @@
 import express from 'express';
-import functions from '@google-cloud/functions-framework';
 import setup from './setup';
 
 const app = express();
 
 const { mediaSearchApi } = setup();
 
-app.get('/search', mediaSearchApi.searchMedia);
+app.get('/search', async (req, res) => mediaSearchApi.searchMedia(req, res));
 
 export default app;
