@@ -9,7 +9,7 @@
         "type": "text"
       },
       "type": {
-        "type": "text"
+        "type": "keyword"
       },
       "author": {
         "type": "text"

@@ -83,12 +83,35 @@ export const mediaSearchResultTestData : MediaSearchResult[] = [
                 stockCount: 10
             }
         ]
+    },
+    {
+        mediaId: 5,
+        title: "The Hobbit: An Unexpected Journey",
+        type: "Movie",
+        author: "Peter Jackson",
+        description: "A reluctant Hobbit, Bilbo Baggins, sets out to the Lonely Mountain with a spirited group of dwarves to reclaim their mountain home, and the gold within it from the dragon Smaug.",
+        releaseDate: "2012-12-14",
+        imageUrl: "https://example.com/image5.jpg",
+        genres: ["Action", "Adventure", "Fantasy"],
+        mediaStock: [
+            {
+                locationId: 1,
+                locationName: "Sheffield",
+                stockCount: 10
+            },
+            {
+                locationId: 2,
+                locationName: "Manchester",
+                stockCount: 10
+            }
+        ]
     }
 ]
 
 export const testDataIdx = {
     THE_DARK_KNIGHT: 0,
-    THE_HOBBIT: 1,
+    THE_HOBBIT_BOOK: 1,
     THE_LEGEND_OF_ZELDA: 2,
-    RED_DEAD_REDEMPTION_2: 3
+    RED_DEAD_REDEMPTION_2: 3,
+    THE_HOBBIT_MOVIE: 4
 }

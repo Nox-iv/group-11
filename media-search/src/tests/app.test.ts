@@ -55,7 +55,7 @@ describe('Media Search API Tests', () => {
         log('6) Tests starting...')
     }, 20000);
 
-    describe('Search Term...', () => {
+    describe('POST /search', () => {
         test('can match a single media item.', async () => {
             const response = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -78,13 +78,42 @@ describe('Media Search API Tests', () => {
                 searchTerm: 'The legend of Zelda'
             });
 
-
-            console.log(response.body);
             expect(response.status).toBe(200);
             // All test data contains the word 'the', so everything is brought back
-            expect(response.body.length).toEqual(4);
+            expect(response.body.length).toEqual(5);
             // Best match first
             expect(response.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_LEGEND_OF_ZELDA]);
+        });
+
+        test('can filter by media type', async () => {
+            // Establish baseline by verifying search term returns both book and movie
+            const noFilterResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Hobbit',
+            });
+
+            expect(noFilterResponse.status).toBe(200);
+            expect(noFilterResponse.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_HOBBIT_BOOK]);
+            expect(noFilterResponse.body[1]).toEqual(mediaSearchResultTestData[testDataIdx.THE_HOBBIT_MOVIE]);
+
+            // Now filter for the book
+            const filterResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Hobbit',
+                filters: {
+                    type: 'Book'
+                }
+            });
+            
+            log(filterResponse.body)
+
+            expect(filterResponse.status).toBe(200);
+            expect(filterResponse.body.length).toEqual(1);
+            expect(filterResponse.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_HOBBIT_BOOK]);
         });
     });
 

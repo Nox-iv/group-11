@@ -1,6 +1,6 @@
-import { NotImplementedError } from "../../../shared/errors/notImplementedError";
-import { MediaSearchResult } from "../../data/documents/mediaSearchResult";
-import { MediaSearchClientParams } from "../dto/MediaSearchClientParams";
+import { NotImplementedError } from "../../../../shared/errors/notImplementedError";
+import { MediaSearchResult } from "../../../data/documents/mediaSearchResult";
+import { MediaSearchClientParams } from "../../dto/MediaSearchClientParams";
 
 export default class IMediaSearchClient {
     //@ts-ignore
