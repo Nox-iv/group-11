@@ -25,10 +25,24 @@ export default class MediaSearchApi {
     }
 
     private parseSearchParams(request: Request): Message<MediaSearchLogicParams> {
-        const searchTerm = request.query.searchTerm as string ?? '';
-        const page = Number(request.query?.page ?? 0);
-        const pageSize = Number(request.query?.pageSize ?? 10);
+        const result = new Message<MediaSearchLogicParams>(null);
 
-        return new Message<MediaSearchLogicParams>({searchTerm, page, pageSize });
+        const searchTerm = request.body?.searchTerm ?? '';
+        const page = Number(request.body?.page ?? 0);
+        const pageSize = Number(request.body?.pageSize ?? 10);
+
+        if (isNaN(page)) {
+            result.addError(new Error('Page must be a number'));
+        }
+
+        if (isNaN(pageSize)) {
+            result.addError(new Error('Page size must be a number'));
+        }
+
+        if (!result.hasErrors()) {
+            result.value = { searchTerm, page, pageSize };
+        }
+
+        return result;
     }
 }

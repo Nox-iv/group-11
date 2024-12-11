@@ -85,3 +85,10 @@ export const mediaSearchResultTestData : MediaSearchResult[] = [
         ]
     }
 ]
+
+export const testDataIdx = {
+    THE_DARK_KNIGHT: 0,
+    THE_HOBBIT: 1,
+    THE_LEGEND_OF_ZELDA: 2,
+    RED_DEAD_REDEMPTION_2: 3
+}

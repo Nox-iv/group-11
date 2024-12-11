@@ -3,7 +3,7 @@ export class Message<T> {
     public _value: T | null = null;
     private _errors : Error[] = [];
 
-    constructor(value: T) {
+    constructor(value: T | null) {
         this.value = value;
     }
 

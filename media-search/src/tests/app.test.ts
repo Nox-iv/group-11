@@ -1,6 +1,6 @@
 import app from '../app';
 import { elasticSearchClient } from '../elasticsearch/client/elasticSearchClient';
-import { mediaSearchResultTestData } from './data';
+import { mediaSearchResultTestData, testDataIdx } from './data';
 
 import request from 'supertest';
 
@@ -57,14 +57,34 @@ describe('Media Search API Tests', () => {
 
     describe('Search Term...', () => {
         test('can match a single media item.', async () => {
-            const response = await agent.get('/search')
-            .query({
-                searchTerm: 'Red Dead Redemption 2'
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: mediaSearchResultTestData[testDataIdx.RED_DEAD_REDEMPTION_2].title
             });
 
             expect(response.status).toBe(200);
-            expect(response.body[0]).toEqual(mediaSearchResultTestData[3]);
+            // Only one result because the search term is an exact match
             expect(response.body.length).toEqual(1);
+            expect(response.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.RED_DEAD_REDEMPTION_2]);
+        });
+
+        test('can match multiple media items.', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The legend of Zelda'
+            });
+
+
+            console.log(response.body);
+            expect(response.status).toBe(200);
+            // All test data contains the word 'the', so everything is brought back
+            expect(response.body.length).toEqual(4);
+            // Best match first
+            expect(response.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_LEGEND_OF_ZELDA]);
         });
     });
 
