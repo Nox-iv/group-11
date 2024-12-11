@@ -105,6 +105,72 @@ export const mediaSearchResultTestData : MediaSearchResult[] = [
                 stockCount: 10
             }
         ]
+    },
+    {
+        mediaId: 6,
+        title: "The Lord of the Rings: The Fellowship of the Ring",
+        type: "Movie",
+        author: "Peter Jackson",
+        description: "A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
+        releaseDate: "2001-12-19",
+        imageUrl: "https://example.com/image6.jpg",
+        genres: ["Action", "Adventure", "Fantasy"],
+        mediaStock: [
+            {
+                locationId: 1,
+                locationName: "Sheffield",
+                stockCount: 10
+            },
+            {
+                locationId: 2,
+                locationName: "Manchester",
+                stockCount: 10
+            }
+        ]
+    },
+    {
+        mediaId: 7,
+        title: "The Lord of the Rings: The Two Towers",
+        type: "Movie",
+        author: "Peter Jackson",
+        description: "While Frodo and Sam edge closer to Mordor with the help of the shifty Gollum, the divided fellowship makes a stand against Sauron's new ally, Saruman, and his hordes of Isengard.",
+        releaseDate: "2002-12-18",
+        imageUrl: "https://example.com/image7.jpg",
+        genres: ["Action", "Adventure", "Fantasy"],
+        mediaStock: [
+            {
+                locationId: 1,
+                locationName: "Sheffield",
+                stockCount: 10
+            },
+            {
+                locationId: 2,
+                locationName: "Manchester",
+                stockCount: 10
+            }
+        ]
+    },
+    {
+        mediaId: 8,
+        title: "The Lord of the Rings: The Return of the King",
+        type: "Movie",
+        author: "Peter Jackson",
+        description: "Gandalf and Aragorn lead the World of Men against Sauron's army to draw his gaze from Frodo and Sam as they approach Mount Doom with the One Ring.",
+        releaseDate: "2003-12-17",
+        imageUrl: "https://example.com/image8.jpg",
+        genres: ["Action", "Adventure", "Fantasy"],
+        mediaStock: [
+            {
+                locationId: 1,
+                locationName: "Sheffield",
+                stockCount: 10
+            },
+            {
+                locationId: 2,
+                locationName: "Manchester",
+                stockCount: 10
+            }
+        ]
     }
 ]
 
@@ -113,5 +179,8 @@ export const testDataIdx = {
     THE_HOBBIT_BOOK: 1,
     THE_LEGEND_OF_ZELDA: 2,
     RED_DEAD_REDEMPTION_2: 3,
-    THE_HOBBIT_MOVIE: 4
+    THE_HOBBIT_MOVIE: 4,
+    LOTR_FELLOWSHIP: 5,
+    LOTR_TWO_TOWERS: 6,
+    LOTR_RETURN_KING: 7
 }

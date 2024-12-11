@@ -5,4 +5,10 @@ export interface MediaSearchClientParams {
     from : number;
     size : number;
     filters?: IMediaSearchFilters;
+    range?: {
+        releaseDate?: {
+            from?: string;
+            to?: string;
+        }
+    }
 }

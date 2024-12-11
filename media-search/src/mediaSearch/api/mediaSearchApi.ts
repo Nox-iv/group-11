@@ -2,7 +2,7 @@ import { Message } from "../../shared/messaging/message";
 import { MediaSearchLogicParams } from "../interfaces/dto/MediaSearchLogicParams";
 import IMediaSearchLogic from "../interfaces/logic/IMediaSearchLogic";
 import { Request, Response } from "express";
-import { MediaSearchFilters } from "../interfaces/data/MediaSearchFilters";
+
 export default class MediaSearchApi {
     constructor(private readonly mediaSearchLogic: IMediaSearchLogic) {}
 
@@ -34,6 +34,15 @@ export default class MediaSearchApi {
         const page = Number(request.body?.page ?? 0);
         const pageSize = Number(request.body?.pageSize ?? 10);
         const filters = request.body?.filters ?? {};
+        const range = request.body?.range ?? {};
+
+        if (range?.releaseDate?.from) {
+            range.releaseDate.from = new Date(range.releaseDate.from);
+        }
+
+        if (range?.releaseDate?.to) {
+            range.releaseDate.to = new Date(range.releaseDate.to);
+        }
 
         if (isNaN(page)) {
             result.addError(new Error('Page must be a number'));
@@ -44,7 +53,7 @@ export default class MediaSearchApi {
         }
 
         if (!result.hasErrors()) {
-            result.value = { searchTerm, page, pageSize, filters };
+            result.value = { searchTerm, page, pageSize, filters, range };
         }
 
         return result;

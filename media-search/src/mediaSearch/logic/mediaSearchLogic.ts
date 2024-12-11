@@ -5,6 +5,7 @@ import IMediaSearchLogic from "../interfaces/logic/IMediaSearchLogic";
 import { Message } from "../../shared/messaging/message";
 import { MediaSearchFilters } from "../interfaces/data/MediaSearchFilters";
 import { assert, log } from "console";
+import { MediaSearchClientParams } from "../interfaces/dto/MediaSearchClientParams";
 
 export default class MediaSearchLogic extends IMediaSearchLogic {
     constructor(mediaSearchClient: IMediaSearchClient) {
@@ -14,15 +15,43 @@ export default class MediaSearchLogic extends IMediaSearchLogic {
 
     public async searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult[]>> {
         const result = new Message<MediaSearchResult[]>([]);
-        const reqFilters = searchParams.filters;
+        const filters = searchParams.filters;
 
-        if (reqFilters) {
-            for (const currentReqFilter of Object.keys(reqFilters)) {
-                const allowedValues = MediaSearchFilters.get(currentReqFilter);
-                const currentReqFilterValue = reqFilters[currentReqFilter];
-                if (allowedValues == undefined || !allowedValues.includes(currentReqFilterValue)) {
-                    result.addError(new Error(`Invalid filter value: ${currentReqFilterValue}`));
+        if (filters) {
+            for (const currentFilter of Object.keys(filters)) {
+                const allowedValues = MediaSearchFilters.get(currentFilter);
+                const currentFilterValue = filters[currentFilter];
+                if (allowedValues == undefined || !allowedValues.includes(currentFilterValue)) {
+                    result.addError(new Error(`Invalid filter value: ${currentFilterValue}`));
                 }
+            }
+        }
+
+        const rangeParams : any = {};
+        if (searchParams.range?.releaseDate) { 
+            const currentDate = new Date();
+            const range = searchParams.range.releaseDate;
+
+            rangeParams.releaseDate = {}
+
+            if (range.to && range.to > currentDate) {
+                result.addError(new Error(`Cannot use future date as release date upper bound`));
+            }
+
+            if (range.from && range.from > currentDate) {
+                result.addError(new Error(`Cannot use future date as release date lower bound`));
+            }
+
+            if (range.from && range.to && range.to < range.from) {
+                result.addError(new Error(`Release date upper bound must be greater than lower bound`));
+            }
+
+            if (range.to) {
+                rangeParams.releaseDate.to = range.to.toISOString().split('T')[0];
+            }
+
+            if (range.from) {
+                rangeParams.releaseDate.from = range.from.toISOString().split('T')[0];
             }
         }
 
@@ -31,7 +60,8 @@ export default class MediaSearchLogic extends IMediaSearchLogic {
                 from: searchParams.page * searchParams.pageSize,
                 size: searchParams.pageSize,
                 searchTerm: searchParams.searchTerm,
-                filters: searchParams.filters
+                filters: searchParams.filters,
+                range: rangeParams
             });
             
             result.value = results;

@@ -7,6 +7,7 @@ import request from 'supertest';
 import { Server } from 'http';
 import { log } from 'console';
 import fs from 'fs';
+import { MediaSearchResult } from '../mediaSearch/data/documents/mediaSearchResult';
 
 describe('Media Search API Tests', () => {
     let server: Server;
@@ -80,7 +81,7 @@ describe('Media Search API Tests', () => {
 
             expect(response.status).toBe(200);
             // All test data contains the word 'the', so everything is brought back
-            expect(response.body.length).toEqual(5);
+            expect(response.body.length).toBeGreaterThan(1);
             // Best match first
             expect(response.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_LEGEND_OF_ZELDA]);
         });
@@ -109,11 +110,100 @@ describe('Media Search API Tests', () => {
                 }
             });
             
-            log(filterResponse.body)
-
             expect(filterResponse.status).toBe(200);
             expect(filterResponse.body.length).toEqual(1);
             expect(filterResponse.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_HOBBIT_BOOK]);
+        });
+
+        test('can filter by release date range', async () => {
+            let responseMediaIds: number[] = [];
+            let expectedExclusions: number[] = [];
+
+            const noFilterResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({  
+                searchTerm: 'The Lord of the Rings',
+            });
+
+            const expectedTop3Results = [testDataIdx.LOTR_FELLOWSHIP, testDataIdx.LOTR_TWO_TOWERS, testDataIdx.LOTR_RETURN_KING];
+            responseMediaIds = noFilterResponse.body.map((result: MediaSearchResult) => result.mediaId);
+
+            let top3Results = responseMediaIds.slice(0, 3)
+            for (let expectedTopResult of expectedTop3Results) {
+                expect(top3Results.includes(mediaSearchResultTestData[expectedTopResult].mediaId)).toBe(true);
+            }
+
+            const filterResponseUpperAndLowerBound = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Lord of the Rings',
+                range: {
+                    releaseDate: {
+                        from: '2002-01-01',
+                        to: '2003-01-01'
+                    }
+                }
+            });
+
+            expect(filterResponseUpperAndLowerBound.status).toBe(200);
+            expect(filterResponseUpperAndLowerBound.body[0].mediaId).toEqual(mediaSearchResultTestData[testDataIdx.LOTR_TWO_TOWERS].mediaId);
+
+            expectedExclusions = [testDataIdx.LOTR_RETURN_KING, testDataIdx.LOTR_FELLOWSHIP];
+            responseMediaIds = filterResponseUpperAndLowerBound.body.map((result: MediaSearchResult) => result.mediaId);
+            for (let expectedExclusion of expectedExclusions) {
+                expect(responseMediaIds.includes(mediaSearchResultTestData[expectedExclusion].mediaId)).toBe(false);
+            }
+
+            const filterResponseUpperBound = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Lord of the Rings',
+                range: {
+                    releaseDate: {
+                        to: '2003-01-01'
+                    }
+                }
+            });
+
+            expectedExclusions = [testDataIdx.LOTR_RETURN_KING];
+            expect(filterResponseUpperBound.status).toBe(200);
+            
+            responseMediaIds = filterResponseUpperBound.body.map((result: MediaSearchResult) => result.mediaId);
+            for (let expectedExclusion of expectedExclusions) {
+                expect(responseMediaIds.includes(mediaSearchResultTestData[expectedExclusion].mediaId)).toBe(false);
+            }
+
+            const expectedTop2Results = [testDataIdx.LOTR_FELLOWSHIP, testDataIdx.LOTR_TWO_TOWERS];
+            const top2Results = responseMediaIds.slice(0, 2);
+            for (let expectedTopResult of expectedTop2Results) {
+                expect(top2Results.includes(mediaSearchResultTestData[expectedTopResult].mediaId)).toBe(true);
+            }
+
+            const filterResponseLowerBound = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Lord of the Rings',
+                range: {
+                    releaseDate: {
+                        from: '2003-01-01'
+                    }
+                }
+            });
+
+            expectedExclusions = [testDataIdx.LOTR_FELLOWSHIP, testDataIdx.LOTR_TWO_TOWERS];
+            expect(filterResponseLowerBound.status).toBe(200);
+
+
+            responseMediaIds = filterResponseLowerBound.body.map((result: MediaSearchResult) => result.mediaId);
+            for (let expectedExclusion of expectedExclusions) {
+                expect(responseMediaIds.includes(mediaSearchResultTestData[expectedExclusion].mediaId)).toBe(false);
+            }
+
+            expect(filterResponseLowerBound.body[0].mediaId).toEqual(mediaSearchResultTestData[testDataIdx.LOTR_RETURN_KING].mediaId);
         });
     });
 

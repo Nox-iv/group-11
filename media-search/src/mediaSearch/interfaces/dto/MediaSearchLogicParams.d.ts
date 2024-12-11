@@ -5,4 +5,10 @@ export interface MediaSearchLogicParams {
     page: number;
     pageSize: number;
     filters?: any;
+    range?: {
+        releaseDate?: {
+            from?: Date;
+            to?: Date;
+        }
+    }
 }
