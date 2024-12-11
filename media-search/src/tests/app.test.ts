@@ -55,7 +55,7 @@ describe('Media Search API Tests', () => {
         log('6) Tests starting...')
     }, 20000);
 
-    describe('POST /search', () => {
+    describe('200 POST /search', () => {
         test('can match a single media item.', async () => {
             const response = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -114,6 +114,46 @@ describe('Media Search API Tests', () => {
             expect(filterResponse.status).toBe(200);
             expect(filterResponse.body.length).toEqual(1);
             expect(filterResponse.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_HOBBIT_BOOK]);
+        });
+    });
+
+    describe('400 POST /search', () => {
+        test('return an error if the page is not a number', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Hobbit',
+                page: 'not a number'
+            });
+
+            expect(response.status).toBe(400);
+        });
+
+        test('return an error if the page size is not a number', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Hobbit',
+                pageSize: 'not a number'
+            });
+
+            expect(response.status).toBe(400);
+        });
+
+        test('return an error if the media filter value is not valid', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Hobbit',
+                filters: {
+                    type: 'not a valid type'
+                }
+            });
+
+            expect(response.status).toBe(400);
         });
     });
 
