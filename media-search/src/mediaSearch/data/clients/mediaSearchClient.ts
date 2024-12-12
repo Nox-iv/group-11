@@ -13,16 +13,20 @@ export default class MediaSearchClient extends IMediaSearchClient {
     public async searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult[]> {
         try {
             const queryContainer: estypesWithBody.QueryDslQueryContainer = {};
-            const boolQuery: estypesWithBody.QueryDslBoolQuery = {
-                must: [
+            const boolQuery: estypesWithBody.QueryDslBoolQuery = {};
+
+            boolQuery.must = [];
+
+            if (searchParams.searchTerm) {
+                boolQuery.must.push(
                     {
                         multi_match: {
                             query: searchParams.searchTerm,
                             fields: ["title", "description", "author", "genres"]
                         }
                     }
-                ]
-            };
+                );
+            }
 
             if (searchParams.range) {
                 const rangeQueries = Object.entries(searchParams.range).map(([key, value]) => ({
@@ -34,11 +38,7 @@ export default class MediaSearchClient extends IMediaSearchClient {
                     }
                 }));
 
-                if (Array.isArray(boolQuery.must)) {
-                    boolQuery.must.push(...rangeQueries);
-                } else {
-                    boolQuery.must = rangeQueries;
-                }
+                boolQuery.must.push(...rangeQueries);
             }
 
             if (searchParams.filters) {

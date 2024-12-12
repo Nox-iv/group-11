@@ -193,6 +193,50 @@ export const mediaSearchResultTestData : MediaSearchResult[] = [
                 stockCount: 10
             }
         ]
+    },
+    {
+        mediaId: 10,
+        title: "Dune",
+        type: "Book",
+        author: "Frank Herbert",
+        description: "A noble family becomes embroiled in a war for control over the galaxy's most valuable asset while its heir becomes troubled by visions of a dark future.",
+        releaseDate: "1965-08-01",
+        imageUrl: "https://example.com/image10.jpg",
+        genres: ["Fantasy", "Sci-Fi"],
+        mediaStock: [
+            {
+                locationId: 1,
+                locationName: "Sheffield",
+                stockCount: 10
+            },
+            {
+                locationId: 2,
+                locationName: "Manchester",
+                stockCount: 10
+            }
+        ]
+    },
+    {
+        mediaId: 11,
+        title: "Star Wars: A New Hope",
+        type: "Movie",
+        author: "George Lucas",
+        description: "Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, a Wookiee and two droids to save the galaxy from the Empire's world-destroying battle station.",
+        releaseDate: "1977-05-25",
+        imageUrl: "https://example.com/image11.jpg",
+        genres: ["Fantasy", "Sci-Fi"],
+        mediaStock: [
+            {
+                locationId: 1,
+                locationName: "Sheffield",
+                stockCount: 10
+            },
+            {
+                locationId: 2,
+                locationName: "Manchester",
+                stockCount: 10
+            }
+        ]
     }
 ]
 
@@ -205,5 +249,7 @@ export const testDataIdx = {
     LOTR_FELLOWSHIP: 5,
     LOTR_TWO_TOWERS: 6,
     LOTR_RETURN_KING: 7,
-    LOTR_GAME: 8
+    LOTR_GAME: 8,
+    DUNE: 9,
+    STAR_WARS_NEW_HOPE: 10
 }

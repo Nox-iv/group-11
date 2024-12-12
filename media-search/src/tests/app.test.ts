@@ -80,123 +80,99 @@ describe('Media Search API Tests', () => {
             });
 
             expect(response.status).toBe(200);
-            // All test data contains the word 'the', so everything is brought back
+            // 'The' is a common word, so all test data is returned
             expect(response.body.length).toBeGreaterThan(1);
             // Best match first
             expect(response.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_LEGEND_OF_ZELDA]);
         });
 
         test('can filter by media type', async () => {
-            // Establish baseline by verifying search term returns both book and movie
+            // Verify that test data has examples of books and at least one other type, in this case movies.
             const noFilterResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
             .send({
-                searchTerm: 'The Hobbit',
+                searchTerm: '',
             });
 
             expect(noFilterResponse.status).toBe(200);
-            expect(noFilterResponse.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_HOBBIT_BOOK]);
-            expect(noFilterResponse.body[1]).toEqual(mediaSearchResultTestData[testDataIdx.THE_HOBBIT_MOVIE]);
+            // Verify that test data has examples of books.
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Book')).toBe(true);
+            // Verify that test data has examples of movies.
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Movie')).toBe(true);
 
-            // Now filter for the book
             const filterResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
             .send({
-                searchTerm: 'The Hobbit',
+                searchTerm: '',
                 filters: {
                     type: ['Book']
                 }
             });
             
             expect(filterResponse.status).toBe(200);
-            expect(filterResponse.body.length).toEqual(1);
-            expect(filterResponse.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_HOBBIT_BOOK]);
+            expect(filterResponse.body.length).toBeGreaterThan(1);
+            expect(filterResponse.body.some((x: MediaSearchResult) => x.type !== 'Book')).toBe(false);
         });
 
         test('can filter by multiple media types, bringing back all media items with at least one filter match', async () => {
-            const responseFilterOutGame = await agent.post('/search')
+            // Verify that test data has examples of books, games and movies (types used in tests below).
+            const noFilterResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
             .send({
-                searchTerm: 'The Lord of the Rings',
+                searchTerm: '',
+            });
+
+            expect(noFilterResponse.status).toBe(200);
+            expect(noFilterResponse.body.length).toBeGreaterThan(1);
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Book')).toBe(true);
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Game')).toBe(true);
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Movie')).toBe(true);
+
+            const responseOnlyBooksAndMovies = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
                 filters: {
                     type: ['Movie', 'Book']
                 }
             }); 
 
-            let expectedExclusions = new Set(mediaSearchResultTestData
-                .filter(media => media.type === 'Game')
-                .map(media => media.mediaId)
-            );
-
-            expect(responseFilterOutGame.status).toBe(200);
-
-            let resultMediaIds = responseFilterOutGame.body.map((result: MediaSearchResult) => result.mediaId);
-    
-            for (let resultMediaId of resultMediaIds) {
-                expect(expectedExclusions.has(resultMediaId)).toBe(false);
-            }
-
-            const responseFilterOutMovie = await agent.post('/search')
-            .set('Content-Type', 'application/json')
-            .set('Accept', 'application/json')
-            .send({
-                searchTerm: 'The Lord of the Rings',
-                filters: {
-                    type: ['Book', 'Game']
-                }
-            });
-
-            expectedExclusions = new Set(mediaSearchResultTestData
-                .filter(media => media.type === 'Movie')
-                .map(media => media.mediaId)
-            );
-
-            expect(responseFilterOutMovie.status).toBe(200);
-
-            resultMediaIds = responseFilterOutMovie.body.map((result: MediaSearchResult) => result.mediaId);
-            for (let resultMediaId of resultMediaIds) {
-                expect(expectedExclusions.has(resultMediaId)).toBe(false);
-            }
+            expect(responseOnlyBooksAndMovies.status).toBe(200);
+            expect(responseOnlyBooksAndMovies.body.length).toBeGreaterThan(1);
+            expect(responseOnlyBooksAndMovies.body.some((x: MediaSearchResult) => x.type !== 'Book' && x.type !== 'Movie')).toBe(false);
         });
 
         test('can filter by release date range', async () => {
-            // baseline - no filter
+            let lowerBound = new Date('2002-01-01T00:00:00.000Z');
+            let upperBound = new Date('2003-01-01T23:59:59.999Z');
+
+            // Verify that test data has examples for all cases: below lower bound, above upper bound, and within bounds.
             const noFilterResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
             .send({  
-                searchTerm: 'The Lord of the Rings',
+                searchTerm: '',
             });
 
-            const expectedTop4Results = new Set([
-                mediaSearchResultTestData[testDataIdx.LOTR_FELLOWSHIP].mediaId, 
-                mediaSearchResultTestData[testDataIdx.LOTR_TWO_TOWERS].mediaId, 
-                mediaSearchResultTestData[testDataIdx.LOTR_RETURN_KING].mediaId, 
-                mediaSearchResultTestData[testDataIdx.LOTR_GAME].mediaId
-            ]);
-
             expect(noFilterResponse.status).toBe(200);
+            expect(noFilterResponse.body.length).toBeGreaterThan(1);
 
-            let noFilterResponseMediaIds = noFilterResponse.body.map((result: MediaSearchResult) => result.mediaId);
-
-            // Check that the top 4 results match search term - verify filter works in conjunction with search term
-            let top4Results = noFilterResponseMediaIds.slice(0, 4)
-            for (let resultMediaId of top4Results) {
-                expect(expectedTop4Results.has(resultMediaId)).toBe(true);
-            }
-
-            // Check that the results are within the provided release date range
-            let lowerBound = new Date('2002-01-01T00:00:00.000Z');
-            let upperBound = new Date('2003-01-01T23:59:59.999Z');
+            // Verify that test data has examples above upper bound
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => new Date(x.releaseDate) > upperBound)).toBe(true);
+            // Verify that test data has examples below lower bound
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => new Date(x.releaseDate) < lowerBound)).toBe(true);
+            // Verify that test data has examples within the bounds
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => new Date(x.releaseDate) >= lowerBound && new Date(x.releaseDate) <= upperBound)).toBe(true);
 
             const filterResponseUpperAndLowerBound = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
             .send({
-                searchTerm: 'The Lord of the Rings',
+                searchTerm: '',
                 range: {
                     releaseDate: {
                         from: lowerBound,
@@ -205,26 +181,15 @@ describe('Media Search API Tests', () => {
                 }
             });
 
-            // Make set of test data outside of the release date range
-            let upperAndLowerBoundExpectedExclusions = new Set(mediaSearchResultTestData
-                .filter(media => new Date(media.releaseDate) < lowerBound || new Date(media.releaseDate) > upperBound)
-                .map(media => media.mediaId)
-            );
-
             expect(filterResponseUpperAndLowerBound.status).toBe(200);
-            expect(filterResponseUpperAndLowerBound.body[0].mediaId).toEqual(mediaSearchResultTestData[testDataIdx.LOTR_TWO_TOWERS].mediaId);
+            expect(filterResponseUpperAndLowerBound.body.length).toBeGreaterThanOrEqual(1);
+            expect(filterResponseUpperAndLowerBound.body.some((x: MediaSearchResult) => new Date(x.releaseDate) < lowerBound || new Date(x.releaseDate) > upperBound)).toBe(false);
 
-            let filterResponseUpperAndLowerBoundMediaIds = filterResponseUpperAndLowerBound.body.map((result: MediaSearchResult) => result.mediaId);
-            for (let resultMediaId of filterResponseUpperAndLowerBoundMediaIds) {
-                expect(upperAndLowerBoundExpectedExclusions.has(resultMediaId)).toBe(false);
-            }
-
-            // Check results are within upper bound, when only an upper bound is provided
             const filterResponseUpperBound = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
             .send({
-                searchTerm: 'The Lord of the Rings',
+                searchTerm: '',
                 range: {
                     releaseDate: {
                         to: upperBound
@@ -232,35 +197,15 @@ describe('Media Search API Tests', () => {
                 }
             });
 
-            let upperBoundExpectedExclusions = new Set(mediaSearchResultTestData
-                .filter(media => new Date(media.releaseDate) > upperBound)
-                .map(media => media.mediaId)
-            );
-
             expect(filterResponseUpperBound.status).toBe(200);
-            
-            let filterResponseUpperBoundMediaIds = filterResponseUpperBound.body.map((result: MediaSearchResult) => result.mediaId);
-            for (let resultMediaId of filterResponseUpperBoundMediaIds) {
-                expect(upperBoundExpectedExclusions.has(resultMediaId)).toBe(false);
-            }
+            expect(filterResponseUpperBound.body.length).toBeGreaterThanOrEqual(1);
+            expect(filterResponseUpperBound.body.some((x: MediaSearchResult) => new Date(x.releaseDate) > upperBound)).toBe(false);
 
-            let expectedTop2Results = new Set([
-                mediaSearchResultTestData[testDataIdx.LOTR_FELLOWSHIP].mediaId, 
-                mediaSearchResultTestData[testDataIdx.LOTR_TWO_TOWERS].mediaId
-            ]);
-
-            let top2Results = filterResponseUpperBoundMediaIds.slice(0, 2);
-            for (let resultMediaId of top2Results) {
-                expect(expectedTop2Results.has(resultMediaId)).toBe(true);
-            }
-
-            // Check results are within lower bound, when only a lower bound is provided
-            lowerBound = new Date('2003-01-01T00:00:00.000Z');
             const filterResponseLowerBound = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
             .send({
-                searchTerm: 'The Lord of the Rings',
+                searchTerm: '',
                 range: {
                     releaseDate: {
                         from: lowerBound
@@ -268,27 +213,56 @@ describe('Media Search API Tests', () => {
                 }
             });
 
-            let lowerBoundExpectedExclusions = new Set(mediaSearchResultTestData
-                .filter(media => new Date(media.releaseDate) < lowerBound)
-                .map(media => media.mediaId)
-            );
-
             expect(filterResponseLowerBound.status).toBe(200);
+            expect(filterResponseLowerBound.body.length).toBeGreaterThanOrEqual(1);
+            expect(filterResponseLowerBound.body.some((x: MediaSearchResult) => new Date(x.releaseDate) < lowerBound)).toBe(false);
+        });
 
-            let filterResponseLowerBoundMediaIds = filterResponseLowerBound.body.map((result: MediaSearchResult) => result.mediaId);
-            for (let resultMediaId of filterResponseLowerBoundMediaIds) {
-                expect(lowerBoundExpectedExclusions.has(resultMediaId)).toBe(false);
-            }
+        test('can filter by media genre (single & multiple)', async () => {
+            // Verify that test data has examples with the genre 'Fantasy' and 'Sci-Fi' (genres used in tests below), and at least one other genre.
+            const noFilterResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+                page: 0,
+                pageSize: 100
+            });
 
-            expectedTop2Results = new Set([
-                mediaSearchResultTestData[testDataIdx.LOTR_RETURN_KING].mediaId, 
-                mediaSearchResultTestData[testDataIdx.LOTR_GAME].mediaId
-            ]);
+            expect(noFilterResponse.status).toBe(200);
+            expect(noFilterResponse.body.length).toBeGreaterThanOrEqual(1);
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.genres.includes('Fantasy'))).toBe(true);
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.genres.includes('Sci-Fi'))).toBe(true);
+            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.genres.includes('Adventure'))).toBe(true);
 
-            let lowerBoundTop2Results = filterResponseLowerBoundMediaIds.slice(0, 2);
-            for (let resultMediaId of lowerBoundTop2Results) {
-                expect(expectedTop2Results.has(resultMediaId)).toBe(true);
-            }
+
+            const singleGenreResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+                filters: {
+                    genres: ['Fantasy']
+                }
+            });
+
+            expect(singleGenreResponse.status).toBe(200);
+            expect(singleGenreResponse.body.length).toBeGreaterThanOrEqual(1);
+            expect(singleGenreResponse.body.some((x: MediaSearchResult) => !x.genres.includes('Fantasy'))).toBe(false);
+
+            let multipleGenreResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+                filters: {
+                    genres: ['Fantasy', 'Sci-Fi']
+                }
+            });
+
+            expect(multipleGenreResponse.status).toBe(200);
+            expect(multipleGenreResponse.body.length).toBeGreaterThanOrEqual(1);
+            expect(multipleGenreResponse.body.some((x: MediaSearchResult) => !x.genres.includes('Fantasy') && !x.genres.includes('Sci-Fi'))).toBe(false);
         });
     });
 
