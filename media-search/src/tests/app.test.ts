@@ -106,7 +106,7 @@ describe('Media Search API Tests', () => {
             .send({
                 searchTerm: 'The Hobbit',
                 filters: {
-                    type: 'Book'
+                    type: ['Book']
                 }
             });
             

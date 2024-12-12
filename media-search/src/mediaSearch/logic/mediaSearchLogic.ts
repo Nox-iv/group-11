@@ -20,9 +20,18 @@ export default class MediaSearchLogic extends IMediaSearchLogic {
         if (filters) {
             for (const currentFilter of Object.keys(filters)) {
                 const allowedValues = MediaSearchFilters.get(currentFilter);
-                const currentFilterValue = filters[currentFilter];
-                if (allowedValues == undefined || !allowedValues.includes(currentFilterValue)) {
-                    result.addError(new Error(`Invalid filter value: ${currentFilterValue}`));
+                const currentFilterValues = filters[currentFilter];
+
+                if (allowedValues == undefined) {
+                    result.addError(new Error(`Filter has no allowed values: ${currentFilter}`));
+                } else if (!Array.isArray(currentFilterValues)) {
+                    result.addError(new Error(`Filter value must be an array of filterable values: ${currentFilterValues}`));
+                } else {
+                    for (const filterValue of currentFilterValues) {
+                        if (!allowedValues.has(filterValue)) {
+                            result.addError(new Error(`Invalid filter value: ${filterValue}`));
+                        }
+                    }
                 }
             }
         }

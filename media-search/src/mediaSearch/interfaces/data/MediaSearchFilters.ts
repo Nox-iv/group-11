@@ -1,3 +1,3 @@
-export const MediaSearchFilters: Readonly<Map<string, string[]>> = new Map<string, string[]>([
-    ['type', ['Book', 'Movie', 'Game']]
+export const MediaSearchFilters: Readonly<Map<string, Set<string>>> = new Map<string, Set<string>>([
+    ['type', new Set(['Book', 'Movie', 'Game'])]
 ]);

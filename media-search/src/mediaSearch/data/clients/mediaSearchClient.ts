@@ -43,7 +43,11 @@ export default class MediaSearchClient extends IMediaSearchClient {
 
             if (searchParams.filters) {
                 boolQuery.filter = Object.entries(searchParams.filters).map(
-                    ([key, value]) => ({ term: { [key]: value } })
+                    ([key, value]) => (
+                        {
+                             terms: { [key]: value } 
+                        }
+                    )
                 );
             }
 
