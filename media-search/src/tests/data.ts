@@ -171,6 +171,28 @@ export const mediaSearchResultTestData : MediaSearchResult[] = [
                 stockCount: 10
             }
         ]
+    },
+    {
+        mediaId: 9,
+        title: "The Lord of the Rings: The Return of the King",
+        type: "Game",
+        author: "EA Games",
+        description: "Based on the epic film trilogy, play through the most memorable battles from The Lord of the Rings as you embark on the quest to destroy the One Ring and save Middle-earth.",
+        releaseDate: "2003-11-05",
+        imageUrl: "https://example.com/image9.jpg",
+        genres: ["Action", "Adventure", "Fantasy"],
+        mediaStock: [
+            {
+                locationId: 1,
+                locationName: "Sheffield",
+                stockCount: 10
+            },
+            {
+                locationId: 2,
+                locationName: "Manchester",
+                stockCount: 10
+            }
+        ]
     }
 ]
 
@@ -182,5 +204,6 @@ export const testDataIdx = {
     THE_HOBBIT_MOVIE: 4,
     LOTR_FELLOWSHIP: 5,
     LOTR_TWO_TOWERS: 6,
-    LOTR_RETURN_KING: 7
+    LOTR_RETURN_KING: 7,
+    LOTR_GAME: 8
 }

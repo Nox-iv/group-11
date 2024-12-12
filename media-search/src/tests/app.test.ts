@@ -115,10 +115,55 @@ describe('Media Search API Tests', () => {
             expect(filterResponse.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_HOBBIT_BOOK]);
         });
 
-        test('can filter by release date range', async () => {
-            let responseMediaIds: number[] = [];
-            let expectedExclusions: number[] = [];
+        test('can filter by multiple media types, bringing back all media items with at least one filter match', async () => {
+            const responseFilterOutGame = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Lord of the Rings',
+                filters: {
+                    type: ['Movie', 'Book']
+                }
+            }); 
 
+            let expectedExclusions = new Set(mediaSearchResultTestData
+                .filter(media => media.type === 'Game')
+                .map(media => media.mediaId)
+            );
+
+            expect(responseFilterOutGame.status).toBe(200);
+
+            let resultMediaIds = responseFilterOutGame.body.map((result: MediaSearchResult) => result.mediaId);
+    
+            for (let resultMediaId of resultMediaIds) {
+                expect(expectedExclusions.has(resultMediaId)).toBe(false);
+            }
+
+            const responseFilterOutMovie = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Lord of the Rings',
+                filters: {
+                    type: ['Book', 'Game']
+                }
+            });
+
+            expectedExclusions = new Set(mediaSearchResultTestData
+                .filter(media => media.type === 'Movie')
+                .map(media => media.mediaId)
+            );
+
+            expect(responseFilterOutMovie.status).toBe(200);
+
+            resultMediaIds = responseFilterOutMovie.body.map((result: MediaSearchResult) => result.mediaId);
+            for (let resultMediaId of resultMediaIds) {
+                expect(expectedExclusions.has(resultMediaId)).toBe(false);
+            }
+        });
+
+        test('can filter by release date range', async () => {
+            // baseline - no filter
             const noFilterResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
@@ -126,13 +171,26 @@ describe('Media Search API Tests', () => {
                 searchTerm: 'The Lord of the Rings',
             });
 
-            const expectedTop3Results = [testDataIdx.LOTR_FELLOWSHIP, testDataIdx.LOTR_TWO_TOWERS, testDataIdx.LOTR_RETURN_KING];
-            responseMediaIds = noFilterResponse.body.map((result: MediaSearchResult) => result.mediaId);
+            const expectedTop4Results = new Set([
+                mediaSearchResultTestData[testDataIdx.LOTR_FELLOWSHIP].mediaId, 
+                mediaSearchResultTestData[testDataIdx.LOTR_TWO_TOWERS].mediaId, 
+                mediaSearchResultTestData[testDataIdx.LOTR_RETURN_KING].mediaId, 
+                mediaSearchResultTestData[testDataIdx.LOTR_GAME].mediaId
+            ]);
 
-            let top3Results = responseMediaIds.slice(0, 3)
-            for (let expectedTopResult of expectedTop3Results) {
-                expect(top3Results.includes(mediaSearchResultTestData[expectedTopResult].mediaId)).toBe(true);
+            expect(noFilterResponse.status).toBe(200);
+
+            let noFilterResponseMediaIds = noFilterResponse.body.map((result: MediaSearchResult) => result.mediaId);
+
+            // Check that the top 4 results match search term - verify filter works in conjunction with search term
+            let top4Results = noFilterResponseMediaIds.slice(0, 4)
+            for (let resultMediaId of top4Results) {
+                expect(expectedTop4Results.has(resultMediaId)).toBe(true);
             }
+
+            // Check that the results are within the provided release date range
+            let lowerBound = new Date('2002-01-01T00:00:00.000Z');
+            let upperBound = new Date('2003-01-01T23:59:59.999Z');
 
             const filterResponseUpperAndLowerBound = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -141,21 +199,27 @@ describe('Media Search API Tests', () => {
                 searchTerm: 'The Lord of the Rings',
                 range: {
                     releaseDate: {
-                        from: '2002-01-01',
-                        to: '2003-01-01'
+                        from: lowerBound,
+                        to: upperBound
                     }
                 }
             });
 
+            // Make set of test data outside of the release date range
+            let upperAndLowerBoundExpectedExclusions = new Set(mediaSearchResultTestData
+                .filter(media => new Date(media.releaseDate) < lowerBound || new Date(media.releaseDate) > upperBound)
+                .map(media => media.mediaId)
+            );
+
             expect(filterResponseUpperAndLowerBound.status).toBe(200);
             expect(filterResponseUpperAndLowerBound.body[0].mediaId).toEqual(mediaSearchResultTestData[testDataIdx.LOTR_TWO_TOWERS].mediaId);
 
-            expectedExclusions = [testDataIdx.LOTR_RETURN_KING, testDataIdx.LOTR_FELLOWSHIP];
-            responseMediaIds = filterResponseUpperAndLowerBound.body.map((result: MediaSearchResult) => result.mediaId);
-            for (let expectedExclusion of expectedExclusions) {
-                expect(responseMediaIds.includes(mediaSearchResultTestData[expectedExclusion].mediaId)).toBe(false);
+            let filterResponseUpperAndLowerBoundMediaIds = filterResponseUpperAndLowerBound.body.map((result: MediaSearchResult) => result.mediaId);
+            for (let resultMediaId of filterResponseUpperAndLowerBoundMediaIds) {
+                expect(upperAndLowerBoundExpectedExclusions.has(resultMediaId)).toBe(false);
             }
 
+            // Check results are within upper bound, when only an upper bound is provided
             const filterResponseUpperBound = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
@@ -163,25 +227,35 @@ describe('Media Search API Tests', () => {
                 searchTerm: 'The Lord of the Rings',
                 range: {
                     releaseDate: {
-                        to: '2003-01-01'
+                        to: upperBound
                     }
                 }
             });
 
-            expectedExclusions = [testDataIdx.LOTR_RETURN_KING];
+            let upperBoundExpectedExclusions = new Set(mediaSearchResultTestData
+                .filter(media => new Date(media.releaseDate) > upperBound)
+                .map(media => media.mediaId)
+            );
+
             expect(filterResponseUpperBound.status).toBe(200);
             
-            responseMediaIds = filterResponseUpperBound.body.map((result: MediaSearchResult) => result.mediaId);
-            for (let expectedExclusion of expectedExclusions) {
-                expect(responseMediaIds.includes(mediaSearchResultTestData[expectedExclusion].mediaId)).toBe(false);
+            let filterResponseUpperBoundMediaIds = filterResponseUpperBound.body.map((result: MediaSearchResult) => result.mediaId);
+            for (let resultMediaId of filterResponseUpperBoundMediaIds) {
+                expect(upperBoundExpectedExclusions.has(resultMediaId)).toBe(false);
             }
 
-            const expectedTop2Results = [testDataIdx.LOTR_FELLOWSHIP, testDataIdx.LOTR_TWO_TOWERS];
-            const top2Results = responseMediaIds.slice(0, 2);
-            for (let expectedTopResult of expectedTop2Results) {
-                expect(top2Results.includes(mediaSearchResultTestData[expectedTopResult].mediaId)).toBe(true);
+            let expectedTop2Results = new Set([
+                mediaSearchResultTestData[testDataIdx.LOTR_FELLOWSHIP].mediaId, 
+                mediaSearchResultTestData[testDataIdx.LOTR_TWO_TOWERS].mediaId
+            ]);
+
+            let top2Results = filterResponseUpperBoundMediaIds.slice(0, 2);
+            for (let resultMediaId of top2Results) {
+                expect(expectedTop2Results.has(resultMediaId)).toBe(true);
             }
 
+            // Check results are within lower bound, when only a lower bound is provided
+            lowerBound = new Date('2003-01-01T00:00:00.000Z');
             const filterResponseLowerBound = await agent.post('/search')
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json')
@@ -189,21 +263,32 @@ describe('Media Search API Tests', () => {
                 searchTerm: 'The Lord of the Rings',
                 range: {
                     releaseDate: {
-                        from: '2003-01-01'
+                        from: lowerBound
                     }
                 }
             });
 
-            expectedExclusions = [testDataIdx.LOTR_FELLOWSHIP, testDataIdx.LOTR_TWO_TOWERS];
+            let lowerBoundExpectedExclusions = new Set(mediaSearchResultTestData
+                .filter(media => new Date(media.releaseDate) < lowerBound)
+                .map(media => media.mediaId)
+            );
+
             expect(filterResponseLowerBound.status).toBe(200);
 
-
-            responseMediaIds = filterResponseLowerBound.body.map((result: MediaSearchResult) => result.mediaId);
-            for (let expectedExclusion of expectedExclusions) {
-                expect(responseMediaIds.includes(mediaSearchResultTestData[expectedExclusion].mediaId)).toBe(false);
+            let filterResponseLowerBoundMediaIds = filterResponseLowerBound.body.map((result: MediaSearchResult) => result.mediaId);
+            for (let resultMediaId of filterResponseLowerBoundMediaIds) {
+                expect(lowerBoundExpectedExclusions.has(resultMediaId)).toBe(false);
             }
 
-            expect(filterResponseLowerBound.body[0].mediaId).toEqual(mediaSearchResultTestData[testDataIdx.LOTR_RETURN_KING].mediaId);
+            expectedTop2Results = new Set([
+                mediaSearchResultTestData[testDataIdx.LOTR_RETURN_KING].mediaId, 
+                mediaSearchResultTestData[testDataIdx.LOTR_GAME].mediaId
+            ]);
+
+            let lowerBoundTop2Results = filterResponseLowerBoundMediaIds.slice(0, 2);
+            for (let resultMediaId of lowerBoundTop2Results) {
+                expect(expectedTop2Results.has(resultMediaId)).toBe(true);
+            }
         });
     });
 
