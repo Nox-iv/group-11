@@ -27,7 +27,7 @@
       "genres": {
         "type": "keyword"
       },
-      "stock": {
+      "mediaStock": {
         "type": "nested",
         "properties": {
           "locationId": {

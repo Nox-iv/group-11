@@ -13,12 +13,13 @@ export default class MediaSearchClient extends IMediaSearchClient {
     public async searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult[]> {
         try {
             const queryContainer: estypesWithBody.QueryDslQueryContainer = {};
-            const boolQuery: estypesWithBody.QueryDslBoolQuery = {};
+            const parentQuery: estypesWithBody.QueryDslBoolQuery = {};
 
-            boolQuery.must = [];
+            parentQuery.must = [];
+            parentQuery.filter = [];
 
             if (searchParams.searchTerm) {
-                boolQuery.must.push(
+                parentQuery.must.push(
                     {
                         multi_match: {
                             query: searchParams.searchTerm,
@@ -38,21 +39,49 @@ export default class MediaSearchClient extends IMediaSearchClient {
                     }
                 }));
 
-                boolQuery.must.push(...rangeQueries);
+                parentQuery.must.push(...rangeQueries);
             }
 
             if (searchParams.filters) {
-                boolQuery.filter = Object.entries(searchParams.filters).map(
+                parentQuery.filter.push(...Object.entries(searchParams.filters).map(
                     ([key, value]) => (
                         {
                              terms: { [key]: value } 
                         }
                     )
-                );
+                ));
             }
 
-            queryContainer.bool = boolQuery;
+            if (searchParams.availableAtLocation) {
+                const availableAtLocationQuery = {
+                    nested: {
+                        path: "mediaStock",
+                        query: {
+                            bool: {
+                                must: [
+                                    {
+                                        term: {
+                                            "mediaStock.locationId": searchParams.availableAtLocation
+                                        }
+                                    },
+                                    {
+                                        range: {
+                                            "mediaStock.stockCount": {
+                                                gte: 1
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
 
+                log("here")
+                parentQuery.filter.push(availableAtLocationQuery);
+            }
+
+            queryContainer.bool = parentQuery;
             const response : estypes.SearchResponse<MediaSearchResult> = await this.client.search<MediaSearchResult>({
                 index: "m_index",
                 from: searchParams.from,

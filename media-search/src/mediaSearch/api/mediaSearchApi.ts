@@ -35,6 +35,16 @@ export default class MediaSearchApi {
         const pageSize = Number(request.body?.pageSize ?? 10);
         const filters = request.body?.filters ?? {};
         const range = request.body?.range ?? {};
+        let availableAtLocation = undefined;
+
+        if (request.body?.availableAtLocation) {
+            let tmp = parseInt(request.body?.availableAtLocation);
+            if (isNaN(tmp)) {
+                result.addError(new Error('Available at location must be a number or an empty field.'));
+            } else {
+                availableAtLocation = tmp;
+            }
+        }
 
         if (range?.releaseDate?.from) {
             range.releaseDate.from = new Date(range.releaseDate.from);
@@ -53,7 +63,7 @@ export default class MediaSearchApi {
         }
 
         if (!result.hasErrors()) {
-            result.value = { searchTerm, page, pageSize, filters, range };
+            result.value = { searchTerm, page, pageSize, filters, range, availableAtLocation };
         }
 
         return result;

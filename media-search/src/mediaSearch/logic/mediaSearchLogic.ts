@@ -4,7 +4,6 @@ import { MediaSearchResult } from "../data/documents/mediaSearchResult";
 import IMediaSearchLogic from "../interfaces/logic/IMediaSearchLogic";
 import { Message } from "../../shared/messaging/message";
 import { MediaSearchFilters } from "../interfaces/data/MediaSearchFilters";
-import { assert, log } from "console";
 import { MediaSearchClientParams } from "../interfaces/dto/MediaSearchClientParams";
 
 export default class MediaSearchLogic extends IMediaSearchLogic {
@@ -64,15 +63,20 @@ export default class MediaSearchLogic extends IMediaSearchLogic {
             }
         }
 
+        const clientParams : MediaSearchClientParams = {
+            from: searchParams.page * searchParams.pageSize,
+            size: searchParams.pageSize,
+            searchTerm: searchParams.searchTerm,
+            filters: searchParams.filters,
+            range: rangeParams,
+        }
+
+        if (searchParams.availableAtLocation) {
+            clientParams.availableAtLocation = searchParams.availableAtLocation;
+        }
+
         if (!result.hasErrors()) {
-            const results = await this.mediaSearchClient.searchMedia({
-                from: searchParams.page * searchParams.pageSize,
-                size: searchParams.pageSize,
-                searchTerm: searchParams.searchTerm,
-                filters: searchParams.filters,
-                range: rangeParams
-            });
-            
+            const results = await this.mediaSearchClient.searchMedia(clientParams);
             result.value = results;
         }
 

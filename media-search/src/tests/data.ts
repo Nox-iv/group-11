@@ -97,7 +97,7 @@ export const mediaSearchResultTestData : MediaSearchResult[] = [
             {
                 locationId: 1,
                 locationName: "Sheffield",
-                stockCount: 10
+                stockCount: 0
             },
             {
                 locationId: 2,
@@ -119,12 +119,12 @@ export const mediaSearchResultTestData : MediaSearchResult[] = [
             {
                 locationId: 1,
                 locationName: "Sheffield",
-                stockCount: 10
+                stockCount: 0
             },
             {
                 locationId: 2,
                 locationName: "Manchester",
-                stockCount: 10
+                stockCount: 1
             }
         ]
     },
@@ -141,12 +141,12 @@ export const mediaSearchResultTestData : MediaSearchResult[] = [
             {
                 locationId: 1,
                 locationName: "Sheffield",
-                stockCount: 10
+                stockCount: 0
             },
             {
                 locationId: 2,
                 locationName: "Manchester",
-                stockCount: 10
+                stockCount: 2
             }
         ]
     },
@@ -163,12 +163,12 @@ export const mediaSearchResultTestData : MediaSearchResult[] = [
             {
                 locationId: 1,
                 locationName: "Sheffield",
-                stockCount: 10
+                stockCount: 0
             },
             {
                 locationId: 2,
                 locationName: "Manchester",
-                stockCount: 10
+                stockCount: 0
             }
         ]
     },

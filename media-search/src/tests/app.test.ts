@@ -7,7 +7,7 @@ import request from 'supertest';
 import { Server } from 'http';
 import { log } from 'console';
 import fs from 'fs';
-import { MediaSearchResult } from '../mediaSearch/data/documents/mediaSearchResult';
+import { MediaSearchResult, MediaStock } from '../mediaSearch/data/documents/mediaSearchResult';
 
 describe('Media Search API Tests', () => {
     let server: Server;
@@ -263,6 +263,43 @@ describe('Media Search API Tests', () => {
             expect(multipleGenreResponse.status).toBe(200);
             expect(multipleGenreResponse.body.length).toBeGreaterThanOrEqual(1);
             expect(multipleGenreResponse.body.some((x: MediaSearchResult) => !x.genres.includes('Fantasy') && !x.genres.includes('Sci-Fi'))).toBe(false);
+        });
+
+        test(`can only show media items available at a given location`, async () => {
+            // Verify that test data contains examples of media items unavailable at a given location.
+            // Also verify that test data contains examples of media items a other locations - test for breaking change.
+            let locationId = 1;
+            const noFilterResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+            });
+
+            expect(noFilterResponse.status).toBe(200);
+            expect(noFilterResponse.body.length).toBeGreaterThanOrEqual(1);
+            // Verify that test data contains examples of media items unavailable at given location.
+            expect(noFilterResponse.body.some((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount === 0))).toBe(true);
+            // Verify that test data contains examples of media items available at given location.
+            expect(noFilterResponse.body.some((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount > 0))).toBe(true);
+            // Verify that test data contains examples of media items available at other locations.
+            expect(noFilterResponse.body.some((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId !== locationId && y.stockCount > 0))).toBe(true);
+            expect(noFilterResponse.body.some((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId !== locationId && y.stockCount === 0))).toBe(true);
+
+            const availableAtLocationResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+                availableAtLocation: locationId,
+                page: 0,
+                pageSize: 100
+            });
+
+            expect(availableAtLocationResponse.status).toBe(200);
+            expect(availableAtLocationResponse.body.length).toBeGreaterThanOrEqual(1);
+            log(availableAtLocationResponse.body.map((x: MediaSearchResult) => x.mediaStock));
+            expect(availableAtLocationResponse.body.every((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount > 0))).toBe(true);
         });
     });
 

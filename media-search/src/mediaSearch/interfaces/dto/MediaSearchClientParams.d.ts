@@ -11,4 +11,5 @@ export interface MediaSearchClientParams {
             to?: string;
         }
     }
+    availableAtLocation?: number;
 }

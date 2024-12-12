@@ -1,5 +1,3 @@
-import { IMediaSearchFilters } from "../data/IMediaSearchFilters";
-
 export interface MediaSearchLogicParams {
     searchTerm: string;
     page: number;
@@ -11,4 +9,5 @@ export interface MediaSearchLogicParams {
             to?: Date;
         }
     }
+    availableAtLocation?: number;
 }
