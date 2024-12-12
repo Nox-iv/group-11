@@ -77,7 +77,6 @@ export default class MediaSearchClient extends IMediaSearchClient {
                     }
                 }
 
-                log("here")
                 parentQuery.filter.push(availableAtLocationQuery);
             }
 

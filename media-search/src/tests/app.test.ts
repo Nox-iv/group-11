@@ -341,6 +341,98 @@ describe('Media Search API Tests', () => {
 
             expect(response.status).toBe(400);
         });
+
+        test('return an error if the available at location is not a number', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Hobbit',
+                availableAtLocation: 'not a number'
+            });
+
+            expect(response.status).toBe(400);
+        });
+
+        test('return an error if the release date range is not a valid date', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+                range: {
+                    releaseDate: {
+                        from: 'not a date',
+                        to: 'not a date'
+                    }
+                }
+            });
+
+            expect(response.status).toBe(400);
+        });
+
+        test('return an error if the release date range start is after the end', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+                range: {
+                    releaseDate: {
+                        from: '2003-01-01',
+                        to: '2002-01-01'
+                    }
+                }
+            });
+
+            expect(response.status).toBe(400);
+        });
+
+        test('return an error if the release date range start is in the future', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+                range: {
+                    releaseDate: {
+                        from: '2025-01-01',
+                        to: '2026-01-01'
+                    }
+                }
+            });
+
+            expect(response.status).toBe(400);
+        });
+
+        test('return an error if the release date range end is in the future', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+                range: {
+                    releaseDate: {
+                        from: '2002-01-01',
+                        to: '2026-01-01'
+                    }
+                }
+            });
+
+            expect(response.status).toBe(400);
+        });
+
+        test('return an error if an invalid genre filter is provided', async () => {
+            const response = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: '',
+                filters: {
+                    genres: ['not a valid genre']
+                }
+            });
+        });
     });
 
     afterAll(async () => {

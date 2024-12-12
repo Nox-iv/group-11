@@ -1,3 +1,4 @@
+import { log } from "console";
 import { Message } from "../../shared/messaging/message";
 import { MediaSearchLogicParams } from "../interfaces/dto/MediaSearchLogicParams";
 import IMediaSearchLogic from "../interfaces/logic/IMediaSearchLogic";
@@ -11,7 +12,7 @@ export default class MediaSearchApi {
             const searchParams: Message<MediaSearchLogicParams> = this.parseSearchParams(request);
 
             if (searchParams.hasErrors()) {
-            response.status(400).json(searchParams.errors);
+                response.status(400).json(searchParams.errors);
                 return;
             }
 
@@ -47,11 +48,21 @@ export default class MediaSearchApi {
         }
 
         if (range?.releaseDate?.from) {
-            range.releaseDate.from = new Date(range.releaseDate.from);
+            let fromDate = Date.parse(range.releaseDate.from);
+            if (isNaN(fromDate)) {
+                result.addError(new Error('Release date range start must be a valid date'));
+            } else {
+                range.releaseDate.from = new Date(fromDate);
+            }
         }
 
         if (range?.releaseDate?.to) {
-            range.releaseDate.to = new Date(range.releaseDate.to);
+            let toDate = Date.parse(range.releaseDate.to);
+            if (isNaN(toDate)) {
+                result.addError(new Error('Release date range end must be a valid date'));
+            } else {
+                range.releaseDate.to = new Date(toDate);
+            }
         }
 
         if (isNaN(page)) {

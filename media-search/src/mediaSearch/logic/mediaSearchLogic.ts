@@ -5,6 +5,7 @@ import IMediaSearchLogic from "../interfaces/logic/IMediaSearchLogic";
 import { Message } from "../../shared/messaging/message";
 import { MediaSearchFilters } from "../interfaces/data/MediaSearchFilters";
 import { MediaSearchClientParams } from "../interfaces/dto/MediaSearchClientParams";
+import { log } from "console";
 
 export default class MediaSearchLogic extends IMediaSearchLogic {
     constructor(mediaSearchClient: IMediaSearchClient) {
@@ -15,7 +16,7 @@ export default class MediaSearchLogic extends IMediaSearchLogic {
     public async searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult[]>> {
         const result = new Message<MediaSearchResult[]>([]);
         const filters = searchParams.filters;
-
+        
         if (filters) {
             for (const currentFilter of Object.keys(filters)) {
                 const allowedValues = MediaSearchFilters.get(currentFilter);
