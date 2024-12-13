@@ -441,7 +441,6 @@ describe('Media Search API Tests', () => {
             const response = await agent.get('/filters');
 
             expect(response.status).toBe(200);
-            log(response.body);
             expect(response.body.type).toEqual(Array.from(MediaSearchFilters.get('type')!));
             expect(response.body.genres).toEqual(Array.from(MediaSearchFilters.get('genres')!));
         });
