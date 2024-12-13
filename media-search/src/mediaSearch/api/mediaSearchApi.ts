@@ -28,6 +28,15 @@ export default class MediaSearchApi {
         }
     }
 
+    public async getSearchFilters(request: Request, response: Response): Promise<void> {
+        try {
+            const filters = await this.mediaSearchLogic.getSearchFilters();
+            response.status(200).json(filters);
+        } catch (error) {
+            response.status(500).json((error as Error).message);
+        }
+    }
+
     private parseSearchParams(request: Request): Message<MediaSearchLogicParams> {
         const result = new Message<MediaSearchLogicParams>(null);
 

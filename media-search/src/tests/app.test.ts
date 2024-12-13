@@ -8,6 +8,7 @@ import { Server } from 'http';
 import { log } from 'console';
 import fs from 'fs';
 import { MediaSearchResult, MediaStock } from '../mediaSearch/data/documents/mediaSearchResult';
+import { MediaSearchFilters } from '../mediaSearch/interfaces/data/MediaSearchFilters';
 
 describe('Media Search API Tests', () => {
     let server: Server;
@@ -432,6 +433,17 @@ describe('Media Search API Tests', () => {
                     genres: ['not a valid genre']
                 }
             });
+        });
+    });
+
+    describe('200 GET /filters', () => {
+        test('can get the search filters', async () => {
+            const response = await agent.get('/filters');
+
+            expect(response.status).toBe(200);
+            log(response.body);
+            expect(response.body.type).toEqual(Array.from(MediaSearchFilters.get('type')!));
+            expect(response.body.genres).toEqual(Array.from(MediaSearchFilters.get('genres')!));
         });
     });
 

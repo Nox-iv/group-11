@@ -6,6 +6,7 @@ import { Message } from "../../shared/messaging/message";
 import { MediaSearchFilters } from "../interfaces/data/MediaSearchFilters";
 import { MediaSearchClientParams } from "../interfaces/dto/MediaSearchClientParams";
 import { log } from "console";
+import { IGenresFilterValues, IMediaSearchFilters, ITypeFilterValues } from "../interfaces/data/IMediaSearchFilters";
 
 export default class MediaSearchLogic extends IMediaSearchLogic {
     constructor(mediaSearchClient: IMediaSearchClient) {
@@ -79,6 +80,23 @@ export default class MediaSearchLogic extends IMediaSearchLogic {
         if (!result.hasErrors()) {
             const results = await this.mediaSearchClient.searchMedia(clientParams);
             result.value = results;
+        }
+
+        return result;
+    }
+
+    public async getSearchFilters(): Promise<IMediaSearchFilters> {
+        const result : IMediaSearchFilters = {
+            type: [],
+            genres: [],
+        };
+
+        for (const currentFilter of Object.keys(result)) {
+            if (currentFilter == 'type') {
+                result.type = Array.from(MediaSearchFilters.get(currentFilter)!) as ITypeFilterValues | [];
+            } else if (currentFilter == 'genres') {
+                result.genres = Array.from(MediaSearchFilters.get(currentFilter)!) as IGenresFilterValues | [];
+            }
         }
 
         return result;
