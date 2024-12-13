@@ -87,6 +87,45 @@ describe('Media Search API Tests', () => {
             expect(response.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_LEGEND_OF_ZELDA]);
         });
 
+        test('can page search results', async () => {
+            const resultNoPagination = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'Lord of the Rings',
+            });
+
+            expect(resultNoPagination.status).toBe(200);
+            
+            const top4Results = resultNoPagination.body.slice(0, 4);
+
+            const firstPageResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Lord of the Rings',
+                page: 0,
+                pageSize: 2
+            });
+
+            expect(firstPageResponse.status).toBe(200);
+            expect(firstPageResponse.body.length).toBe(2);
+            expect(firstPageResponse.body).toEqual(top4Results.slice(0, 2));
+
+            const secondPageResponse = await agent.post('/search')
+            .set('Content-Type', 'application/json')
+            .set('Accept', 'application/json')
+            .send({
+                searchTerm: 'The Lord of the Rings',
+                page: 1,
+                pageSize: 2
+            });
+
+            expect(secondPageResponse.status).toBe(200);
+            expect(secondPageResponse.body.length).toBe(2);
+            expect(secondPageResponse.body).toEqual(top4Results.slice(2, 4)); 
+        });
+
         test('can filter by media type', async () => {
             // Verify that test data has examples of books and at least one other type, in this case movies.
             const noFilterResponse = await agent.post('/search')
@@ -299,7 +338,6 @@ describe('Media Search API Tests', () => {
 
             expect(availableAtLocationResponse.status).toBe(200);
             expect(availableAtLocationResponse.body.length).toBeGreaterThanOrEqual(1);
-            log(availableAtLocationResponse.body.map((x: MediaSearchResult) => x.mediaStock));
             expect(availableAtLocationResponse.body.every((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount > 0))).toBe(true);
         });
     });
