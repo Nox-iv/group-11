@@ -1,21 +1,127 @@
-import { Box, Stack } from "@mui/material";
+import { useState, ChangeEvent } from "react";
+
+import { Box, CircularProgress, Stack, Typography, FormGroup, Checkbox, FormControlLabel } from "@mui/material";
+
+import { useQuery } from "@tanstack/react-query";
+
+import { useSearchParams } from "react-router";
+
 import Navigation from "../components/Navigation";
 import Search from "../components/Search";
 import ResultCard from "../components/ResultCard";  
 
+import { MediaSearchResult } from "../api/types/mediaSearchResult";
+import { MediaSearchRequest } from "../api/types/mediaSearchRequest";
+import { getMedia } from "../api/getMedia";
+import { getSearchFilters } from "../api/getSearchFilters";
+import { MediaSearchFilters } from "../api/types/mediaSearchFilters";
+
 export default function MediaSearch() {
+    const [searchParams] = useSearchParams();
+
+    const searchTerm = searchParams.get('searchTerm');
+    const type = searchParams.get('type');
+
+    const [searchRequest, setSearchRequest] = useState<MediaSearchRequest>({
+        searchTerm: searchTerm != null ? searchTerm : '',
+        page: 0,
+        pageSize: 10,
+        availableAtLocation: undefined,
+        filters: {
+            type: type ? [type] : [],
+        }
+    });
+
+    const mediaQuery = useQuery({
+        queryKey: ['media', 
+            searchRequest.searchTerm, 
+            searchRequest.page, 
+            searchRequest.pageSize, 
+            searchRequest.availableAtLocation, 
+            searchRequest.filters?.type,
+            searchRequest.filters?.genres
+        ],
+        queryFn: () => getMedia(searchRequest),
+    });
+
+    const filterQuery = useQuery({
+        queryKey: ['search', 'filters'],
+        queryFn: () => getSearchFilters(),
+    });
+
+    const handleFilterChange = (event: ChangeEvent<HTMLInputElement>, key: string, value: string) => {
+        if (event.target.checked && !searchRequest.filters?.[key as keyof MediaSearchFilters]?.includes(value)) {
+            setSearchRequest({
+                ...searchRequest,
+                filters: {
+                    ...searchRequest.filters,
+                    [key]: [
+                        ...(searchRequest.filters?.[key as keyof MediaSearchFilters] || []), 
+                        value
+                    ],
+                },
+            });
+        } else if (!event.target.checked && searchRequest.filters?.[key as keyof MediaSearchFilters]?.includes(value)) {
+            setSearchRequest({
+                ...searchRequest,
+                filters: {
+                    ...searchRequest.filters,
+                    [key]: (searchRequest.filters?.[key as keyof MediaSearchFilters] || []).filter((item: string) => item !== value),
+                },
+            });
+        }
+    }
+
     return (
         <Box>
             <Navigation searchHidden={true}/>
             <Box margin={2}>
-                <Search width="100%" hidden={false} />
+                <Search 
+                    width="100%" 
+                    hidden={false} 
+                    onSearch={setSearchRequest}
+                    searchTerm={searchRequest.searchTerm}
+                    filters={searchRequest.filters}
+                    availableAtLocation={searchRequest.availableAtLocation}
+                />
             </Box>
-            <Stack direction="column" margin={2} spacing={2} gap={1}>
-                <ResultCard />
-                <ResultCard />
-                <ResultCard />
-                <ResultCard />
-            </Stack>
+            <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
+                <Box sx={{ display: 'flex', flexDirection: 'column', width: '70%' }}>
+                    <Typography variant="h5" sx={{ ml: 2 }}>Results</Typography>
+                    <Stack width="100%" direction="column" margin={2} spacing={2} gap={1}>
+                        {mediaQuery.isLoading && <CircularProgress />}
+                        {!mediaQuery.isLoading && mediaQuery.data?.map((media: MediaSearchResult) => (
+                            <ResultCard media={media} />
+                        ))}
+                    </Stack>
+                </Box>
+                <Box sx={{ display: 'flex', flexDirection: 'column', ml: 4, width: '30%' }}>
+                    <Typography variant="h5" sx={{ marginBottom: 2 }}>Filters</Typography>
+                    <Box>
+                        {filterQuery.isLoading && <CircularProgress />}
+                        {!filterQuery.isLoading && filterQuery.data && Object.entries(filterQuery.data).map(([key, value]) => (
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                <Typography variant="h6">{key.charAt(0).toUpperCase() + key.slice(1)}</Typography>
+                                <FormGroup sx={{ display: 'flex', flexDirection: 'row' }}>
+                                    {value.map((item: string) => (
+                                        <FormControlLabel
+                                            sx={{ width: '20%' }}
+                                            control={
+                                                <Checkbox
+                                                    value={item}
+                                                    checked={searchRequest.filters?.[key as keyof MediaSearchFilters]?.includes(item) ?? false}
+                                                    onChange={(event) => handleFilterChange(event, key, item)}
+                                                />
+                                            }
+                                            label={item}
+                                        />
+                                    ))}
+                                </FormGroup>
+                            </Box>
+                        ))}
+                    </Box>
+                </Box>
+            </Box>
         </Box>
     );
 }

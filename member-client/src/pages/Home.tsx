@@ -1,21 +1,23 @@
-import Navigation from "../components/Navigation";
 import { Box, IconButton, Typography } from "@mui/material";
 import MultiCarousel from "../components/MultiCarousel";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { useQueries, useQuery } from "@tanstack/react-query";
 
+import { Link } from "react-router";
+
+import Navigation from "../components/Navigation";
 import { getSearchFilters } from "../api/getSearchFilters";
-import { getAllContentWithType } from "../api/getContent";
+import { getAllMediaWithType } from "../api/getMedia";
 
 export default function Home() {
-    const searchFiltersQuery = useQuery({ queryKey: ['searchFilters'], queryFn: getSearchFilters });
-    const typeFilters = searchFiltersQuery.data?.types;
+    const searchFiltersQuery = useQuery({ queryKey: ['search', 'filters'], queryFn: getSearchFilters });
+    const typeFilters = searchFiltersQuery.data?.type;
 
     const mediaQueries = useQueries({
         queries: typeFilters?.map(type => ({
             queryKey: ['media', type],
-            queryFn: () => getAllContentWithType(type, 0, 10),
+            queryFn: () => getAllMediaWithType(type, 0, 10),
         })) ?? [],
     });
 
@@ -34,9 +36,11 @@ export default function Home() {
                         <Box>
                             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
                                 <Typography marginLeft={2} variant="h4">{type}s</Typography>
-                                <IconButton>
-                                    <ArrowForwardIcon />
-                                </IconButton>
+                                <Link to={`/search?type=${type}`}>
+                                    <IconButton>
+                                        <ArrowForwardIcon />
+                                    </IconButton>
+                                </Link>
                             </Box>
                             <MultiCarousel items={mediaQueries[index]?.data?.map(media => ({
                                 id: media.mediaId,

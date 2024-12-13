@@ -4,26 +4,45 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import { Box } from '@mui/material';
+import { MediaSearchResult } from '../api/types/mediaSearchResult';
 
-export default function ResultCard() {
+export default function ResultCard({ media }: { media: MediaSearchResult }) {
   return (
     <Card sx={{ width: '100%' }}>
       <CardActionArea sx={{ display: 'flex', flexDirection: 'row' }}>
-        <Box sx={{ width: '20%'}}>
+        <Box sx={{ width: '25%', maxWidth: '250px', maxHeight: '250px'}}>
             <CardMedia
                 component="img"
-                height="140"
-                image="https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800"
-                alt="green iguana"
-        />
+                height={250}
+                width={250}
+                image={media.imageUrl}
+                alt={media.title}
+                sx={{ padding: "1em 0 1em", objectFit: "contain", width: '250px', height: '250px'}}
+            />
         </Box>
         <CardContent sx={{ flex: 1 }}>
           <Typography gutterBottom variant="h5" component="div">
-            Static Title
+            {media.title}
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            Static Description
-            species, ranging across all continents except Antarctica
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+            <Typography component="span" sx={{ color: 'text.primary' }}>Type: </Typography>
+            {media.type}
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+            <Typography component="span" sx={{ color: 'text.primary' }}>Publisher: </Typography>
+            {media.author}
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+            <Typography component="span" sx={{ color: 'text.primary' }}>Release Date: </Typography>
+            {new Date(media.releaseDate).toLocaleDateString()}
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+            <Typography component="span" sx={{ color: 'text.primary' }}>Genres: </Typography>
+            {media.genres.join(', ')}
+          </Typography>
+          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+            <Typography component="span" sx={{ color: 'text.primary' }}>Description: </Typography>
+            {media.description}
           </Typography>
         </CardContent>
       </CardActionArea>

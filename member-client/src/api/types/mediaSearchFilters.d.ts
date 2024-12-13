@@ -1,6 +1,6 @@
 export interface MediaSearchFilters {
-    type: ITypeFilterValues | [];
-    genres: IGenresFilterValues | [];
+    type?: ITypeFilterValues | [];
+    genres?: IGenresFilterValues | [];
 }
 
 export interface GenresFilterValues {

@@ -1,50 +1,73 @@
-import * as React from 'react';
+import { Fragment, useState } from 'react';
+
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 import SearchIcon from '@mui/icons-material/Search';
 
-interface Film {
-  title: string;
-  year: number;
-}
+import { useQuery } from '@tanstack/react-query';
 
-function sleep(duration: number): Promise<void> {
-  return new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, duration);
-  });
-}
+import { getMedia } from '../api/getMedia';
+import { MediaSearchRequest } from '../api/types/mediaSearchRequest';
+import { MediaSearchFilters } from '../api/types/mediaSearchFilters';
+import { MediaSearchResult } from '../api/types/mediaSearchResult';
+
+import { debounce } from '../utils/debounce';
 
 export default function Search({
     label = 'Search',
     width = '100%',
-    hidden = false
+    hidden = false,
+    pageSize = 10,
+    page = 0,
+    filters = undefined,
+    availableAtLocation = undefined,
+    searchTerm = undefined,
+    onSearch = undefined,
 }: {
     label?: string;
     width?: string;
     hidden?: boolean;
+    pageSize?: number;
+    page?: number;
+    filters?: MediaSearchFilters;
+    availableAtLocation?: number;
+    searchTerm?: string;
+    onSearch?: (searchRequest: MediaSearchRequest) => void;
 }) {
-  const [open, setOpen] = React.useState(false);
-  const [options, setOptions] = React.useState<readonly Film[]>([]);
-  const [loading, setLoading] = React.useState(false);
+  const [open, setOpen] = useState(false);
+
+  const [searchRequest, setSearchRequest] = useState<MediaSearchRequest>({
+    searchTerm: searchTerm ?? '',
+    page,
+    pageSize,
+    availableAtLocation,
+    filters
+  });
+
+  const {data, isLoading} = useQuery({
+    queryKey: ['media', 
+      searchRequest.searchTerm, 
+      searchRequest.page, 
+      searchRequest.pageSize, 
+      searchRequest.availableAtLocation, 
+      searchRequest.filters?.type,
+      searchRequest.filters?.genres,
+    ],
+    queryFn: () => getMedia(searchRequest),
+  })
 
   const handleOpen = () => {
     setOpen(true);
-    (async () => {
-      setLoading(true);
-      await sleep(1e3); // For demo purposes.
-      setLoading(false);
-
-      setOptions([...topFilms]);
-    })();
   };
 
   const handleClose = () => {
     setOpen(false);
-    setOptions([]);
   };
+
+  const debouncedSearch = debounce((value: string) => {
+    setSearchRequest({ ...searchRequest, searchTerm: value });
+  }, 50);
 
   return (
     <Autocomplete
@@ -52,10 +75,22 @@ export default function Search({
       open={open}
       onOpen={handleOpen}
       onClose={handleClose}
-      isOptionEqualToValue={(option, value) => option.title === value.title}
-      getOptionLabel={(option) => option.title}
-      options={options}
-      loading={loading}
+      freeSolo={true}
+      isOptionEqualToValue={(option, value) => option === value}
+      noOptionsText="No results"
+      options={open && data ? data.map((result : MediaSearchResult) => result.title) : []}
+      loading={isLoading}
+      value={searchRequest.searchTerm}
+      onInputChange={(_, value) => {
+        if (value) {
+          debouncedSearch(value);
+        }
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') {
+          onSearch?.(searchRequest);
+        }
+      }}
       renderInput={(params) => (
         <TextField
           {...params}
@@ -64,15 +99,15 @@ export default function Search({
             input: {
               ...params.InputProps,
               startAdornment: (
-                <React.Fragment>
+                <Fragment>
                   <SearchIcon />
-                </React.Fragment>
+                </Fragment>
               ),
               endAdornment: (
-                <React.Fragment>
-                  {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                <Fragment>
+                  {isLoading ? <CircularProgress color="inherit" size={20} /> : null}
                   {params.InputProps.endAdornment}
-                </React.Fragment>
+                </Fragment>
               ),
             },
           }}
@@ -81,53 +116,3 @@ export default function Search({
     />
   );
 }
-
-const topFilms = [
-  { title: 'The Shawshank Redemption', year: 1994 },
-  { title: 'The Godfather', year: 1972 },
-  { title: 'The Godfather: Part II', year: 1974 },
-  { title: 'The Dark Knight', year: 2008 },
-  { title: '12 Angry Men', year: 1957 },
-  { title: "Schindler's List", year: 1993 },
-  { title: 'Pulp Fiction', year: 1994 },
-  {
-    title: 'The Lord of the Rings: The Return of the King',
-    year: 2003,
-  },
-  { title: 'The Good, the Bad and the Ugly', year: 1966 },
-  { title: 'Fight Club', year: 1999 },
-  {
-    title: 'The Lord of the Rings: The Fellowship of the Ring',
-    year: 2001,
-  },
-  {
-    title: 'Star Wars: Episode V - The Empire Strikes Back',
-    year: 1980,
-  },
-  { title: 'Forrest Gump', year: 1994 },
-  { title: 'Inception', year: 2010 },
-  {
-    title: 'The Lord of the Rings: The Two Towers',
-    year: 2002,
-  },
-  { title: "One Flew Over the Cuckoo's Nest", year: 1975 },
-  { title: 'Goodfellas', year: 1990 },
-  { title: 'The Matrix', year: 1999 },
-  { title: 'Seven Samurai', year: 1954 },
-  {
-    title: 'Star Wars: Episode IV - A New Hope',
-    year: 1977,
-  },
-  { title: 'City of God', year: 2002 },
-  { title: 'Se7en', year: 1995 },
-  { title: 'The Silence of the Lambs', year: 1991 },
-  { title: "It's a Wonderful Life", year: 1946 },
-  { title: 'Life Is Beautiful', year: 1997 },
-  { title: 'The Usual Suspects', year: 1995 },
-  { title: 'Léon: The Professional', year: 1994 },
-  { title: 'Spirited Away', year: 2001 },
-  { title: 'Saving Private Ryan', year: 1998 },
-  { title: 'Once Upon a Time in the West', year: 1968 },
-  { title: 'American History X', year: 1998 },
-  { title: 'Interstellar', year: 2014 },
-];
