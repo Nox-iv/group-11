@@ -2,6 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router'
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -34,19 +36,23 @@ const theme = createTheme({
   },
 });
 
+const queryClient = new QueryClient();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <BrowserRouter>
-          <Routes>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<MediaSearch />} />
             <Route path="/details" element={<Details />} />
             <Route path="/user/borrowed" element={<MediaBorrowingRecordListing />} />
-          </Routes>
-        </BrowserRouter>
+            </Routes>
+          </BrowserRouter>
+        </QueryClientProvider>
       </LocalizationProvider>
     </ThemeProvider>
   </StrictMode>,

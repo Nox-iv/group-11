@@ -25,9 +25,10 @@ export default function ActionCard({
           height={height}
           width={width}
           image={imgSrc}
-          alt="green iguana"
+          alt="media image"
+          sx={{ padding: "1em 1em 0 1em", objectFit: "contain" }}
         />
-        <CardContent>
+        <CardContent sx={{ height: 120 }}>
           <Typography gutterBottom variant="h5" component="div">
             {title}
           </Typography>

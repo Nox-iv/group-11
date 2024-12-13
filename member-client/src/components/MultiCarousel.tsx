@@ -25,7 +25,12 @@ export default function MultiCarousel({items }: {items: ActionCardDetails[]}) {
     };
 
     return (
-        <Carousel  responsive={responsive}>
+        <Carousel  
+            responsive={responsive}
+            infinite={true}
+            draggable={true}
+            removeArrowOnDeviceType={["tablet", "mobile"]}
+        >
             {items.map((item) => (
                 <ActionCard
                     imgSrc={item.imgSrc}
