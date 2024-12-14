@@ -1,6 +1,6 @@
-import { useState, ChangeEvent } from "react";
+import { useState, ChangeEvent, useEffect } from "react";
 
-import { Box, CircularProgress, Stack, Typography, FormGroup, Checkbox, FormControlLabel, useMediaQuery } from "@mui/material";
+import { Box, CircularProgress, Stack, Typography, FormGroup, Checkbox, FormControlLabel, useMediaQuery, Pagination } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -27,6 +27,8 @@ export default function MediaSearch() {
     const [searchParams] = useSearchParams();
     const searchTerm = searchParams.get('searchTerm');
     const type = searchParams.get('type');
+
+    const [totalHits, setTotalHits] = useState<number>(0);
 
     const [searchRequest, setSearchRequest] = useState<MediaSearchRequest>({
         searchTerm: searchTerm != null ? searchTerm : '',
@@ -77,6 +79,20 @@ export default function MediaSearch() {
             });
         }
     }
+
+    const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
+        setSearchRequest({
+            ...searchRequest,
+            page: value - 1,
+        });
+    };
+
+    useEffect(() => {
+        if (mediaQuery.data?.totalHits) {
+            console.log(mediaQuery.data.totalHits);
+            setTotalHits(mediaQuery.data.totalHits);
+        }
+    }, [mediaQuery.data?.totalHits]);
 
     return (
         <Box>
@@ -131,6 +147,9 @@ export default function MediaSearch() {
                     </Box>
                 </Box>
             </Box>
+            <Stack spacing={2} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 2 }}>
+                <Pagination count={Math.ceil(totalHits / searchRequest.pageSize)} page={searchRequest.page + 1} onChange={handlePageChange} />
+            </Stack>
         </Box>
     );
 }

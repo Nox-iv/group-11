@@ -33,6 +33,7 @@ export const getAllMediaWithType = async (mediaType: string, offset: number, lim
 export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Promise<MediaSearchResult> => {
     if (process.env.NODE_ENV === 'development') {
         const data = mockContent
+            .sort((a: MediaDocument, b: MediaDocument) => a.title.localeCompare(b.title))
             .filter((media: MediaDocument) => {
                 let hasMatch = true
                 if (mediaSearchRequest.filters) {
@@ -55,11 +56,11 @@ export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Prom
 
                 return hasMatch
             })
-            .slice(mediaSearchRequest.page, mediaSearchRequest.page + mediaSearchRequest.pageSize);
-        
+
+            console.log(mediaSearchRequest.page, mediaSearchRequest.pageSize);
         return {
             totalHits: data.length,
-            data: data
+            data: data.slice(mediaSearchRequest.page * mediaSearchRequest.pageSize, (mediaSearchRequest.page + 1) * mediaSearchRequest.pageSize)
         }
     } else {
         const response = await fetch('/api/media/search', {
