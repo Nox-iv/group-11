@@ -6,10 +6,12 @@ import CardActionArea from '@mui/material/CardActionArea';
 import { Box } from '@mui/material';
 import { MediaSearchResult } from '../api/types/mediaSearchResult';
 
-export default function ResultCard({ media }: { media: MediaSearchResult }) {
+export default function ResultCard({ media, onClick }: { media: MediaSearchResult, onClick?: (key: string) => void}) {
   return (
     <Card sx={{ width: '100%' }}>
-      <CardActionArea sx={{ display: 'flex', flexDirection: 'row' }}>
+      <CardActionArea 
+        onClick={() => onClick?.(media.mediaId.toString())}
+        sx={{ display: 'flex', flexDirection: 'row' }}>
         <Box sx={{ width: '25%', maxWidth: '250px', maxHeight: '250px'}}>
             <CardMedia
                 component="img"

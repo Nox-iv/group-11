@@ -3,7 +3,7 @@ import "react-multi-carousel/lib/styles.css";
 import ActionCard from "./ActionCard";
 import { ActionCardDetails } from "../types/ActionCardDetails";
 
-export default function MultiCarousel({items }: {items: ActionCardDetails[]}) {
+export default function MultiCarousel({items}: {items: ActionCardDetails[] }) {
     const responsive = {
         superLargeDesktop: {
           // the naming can be any, depends on you.
@@ -33,11 +33,13 @@ export default function MultiCarousel({items }: {items: ActionCardDetails[]}) {
         >
             {items.map((item) => (
                 <ActionCard
+                    key={item.key}
                     imgSrc={item.imgSrc}
                     title={item.title}
                     description={item.description}
                     height={300}
                     width={300}
+                    onClick={item.onClick ?? (() => {})}
                 />
             ))}
         </Carousel>

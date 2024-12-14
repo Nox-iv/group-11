@@ -48,7 +48,7 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<MediaSearch />} />
-            <Route path="/details" element={<Details />} />
+            <Route path="/details/:mediaId" element={<Details />} />
             <Route path="/user/borrowed" element={<MediaBorrowingRecordListing />} />
             </Routes>
           </BrowserRouter>

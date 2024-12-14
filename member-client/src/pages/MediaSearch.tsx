@@ -4,7 +4,7 @@ import { Box, CircularProgress, Stack, Typography, FormGroup, Checkbox, FormCont
 
 import { useQuery } from "@tanstack/react-query";
 
-import { useSearchParams } from "react-router";
+import { useSearchParams, useNavigate } from "react-router";
 
 import Navigation from "../components/Navigation";
 import Search from "../components/Search";
@@ -12,13 +12,13 @@ import ResultCard from "../components/ResultCard";
 
 import { MediaSearchResult } from "../api/types/mediaSearchResult";
 import { MediaSearchRequest } from "../api/types/mediaSearchRequest";
-import { getMedia } from "../api/getMedia";
+import { searchMedia } from "../api/getMedia";
 import { getSearchFilters } from "../api/getSearchFilters";
 import { MediaSearchFilters } from "../api/types/mediaSearchFilters";
 
 export default function MediaSearch() {
     const [searchParams] = useSearchParams();
-
+    const navigate = useNavigate();
     const searchTerm = searchParams.get('searchTerm');
     const type = searchParams.get('type');
 
@@ -41,7 +41,7 @@ export default function MediaSearch() {
             searchRequest.filters?.type,
             searchRequest.filters?.genres
         ],
-        queryFn: () => getMedia(searchRequest),
+        queryFn: () => searchMedia(searchRequest),
     });
 
     const filterQuery = useQuery({
@@ -91,7 +91,10 @@ export default function MediaSearch() {
                     <Stack width="100%" direction="column" margin={2} spacing={2} gap={1}>
                         {mediaQuery.isLoading && <CircularProgress />}
                         {!mediaQuery.isLoading && mediaQuery.data?.map((media: MediaSearchResult) => (
-                            <ResultCard media={media} />
+                            <ResultCard 
+                                media={media} 
+                                onClick={() => navigate(`/details/${media.mediaId}`, { state: { media } })}
+                            />
                         ))}
                     </Stack>
                 </Box>

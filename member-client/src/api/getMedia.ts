@@ -25,7 +25,7 @@ export const getAllMediaWithType = async (mediaType: string, offset: number, lim
     }
 }
 
-export const getMedia = async (mediaSearchRequest: MediaSearchRequest) : Promise<MediaSearchResult[]> => {
+export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Promise<MediaSearchResult[]> => {
     if (process.env.NODE_ENV === 'development') {
         return mockContent
             .filter((media: MediaSearchResult) => {
@@ -56,6 +56,17 @@ export const getMedia = async (mediaSearchRequest: MediaSearchRequest) : Promise
             method: 'POST',
             body: JSON.stringify(mediaSearchRequest),
         });
+
+        return response.json();
+    }
+}
+
+export const getMediaById = async (mediaId: number) : Promise<MediaSearchResult> => {
+    console.log(mediaId);
+    if (process.env.NODE_ENV === 'development') {
+        return mockContent.find((media: MediaSearchResult) => media.mediaId === mediaId) as MediaSearchResult;
+    } else {
+        const response = await fetch(`/api/media/${mediaId}`);
 
         return response.json();
     }

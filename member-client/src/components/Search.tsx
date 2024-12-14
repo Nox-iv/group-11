@@ -7,7 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { getMedia } from '../api/getMedia';
+import { searchMedia } from '../api/getMedia';
 import { MediaSearchRequest } from '../api/types/mediaSearchRequest';
 import { MediaSearchFilters } from '../api/types/mediaSearchFilters';
 import { MediaSearchResult } from '../api/types/mediaSearchResult';
@@ -54,7 +54,7 @@ export default function Search({
       searchRequest.filters?.type,
       searchRequest.filters?.genres,
     ],
-    queryFn: () => getMedia(searchRequest),
+    queryFn: () => searchMedia(searchRequest),
   })
 
   const handleOpen = () => {
