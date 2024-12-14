@@ -85,7 +85,7 @@ export default function MediaSearch() {
                 <Search 
                     width="100%" 
                     hidden={false} 
-                    onSearch={setSearchRequest}
+                    onSearch={(searchTerm: string) => setSearchRequest({ ...searchRequest, searchTerm })}
                     searchTerm={searchRequest.searchTerm}
                     filters={searchRequest.filters}
                     availableAtLocation={searchRequest.availableAtLocation}

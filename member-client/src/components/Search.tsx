@@ -33,10 +33,10 @@ export default function Search({
     filters?: MediaSearchFilters;
     availableAtLocation?: number;
     searchTerm?: string;
-    onSearch?: (searchRequest: MediaSearchRequest) => void;
+    onSearch?: (searchTerm: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-
+  const [realTimeSearchTerm, setRealTimeSearchTerm] = useState(searchTerm ?? '');
   const [searchRequest, setSearchRequest] = useState<MediaSearchRequest>({
     searchTerm: searchTerm ?? '',
     page,
@@ -84,11 +84,12 @@ export default function Search({
       onInputChange={(_, value) => {
         if (value) {
           debouncedSearch(value);
+          setRealTimeSearchTerm(value);
         }
       }}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
-          onSearch?.(searchRequest);
+          onSearch?.(realTimeSearchTerm);
         }
       }}
       renderInput={(params) => (

@@ -10,13 +10,12 @@ import CloseIcon from '@mui/icons-material/Close';
 import AppBar from "@mui/material/AppBar";
 
 import Search from './Search';
-import { MediaSearchRequest } from "../api/types/mediaSearchRequest";
 
 export default function Navigation({ searchHidden = false }: { searchHidden?: boolean }) {
     const [hideSearch, setHideSearch] = useState(searchHidden);
     const isMobile = useMediaQuery('(max-width:630px)');
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         if (isMobile || searchHidden) {
             setHideSearch(true);
@@ -25,8 +24,8 @@ export default function Navigation({ searchHidden = false }: { searchHidden?: bo
         }
     }, [isMobile, searchHidden]);
 
-    const handleSearch = (searchRequest: MediaSearchRequest) => {
-        navigate(`/search?searchTerm=${searchRequest.searchTerm}`);
+    const handleSearch = (searchTerm: string) => {
+        navigate(`/search?searchTerm=${searchTerm}`);
     }
 
     return (
