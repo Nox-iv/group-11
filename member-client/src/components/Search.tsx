@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { searchMedia } from '../api/getMedia';
 import { MediaSearchRequest } from '../api/types/mediaSearchRequest';
 import { MediaSearchFilters } from '../api/types/mediaSearchFilters';
-import { MediaSearchResult } from '../api/types/mediaSearchResult';
+import { MediaDocument } from '../api/types/mediaSearchResult';
 
 import { debounce } from '../utils/debounce';
 
@@ -78,7 +78,7 @@ export default function Search({
       freeSolo={true}
       isOptionEqualToValue={(option, value) => option === value}
       noOptionsText="No results"
-      options={open && data ? data.map((result : MediaSearchResult) => result.title) : []}
+      options={open && data ? data.data.map((result : MediaDocument) => result.title) : []}
       loading={isLoading}
       value={searchRequest.searchTerm}
       onInputChange={(_, value) => {

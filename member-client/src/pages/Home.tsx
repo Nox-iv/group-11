@@ -49,7 +49,7 @@ export default function Home() {
                                         </Link>
                                     </Box>
                                     <MultiCarousel 
-                                        items={mediaQueries[index]?.data?.map(media => ({
+                                        items={mediaQueries[index]?.data?.data?.map(media => ({
                                             key: media.mediaId.toString(),
                                             title: media.title,
                                             description: media.description,

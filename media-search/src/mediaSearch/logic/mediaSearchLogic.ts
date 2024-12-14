@@ -14,8 +14,8 @@ export default class MediaSearchLogic extends IMediaSearchLogic {
         this.mediaSearchClient = mediaSearchClient;
     }
 
-    public async searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult[]>> {
-        const result = new Message<MediaSearchResult[]>([]);
+    public async searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult>> {
+        const result = new Message<MediaSearchResult>(null);
         const filters = searchParams.filters;
         
         if (filters) {

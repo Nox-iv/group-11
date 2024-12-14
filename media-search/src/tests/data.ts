@@ -1,6 +1,6 @@
-import { MediaSearchResult } from "../mediaSearch/data/documents/mediaSearchResult.d";
+import { MediaDocument } from "../mediaSearch/data/documents/mediaSearchResult.d";
 
-export const mediaSearchResultTestData : MediaSearchResult[] = [
+export const mediaSearchResultTestData : MediaDocument[] = [
     {
         mediaId: 1,
         title: "The Dark Knight",

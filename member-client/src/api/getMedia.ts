@@ -1,12 +1,17 @@
 import { MediaSearchRequest } from "./types/mediaSearchRequest";
-import { MediaSearchResult, MediaStock } from "./types/mediaSearchResult";
+import { MediaDocument, MediaSearchResult, MediaStock } from "./types/mediaSearchResult";
 import { mockContent } from "../test/data/content";
 
-export const getAllMediaWithType = async (mediaType: string, offset: number, limit: number) : Promise<MediaSearchResult[]> => {
+export const getAllMediaWithType = async (mediaType: string, offset: number, limit: number) : Promise<MediaSearchResult> => {
     if (process.env.NODE_ENV === 'development') {
-        return mockContent
-            .filter((media: MediaSearchResult) => media.type === mediaType)
+        const data =  mockContent
+            .filter((media: MediaDocument) => media.type === mediaType)
             .slice(offset, offset + limit);
+
+        return {
+            totalHits: data.length,
+            data
+        }
     } else {
         const response = await fetch('/api/media/search', {
             method: 'POST',
@@ -25,10 +30,10 @@ export const getAllMediaWithType = async (mediaType: string, offset: number, lim
     }
 }
 
-export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Promise<MediaSearchResult[]> => {
+export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Promise<MediaSearchResult> => {
     if (process.env.NODE_ENV === 'development') {
-        return mockContent
-            .filter((media: MediaSearchResult) => {
+        const data = mockContent
+            .filter((media: MediaDocument) => {
                 let hasMatch = true
                 if (mediaSearchRequest.filters) {
                     if (mediaSearchRequest.filters?.type?.length > 0) {
@@ -51,6 +56,11 @@ export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Prom
                 return hasMatch
             })
             .slice(mediaSearchRequest.page, mediaSearchRequest.page + mediaSearchRequest.pageSize);
+        
+        return {
+            totalHits: data.length,
+            data: data
+        }
     } else {
         const response = await fetch('/api/media/search', {
             method: 'POST',
@@ -61,10 +71,10 @@ export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Prom
     }
 }
 
-export const getMediaById = async (mediaId: number) : Promise<MediaSearchResult> => {
+export const getMediaById = async (mediaId: number) : Promise<MediaDocument> => {
     console.log(mediaId);
     if (process.env.NODE_ENV === 'development') {
-        return mockContent.find((media: MediaSearchResult) => media.mediaId === mediaId) as MediaSearchResult;
+        return mockContent.find((media: MediaDocument) => media.mediaId === mediaId) as MediaDocument;
     } else {
         const response = await fetch(`/api/media/${mediaId}`);
 

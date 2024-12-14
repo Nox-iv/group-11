@@ -1,5 +1,5 @@
 import IMediaSearchClient from "../../interfaces/data/client/IMediaSearchClient";
-import { MediaSearchResult } from "../documents/mediaSearchResult";
+import { MediaDocument, MediaSearchResult } from "../documents/mediaSearchResult";
 import { MediaSearchClientParams } from "../../interfaces/dto/MediaSearchClientParams";
 import { Client, estypesWithBody } from "@elastic/elasticsearch";
 import { estypes } from "@elastic/elasticsearch";
@@ -10,7 +10,7 @@ export default class MediaSearchClient extends IMediaSearchClient {
         this.client = client;
     }
 
-    public async searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult[]> {
+    public async searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult> {
         try {
             const queryContainer: estypesWithBody.QueryDslQueryContainer = {};
             const parentQuery: estypesWithBody.QueryDslBoolQuery = {};
@@ -94,7 +94,18 @@ export default class MediaSearchClient extends IMediaSearchClient {
                 throw new Error('Internal search error');
             }
 
-            return response.hits.hits.map((hit: estypes.SearchHit) => hit._source as MediaSearchResult);
+            let totalHits: number;
+
+            if (typeof response.hits.total === 'object') {
+                totalHits = response.hits.total.value
+              } else {
+                totalHits = response.hits.total ?? 0
+              }
+
+            return {
+                totalHits: totalHits,
+                mediaDocuments: response.hits.hits.map((hit: estypes.SearchHit) => hit._source as MediaDocument)
+            };
         } catch (error) {
             log(error)
             throw new Error('Internal search error');

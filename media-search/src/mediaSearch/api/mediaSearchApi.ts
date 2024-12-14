@@ -21,7 +21,10 @@ export default class MediaSearchApi {
             if (result.hasErrors()) {
                 response.status(400).json(result.errors);
             } else {
-                response.status(200).json(result.value);
+                response.status(200).json({
+                    totalHits: result.value?.totalHits,
+                    data: result.value?.mediaDocuments
+                });
             }
         } catch (error) {
             response.status(500).json((error as Error).message);

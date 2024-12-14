@@ -8,7 +8,7 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import Navigation from "../components/Navigation";
 import BookingModal from "../components/BookingModal";
 
-import { MediaSearchResult } from "../api/types/mediaSearchResult";
+import { MediaDocument } from "../api/types/mediaSearchResult";
 import { getMediaById } from "../api/getMedia";
 
 export default function Details() {
@@ -17,12 +17,12 @@ export default function Details() {
 
     const useVerticalLayout = useMediaQuery('(max-width:1000px)');
 
-    const [mediaSearchResult, setMediaSearchResult] = useState<MediaSearchResult | undefined>(undefined);
+    const [mediaDocument, setMediaDocument] = useState<MediaDocument | undefined>(undefined);
     const [hasMediaData, setHasMediaData] = useState(false);
 
     useEffect(() => {
         if (location.state?.media) {
-            setMediaSearchResult(location.state.media as MediaSearchResult);
+            setMediaDocument(location.state.media as MediaDocument);
             setHasMediaData(true);
         }
     }, [location.state?.media]);
@@ -35,7 +35,7 @@ export default function Details() {
 
     useEffect(() => {
         if (mediaQuery.data) {
-            setMediaSearchResult(mediaQuery.data);
+            setMediaDocument(mediaQuery.data);
             setHasMediaData(true);
         }
     }, [mediaQuery.data]);
@@ -56,18 +56,18 @@ export default function Details() {
                     </Typography>
                 </Box>
             )}
-            {hasMediaData && mediaSearchResult && (
+            {hasMediaData && mediaDocument && (
                 <Box sx={{ p: 4 }}>
                     <Box display={useVerticalLayout ? "column" : "flex"} gap={2}>
                         <Box sx={{objectFit: 'contain'}} width={useVerticalLayout ? "100%" : "50%"} textAlign="center">
                             {useVerticalLayout && (
                                 <Typography variant="h3" gutterBottom>
-                                    {mediaSearchResult.title}
+                                    {mediaDocument.title}
                                 </Typography>
                             )}
                             <img 
-                                src={mediaSearchResult.imageUrl} 
-                                alt={mediaSearchResult.title} 
+                                src={mediaDocument.imageUrl} 
+                                alt={mediaDocument.title} 
                                 style={{ 
                                     width: '100%', 
                                     maxHeight: '600px',
@@ -79,38 +79,38 @@ export default function Details() {
                         <Box width={useVerticalLayout ? "100%" : "50%"}>
                             {!useVerticalLayout && (
                                 <Typography variant="h3" gutterBottom>
-                                    {mediaSearchResult.title}
+                                    {mediaDocument.title}
                                 </Typography>
                             )}
                             <List>
                                 <ListItem>
                                     <ListItemText 
                                         primary={<Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Type</Typography>}
-                                        secondary={mediaSearchResult.type}
+                                        secondary={mediaDocument.type}
                                     />
                                 </ListItem>
                                 <ListItem>
                                     <ListItemText 
                                         primary={<Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Release Date</Typography>}
-                                        secondary={new Date(mediaSearchResult.releaseDate).toLocaleDateString()}
+                                        secondary={new Date(mediaDocument.releaseDate).toLocaleDateString()}
                                     />
                                 </ListItem>
                                 <ListItem>
                                     <ListItemText 
                                         primary={<Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Publisher</Typography>}
-                                        secondary={mediaSearchResult.author}
+                                        secondary={mediaDocument.author}
                                     />
                                 </ListItem>
                                 <ListItem>
                                     <ListItemText 
                                         primary={<Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Description</Typography>}
-                                        secondary={mediaSearchResult.description}
+                                        secondary={mediaDocument.description}
                                     />
                                 </ListItem>
                                 <ListItem>
                                     <ListItemText 
                                         primary={<Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>Genres</Typography>}
-                                        secondary={mediaSearchResult.genres.join(', ')}
+                                        secondary={mediaDocument.genres.join(', ')}
                                     />
                                 </ListItem>
                             </List>
@@ -122,7 +122,7 @@ export default function Details() {
                         </Typography>
                 
                         <Box display="flex" flexDirection="column" gap={2}>
-                            {mediaSearchResult.mediaStock.map((stock, index) => (
+                            {mediaDocument.mediaStock.map((stock, index) => (
                                 <Box key={index}>
                                     <Paper 
                                         sx={{ 

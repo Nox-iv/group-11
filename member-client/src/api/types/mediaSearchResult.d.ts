@@ -1,4 +1,9 @@
 export interface MediaSearchResult {
+    totalHits : number,
+    data : MediaDocument[]
+}
+
+export interface MediaDocument {
     mediaId : number,
     title : string,
     type : string,

@@ -10,7 +10,7 @@ import Navigation from "../components/Navigation";
 import Search from "../components/Search";
 import ResultCard from "../components/ResultCard";  
 
-import { MediaSearchResult } from "../api/types/mediaSearchResult";
+import { MediaDocument } from "../api/types/mediaSearchResult";
 import { MediaSearchRequest } from "../api/types/mediaSearchRequest";
 import { searchMedia } from "../api/getMedia";
 import { getSearchFilters } from "../api/getSearchFilters";
@@ -96,7 +96,7 @@ export default function MediaSearch() {
                     <Typography variant="h5" sx={{ ml: 2 }}>Results</Typography>
                     <Stack width="100%" direction="column" margin={2} spacing={2} gap={1}>
                         {mediaQuery.isLoading && <CircularProgress />}
-                        {!mediaQuery.isLoading && mediaQuery.data?.map((media: MediaSearchResult) => (
+                        {!mediaQuery.isLoading && mediaQuery.data?.data?.map((media: MediaDocument) => (
                             <ResultCard 
                                 media={media} 
                                 onClick={() => navigate(`/details/${media.mediaId}`, { state: { media } })}

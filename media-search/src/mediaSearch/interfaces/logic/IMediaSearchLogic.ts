@@ -12,7 +12,7 @@ export default class IMediaSearchLogic {
 
     }
 
-    public searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult[]>> {
+    public searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult>> {
         throw new NotImplementedError();
     }
 

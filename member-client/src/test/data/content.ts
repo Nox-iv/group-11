@@ -1,6 +1,6 @@
-import { MediaSearchResult } from "../../api/types/mediaSearchResult";
+import { MediaDocument } from "../../api/types/mediaSearchResult";
 
-export const mockContent: MediaSearchResult[] = [
+export const mockContent: MediaDocument[] = [
     // Books
     {
         mediaId: 1001,
