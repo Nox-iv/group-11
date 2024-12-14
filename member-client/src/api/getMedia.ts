@@ -73,11 +73,10 @@ export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Prom
 }
 
 export const getMediaById = async (mediaId: number) : Promise<MediaDocument> => {
-    console.log(mediaId);
     if (process.env.NODE_ENV === 'development') {
         return mockContent.find((media: MediaDocument) => media.mediaId === mediaId) as MediaDocument;
     } else {
-        const response = await fetch(`/api/media/${mediaId}`);
+        const response = await fetch(`/api/me\dia/${mediaId}`);
 
         return response.json();
     }
