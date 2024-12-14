@@ -16,6 +16,7 @@ export default function Navigation({ searchHidden = false }: { searchHidden?: bo
     const [hideSearch, setHideSearch] = useState(searchHidden);
     const isMobile = useMediaQuery('(max-width:630px)');
     const navigate = useNavigate();
+    
     useEffect(() => {
         if (isMobile || searchHidden) {
             setHideSearch(true);
