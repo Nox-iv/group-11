@@ -63,7 +63,7 @@ export default function Navigation({ searchHidden = false }: { searchHidden?: bo
                     )}
                     {isMobile && !hideSearch && (
                         <Box sx={{ display: 'flex', width: '100%', alignItems: 'center', marginTop: '20px' }}>
-                            <Search width="100%" hidden={hideSearch} />
+                            <Search width="100%" hidden={hideSearch} onSearch={handleSearch} />
                             <IconButton onClick={() => setHideSearch(!hideSearch)}>
                                 <CloseIcon />
                             </IconButton>

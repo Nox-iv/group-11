@@ -1,6 +1,6 @@
 import { useState, ChangeEvent } from "react";
 
-import { Box, CircularProgress, Stack, Typography, FormGroup, Checkbox, FormControlLabel } from "@mui/material";
+import { Box, CircularProgress, Stack, Typography, FormGroup, Checkbox, FormControlLabel, useMediaQuery } from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -17,8 +17,14 @@ import { getSearchFilters } from "../api/getSearchFilters";
 import { MediaSearchFilters } from "../api/types/mediaSearchFilters";
 
 export default function MediaSearch() {
-    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    // TODO : Hide filters behind dropdowns on mobile
+    const isSmallDevice = useMediaQuery('(max-width:900px)');
+    const isSmallerDevice = useMediaQuery('(max-width:1150px)');
+    const isMediumDevice = useMediaQuery('(max-width:1700px)');
+
+    const [searchParams] = useSearchParams();
     const searchTerm = searchParams.get('searchTerm');
     const type = searchParams.get('type');
 
@@ -105,10 +111,10 @@ export default function MediaSearch() {
                         {!filterQuery.isLoading && filterQuery.data && Object.entries(filterQuery.data).map(([key, value]) => (
                             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                                 <Typography variant="h6">{key.charAt(0).toUpperCase() + key.slice(1)}</Typography>
-                                <FormGroup sx={{ display: 'flex', flexDirection: 'row' }}>
+                                <FormGroup sx={{ display: 'flex', flexDirection: isSmallDevice ? 'column' : 'row' }}>
                                     {value.map((item: string) => (
                                         <FormControlLabel
-                                            sx={{ width: '20%' }}
+                                            sx={{ width: isSmallerDevice ? '40%' : isMediumDevice ? '30%' : '20%' }}
                                             control={
                                                 <Checkbox
                                                     value={item}
