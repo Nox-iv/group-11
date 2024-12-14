@@ -7,7 +7,7 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { searchMedia } from '../api/getMedia';
+import { searchMedia } from '../api/media-search/searchMedia';
 import { MediaSearchRequest } from '../api/types/mediaSearchRequest';
 import { MediaSearchFilters } from '../api/types/mediaSearchFilters';
 import { MediaDocument } from '../api/types/mediaSearchResult';

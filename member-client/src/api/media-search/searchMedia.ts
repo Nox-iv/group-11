@@ -1,6 +1,6 @@
-import { MediaSearchRequest } from "./types/mediaSearchRequest";
-import { MediaDocument, MediaSearchResult, MediaStock } from "./types/mediaSearchResult";
-import { mockContent } from "../test/data/content";
+import { MediaSearchRequest } from "../types/mediaSearchRequest";
+import { MediaDocument, MediaSearchResult, MediaStock } from "../types/mediaSearchResult";
+import { mockContent } from "../../test/data/content";
 
 export const getAllMediaWithType = async (mediaType: string, offset: number, limit: number) : Promise<MediaSearchResult> => {
     if (process.env.NODE_ENV === 'development') {

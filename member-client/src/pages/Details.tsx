@@ -9,7 +9,7 @@ import Navigation from "../components/Navigation";
 import BookingModal from "../components/BookingModal";
 
 import { MediaDocument } from "../api/types/mediaSearchResult";
-import { getMediaById } from "../api/getMedia";
+import { getMediaById } from "../api/media-search/searchMedia";
 
 export default function Details() {
     const location = useLocation();

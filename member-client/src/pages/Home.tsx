@@ -7,8 +7,8 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "react-router";
 
 import Navigation from "../components/Navigation";
-import { getSearchFilters } from "../api/getSearchFilters";
-import { getAllMediaWithType } from "../api/getMedia";
+import { getSearchFilters } from "../api/media-search/getSearchFilters";
+import { getAllMediaWithType } from "../api/media-search/searchMedia";
 
 export default function Home() {
     const navigate = useNavigate();

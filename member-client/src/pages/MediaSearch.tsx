@@ -12,8 +12,8 @@ import ResultCard from "../components/ResultCard";
 
 import { MediaDocument } from "../api/types/mediaSearchResult";
 import { MediaSearchRequest } from "../api/types/mediaSearchRequest";
-import { searchMedia } from "../api/getMedia";
-import { getSearchFilters } from "../api/getSearchFilters";
+import { searchMedia } from "../api/media-search/searchMedia";
+import { getSearchFilters } from "../api/media-search/getSearchFilters";
 import { MediaSearchFilters } from "../api/types/mediaSearchFilters";
 
 export default function MediaSearch() {
