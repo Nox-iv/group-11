@@ -8,6 +8,7 @@ import dayjs, { Dayjs } from 'dayjs';
 interface DateTimeRangePickerProps {
   maxBorrowingDuration: number;
   branchOpeningHours: Map<number, [number, number][]>
+  layout: 'row' | 'column';
   onStartDateChange: (date: Dayjs | null) => void;
   onEndDateChange: (date: Dayjs | null) => void;
 }
@@ -15,6 +16,7 @@ interface DateTimeRangePickerProps {
 export const BorrowingDateTimeRangePicker = ({
   maxBorrowingDuration,
   branchOpeningHours,
+  layout,
   onStartDateChange,
   onEndDateChange,
 }: DateTimeRangePickerProps) => {
@@ -164,8 +166,8 @@ export const BorrowingDateTimeRangePicker = ({
   };
 
   return (
-    <Box>
-      <Box sx={{ height: '100px', display: 'flex', gap: 2, alignItems: 'center' }}>
+    <Box sx={{width: '100%'}}>
+      <Box sx={{ height: '100px', display: 'flex', flexDirection: layout === 'row' ? 'row' : 'column', gap: 2, alignItems: 'center', width: '100%' }}>
         <DateTimePicker
           label="Start Date & Time"
           value={startDate}
@@ -176,8 +178,8 @@ export const BorrowingDateTimeRangePicker = ({
           maxDate={maxStartDateNoTime}
           maxTime={startDateMaxTime}
           disablePast={true}
+          sx={{width: '100%'}}
         />
-        <Typography>-</Typography>
         <DateTimePicker
           label="End Date & Time"
           value={endDate}
@@ -189,6 +191,7 @@ export const BorrowingDateTimeRangePicker = ({
           maxTime={endDateMaxTime}
           disablePast={true}
           disabled={startDate === null || startDateError !== null}
+          sx={{width: '100%'}}
         />
       </Box>
       <Box>
