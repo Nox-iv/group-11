@@ -1,3 +1,4 @@
+import { MediaBorrowingRecordDetails } from "../../api/media-borrowing/types/mediaBorrowingRecordDetails";
 import { MediaDocument } from "../../api/media-search/types/mediaSearchResult";
 
 export const mockContent: MediaDocument[] = [
@@ -412,3 +413,158 @@ export const mockContent: MediaDocument[] = [
         ]
     }
 ]
+
+const branch = {
+    branchId: 1,
+    locationId: 1,
+    name: "Sheffield Central",
+    openingHours: new Map<number, [number, number][]>([
+      [0, [[900, 1700]]],
+      [1, [[900, 1700]]],
+      [2, [[900, 1700]]],
+      [3, [[900, 1700]]],
+      [4, [[900, 1700]]],
+      [5, [[900, 1700]]],
+      [6, [[900, 1700]]]
+    ]),
+    borrowingConfig: {
+      maxRenewals: 1,
+      maxBorrowingPeriod: 14
+    }
+}
+
+const branch2 = {
+  branchId: 2,
+  locationId : 1,
+  name: "Sheffield South",
+  openingHours: new Map<number, [number, number][]>([
+    [0, [[1000, 1800]]],
+    [1, [[1000, 1800]]],
+    [2, [[1000, 1800]]],
+    [3, [[1000, 1800]]],
+    [4, [[1000, 1800]]],
+    [5, [[1000, 1800]]],
+    [6, [[1000, 1800]]]
+  ]),
+  borrowingConfig: {
+    maxRenewals: 1,
+    maxBorrowingPeriod: 7
+  }
+}
+
+const branch3 = {
+  branchId: 3,
+  locationId: 3,
+  name: "Manchester Central",
+  openingHours: new Map<number, [number, number][]>([
+    [0, [[1000, 1800]]],
+    [1, [[1000, 1800]]],
+    [2, [[1000, 1800]]],
+    [3, [[1000, 1800]]],
+    [4, [[1000, 1800]]],
+    [5, [[1000, 1800]]],
+    [6, [[1000, 1800]]]
+  ]),
+  borrowingConfig: {
+    maxRenewals: 1,
+    maxBorrowingPeriod: 7
+  }
+}
+
+const branch4 = {
+  branchId: 4,
+  locationId: 2,
+  name: "London Central",
+  openingHours: new Map<number, [number, number][]>([
+    [0, [[0, 200], [1000, 2359]]],
+    [1, [[0, 200], [1000, 2359]]],
+    [2, [[0, 200], [1000, 2359]]],
+    [3, [[0, 200], [1000, 2359]]],
+    [4, [[0, 200], [1000, 2359]]],
+    [5, [[0, 200], [1000, 2359]]],
+    [6, [[0, 200], [1000, 2359]]]
+  ]),
+  borrowingConfig: {
+    maxRenewals: 1,
+    maxBorrowingPeriod: 14
+  }
+}
+
+export const mockBranches = [branch, branch2, branch3, branch4]
+
+export const mockBorrowingRecords: MediaBorrowingRecordDetails[] = [
+    {
+      mediaBorrowingRecordId: 1,
+      startDate: (() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 1);
+        date.setHours(10, 0, 0, 0);
+        return date;
+      })(),
+      endDate: (() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        date.setHours(16, 0, 0, 0);
+        return date;
+      })(),
+      renewals: 0,
+      mediaId: 1001,
+      mediaType: 'Book',
+      title: '1984',
+      author: 'George Orwell',
+      assetUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/04/Nineteen_Eighty-Four_cover_Soviet_1984.jpg',
+      branchId: 1,
+      branchName: 'Sheffield Central'
+    },
+    {
+      mediaBorrowingRecordId: 2,
+      startDate: (() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 1);
+        date.setHours(11, 0, 0, 0);
+        return date;
+      })(),
+      endDate: (() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        date.setHours(17, 0, 0, 0);
+        return date;
+      })(),
+      renewals: 1,
+      mediaId: 2002,
+      mediaType: 'Movie',
+      title: 'Inception',
+      author: 'Christopher Nolan',
+      assetUrl: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg',
+      branchId: 3,
+      branchName: 'Manchester Central'
+    },
+    {
+      mediaBorrowingRecordId: 3,
+      renewals: 1,
+      startDate: (() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 1);
+        date.setHours(9, 30, 0, 0);
+        return date;
+      })(),
+      endDate: (() => {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        date.setHours(15, 30, 0, 0);
+        return date;
+      })(),
+      mediaId: 3001,
+      mediaType: 'Game',
+      title: 'The Legend of Zelda: Breath of the Wild',
+      author: 'Nintendo',
+      assetUrl: 'https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild.jpg',
+      branchId: 1,
+      branchName: 'Sheffield South'
+    }
+];
+
+export const userRecordsMap: Record<number, number[]> = {
+    1: [1, 2], 
+    2: [3],    
+  };

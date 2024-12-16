@@ -17,9 +17,10 @@ export interface ResultCardProps {
     resultCardTitle: ResultCardTitleProps;
     resultCardFields: ResultCardFieldProps[];
     onClick?: (key: string) => void;
+    slot?: React.ReactNode;
 }
 
-export default function ResultCard({ key, resultCardMedia, resultCardTitle, resultCardFields, onClick }: ResultCardProps) {
+export default function ResultCard({ key, resultCardMedia, resultCardTitle, resultCardFields, onClick, slot }: ResultCardProps) {
 
   const isMobile = useMediaQuery('(max-width:600px)');
 
@@ -46,6 +47,9 @@ export default function ResultCard({ key, resultCardMedia, resultCardTitle, resu
                     <ResultCardField key={index} label={field.label} value={field.value} hidden={field.hidden} />
                 ))}
             </CardContent>
+        </Box>
+        <Box>
+          {slot}
         </Box>
       </CardActionArea>
     </Card>
