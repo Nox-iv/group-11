@@ -9,7 +9,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 import AppBar from "@mui/material/AppBar";
 
-import Search from './Search';
+import Search from '../media-search/Search';
 
 export default function Navigation({ searchHidden = false }: { searchHidden?: boolean }) {
     const [hideSearch, setHideSearch] = useState(searchHidden);

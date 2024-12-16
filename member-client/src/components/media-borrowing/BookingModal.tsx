@@ -14,8 +14,8 @@ import { Dayjs } from 'dayjs';
 
 import { BorrowingDateTimeRangePicker } from './BorrowingDateTimeRangePicker';
 
-import { getBranchesByLocationId } from '../api/media-borrowing/getBranch';
-import { Branch } from '../api/media-borrowing/types/Branch';
+import { getBranchesByLocationId } from '../../api/media-borrowing/getBranch';
+import { Branch } from '../../api/media-borrowing/types/Branch';
 
 const style = {
   display: 'flex',

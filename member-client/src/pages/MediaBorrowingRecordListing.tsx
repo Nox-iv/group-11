@@ -1,7 +1,6 @@
 import { Box, Typography, Stack } from "@mui/material";
 
-import Navigation from "../components/Navigation";
-import ResultCard from "../components/ResultCard";
+import Navigation from "../components/navigation/Navigation";
 
 export default function MediaBorrowingRecordListing() {
     return (
@@ -13,10 +12,7 @@ export default function MediaBorrowingRecordListing() {
                 </Box>
                 <Box>
                     <Stack direction="column" spacing={2} margin={2}>
-                        <ResultCard />
-                        <ResultCard />
-                        <ResultCard />
-                        <ResultCard />
+                        
                     </Stack>
                 </Box>
             </Box>

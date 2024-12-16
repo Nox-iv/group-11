@@ -1,12 +1,12 @@
 import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
-import MultiCarousel from "../components/MultiCarousel";
+import MultiCarousel from "../components/carousel/MultiCarousel";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
 import { useQueries, useQuery } from "@tanstack/react-query";
 
 import { Link, useNavigate } from "react-router";
 
-import Navigation from "../components/Navigation";
+import Navigation from "../components/navigation/Navigation";
 import { getSearchFilters } from "../api/media-search/getSearchFilters";
 import { getAllMediaWithType } from "../api/media-search/searchMedia";
 

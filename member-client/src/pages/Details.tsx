@@ -5,8 +5,8 @@ import { useLocation, useParams } from "react-router";
 import { Box, Typography,Paper, List, ListItem, ListItemText, useMediaQuery, CircularProgress} from "@mui/material";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
-import Navigation from "../components/Navigation";
-import BookingModal from "../components/BookingModal";
+import Navigation from "../components/navigation/Navigation";
+import BookingModal from "../components/media-borrowing/BookingModal";
 
 import { MediaDocument } from "../api/media-search/types/mediaSearchResult";
 import { getMediaById } from "../api/media-search/searchMedia";

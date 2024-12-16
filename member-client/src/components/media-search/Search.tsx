@@ -7,12 +7,12 @@ import SearchIcon from '@mui/icons-material/Search';
 
 import { useQuery } from '@tanstack/react-query';
 
-import { searchMedia } from '../api/media-search/searchMedia';
-import { MediaSearchRequest } from '../api/media-search/types/mediaSearchRequest';
-import { MediaSearchFilters } from '../api/media-search/types/mediaSearchFilters';
-import { MediaDocument } from '../api/media-search/types/mediaSearchResult';
+import { searchMedia } from '../../api/media-search/searchMedia';
+import { MediaSearchRequest } from '../../api/media-search/types/mediaSearchRequest';
+import { MediaSearchFilters } from '../../api/media-search/types/mediaSearchFilters';
+import { MediaDocument } from '../../api/media-search/types/mediaSearchResult';
 
-import { debounce } from '../utils/debounce';
+import { debounce } from '../../utils/debounce';
 
 export default function Search({
     label = 'Search',

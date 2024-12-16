@@ -29,7 +29,7 @@ export const BorrowingDateTimeRangePicker = ({
       .set('milliseconds', 0)
   }, []);
 
-  const [minStartDateNoTime] = useState<Dayjs>(() => {
+  const minStartDateNoTime = useMemo<Dayjs>(() => {
     const currentDate = dayjs()
     const currentDateNoTime = dayjs(currentDate).set('hours', 0).set('minutes', 0).set('seconds', 0).set('milliseconds', 0)
     if (branchOpeningHours.size > 0) {
@@ -40,9 +40,12 @@ export const BorrowingDateTimeRangePicker = ({
     }
 
     return currentDateNoTime
-  });
+  }, [branchOpeningHours, getDayJsFromBranchOpeningHours]);
 
-  const [maxStartDateNoTime] = useState<Dayjs>(dayjs(minStartDateNoTime).add(1, 'day'));
+  const maxStartDateNoTime = useMemo<Dayjs>(() => {
+    return dayjs(minStartDateNoTime).add(1, 'day')
+  }, [minStartDateNoTime]);
+
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
 
 

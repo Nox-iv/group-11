@@ -6,9 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useSearchParams, useNavigate } from "react-router";
 
-import Navigation from "../components/Navigation";
-import Search from "../components/Search";
-import ResultCard from "../components/ResultCard";  
+import Navigation from "../components/navigation/Navigation";
+import Search from "../components/media-search/Search";
+import ResultCard from "../components/result/ResultCard";  
 
 import { MediaDocument } from "../api/media-search/types/mediaSearchResult";
 import { MediaSearchRequest } from "../api/media-search/types/mediaSearchRequest";
@@ -114,7 +114,34 @@ export default function MediaSearch() {
                         {mediaQuery.isLoading && <CircularProgress />}
                         {!mediaQuery.isLoading && mediaQuery.data?.data?.map((media: MediaDocument) => (
                             <ResultCard 
-                                media={media} 
+                                key={media.mediaId.toString()}
+                                resultCardMedia={{
+                                    imageUrl: media.imageUrl,
+                                    title: media.title,
+                                }}
+                                resultCardTitle={{
+                                    title: media.title,
+                                }}
+                                resultCardFields={
+                                    [
+                                        {
+                                            label: 'Type',
+                                            value: media.type,
+                                        },
+                                        {
+                                            label: 'Publisher',
+                                            value: media.author,
+                                        },
+                                        {
+                                            label: 'Release Date',
+                                            value: new Date(media.releaseDate).toLocaleDateString(),
+                                        },
+                                        {
+                                            label: 'Genres',
+                                            value: media.genres.join(', '),
+                                        },
+                                    ]
+                                }
                                 onClick={() => navigate(`/details/${media.mediaId}`, { state: { media } })}
                             />
                         ))}

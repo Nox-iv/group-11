@@ -49,7 +49,7 @@ createRoot(document.getElementById('root')!).render(
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<MediaSearch />} />
             <Route path="/details/:mediaId" element={<Details />} />
-            <Route path="/user/borrowed" element={<MediaBorrowingRecordListing />} />
+            <Route path="/user/:userId/borrowed" element={<MediaBorrowingRecordListing />} />
             </Routes>
           </BrowserRouter>
         </QueryClientProvider>

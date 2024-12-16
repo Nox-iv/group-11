@@ -1,7 +1,7 @@
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import ActionCard from "./ActionCard";
-import { ActionCardDetails } from "../types/ActionCardDetails";
+import { ActionCardDetails } from "../../types/ActionCardDetails";
 
 export default function MultiCarousel({items}: {items: ActionCardDetails[] }) {
     const responsive = {
