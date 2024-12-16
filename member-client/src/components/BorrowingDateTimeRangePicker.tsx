@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Box, Typography } from '@mui/material';
 import { DateTimePicker, DateTimeValidationError } from '@mui/x-date-pickers';
@@ -79,14 +79,13 @@ export const BorrowingDateTimeRangePicker = ({
       const openDate = getDayJsFromBranchOpeningHours(date, open)
       const closeDate = getDayJsFromBranchOpeningHours(date, close)
 
-      if (date < openDate) {
-        errorCb('minTime')
-      } else if (date > closeDate) {
-        errorCb('maxTime')
+      if (date >= openDate && date <= closeDate) {
+        errorCb(null)
+        return
       }
     }
 
-    errorCb(null)
+    errorCb('minTime')
   }, [getDayJsFromBranchOpeningHours]);
 
   const startDateErrorMsg = useMemo(() => {
@@ -119,6 +118,22 @@ export const BorrowingDateTimeRangePicker = ({
     }
   }, [endDateError]);
 
+  useEffect(() => {
+    if (!startDateError) {
+      onStartDateChange(startDate);
+    } else {
+      onStartDateChange(null);
+    }
+  }, [startDateError, startDate, onStartDateChange]);
+
+  useEffect(() => {
+    if (!endDateError) {
+      onEndDateChange(endDate);
+    } else {
+      onEndDateChange(null);
+    }
+  }, [endDateError, endDate, onEndDateChange]);
+
   const handleStartDateChange = (newDate: Dayjs | null) => {
     if (startDate && newDate) {
       const newDateNoTime = dayjs(newDate).set('hours', 0).set('minutes', 0).set('seconds', 0).set('milliseconds', 0)
@@ -143,12 +158,6 @@ export const BorrowingDateTimeRangePicker = ({
     if (newDate) {
       validateTimeSelectionIsWithinBranchOpeningHours(newDate, branchOpeningHours.get(newDate.day())!, setStartDateError)
     }
-
-    if (!startDateError) {
-      onStartDateChange(newDate);
-    } else {
-      onStartDateChange(null);
-    }
   };
 
   const handleEndDateChange = (newDate: Dayjs | null) => {
@@ -156,12 +165,6 @@ export const BorrowingDateTimeRangePicker = ({
 
     if (newDate) {
       validateTimeSelectionIsWithinBranchOpeningHours(newDate, branchOpeningHours.get(newDate.day())!, setEndDateError)
-    }
-    
-    if (!endDateError) {
-      onEndDateChange(newDate);
-    } else {
-      onEndDateChange(null);
     }
   };
 
