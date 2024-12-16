@@ -1,4 +1,4 @@
-import { MediaDocument } from "../../api/types/mediaSearchResult";
+import { MediaDocument } from "../../api/media-search/types/mediaSearchResult";
 
 export const mockContent: MediaDocument[] = [
     // Books

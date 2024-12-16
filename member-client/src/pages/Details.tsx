@@ -8,7 +8,7 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import Navigation from "../components/Navigation";
 import BookingModal from "../components/BookingModal";
 
-import { MediaDocument } from "../api/types/mediaSearchResult";
+import { MediaDocument } from "../api/media-search/types/mediaSearchResult";
 import { getMediaById } from "../api/media-search/searchMedia";
 
 export default function Details() {
@@ -141,7 +141,7 @@ export default function Details() {
                                             />
                                             <Typography>{stock.locationName}</Typography>
                                         </Box>
-                                        <BookingModal disabled={stock.stockCount === 0} />
+                                        <BookingModal disabled={stock.stockCount === 0} mediaLocationId={stock.locationId} mediaTitle={mediaDocument.title} />
                                     </Paper>
                                 </Box>
                             ))}

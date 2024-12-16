@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { useQuery } from '@tanstack/react-query';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -11,6 +13,9 @@ import { useMediaQuery } from '@mui/material';
 import { Dayjs } from 'dayjs';
 
 import { BorrowingDateTimeRangePicker } from './BorrowingDateTimeRangePicker';
+
+import { getBranchesByLocationId } from '../api/media-borrowing/getBranch';
+import { Branch } from '../api/media-borrowing/types/Branch';
 
 const style = {
   display: 'flex',
@@ -28,62 +33,23 @@ const style = {
   p: 4,
 };
 
-const mediaItem = {
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    branch: "Central Library",
-}
-
-interface Branch {
-  branchId: number;
-  name: string;
-  openingHours: Map<number, [number, number][]>;
-  borrowingConfig: {
-    maxRenewals: number;
-    maxBorrowingPeriod: number;
-  };
-}
-
-const branch: Branch = {
-    branchId: 1,
-    name: "Sheffield Central",
-    openingHours: new Map<number, [number, number][]>([
-      [0, [[900, 1700]]],
-      [1, [[900, 1700]]],
-      [2, [[900, 1700]]],
-      [3, [[900, 1700]]],
-      [4, [[900, 1700]]],
-      [5, [[900, 1700]]],
-      [6, [[900, 1700]]]
-    ]),
-    borrowingConfig: {
-      maxRenewals: 1,
-      maxBorrowingPeriod: 14
-    }
-}
-
-const branch2 = {
-  branchId: 2,
-  name: "Sheffield South",
-  openingHours: new Map<number, [number, number][]>([
-    [0, [[1800, 2000]]],
-    [1, [[1800, 2000]]],
-    [2, [[1800, 2000]]],
-    [3, [[1800, 2000]]],
-    [4, [[1800, 2000]]],
-    [5, [[1800, 2000]]],
-    [6, [[1800, 2000]]]
-  ]),
-  borrowingConfig: {
-    maxRenewals: 1,
-    maxBorrowingPeriod: 7
-  }
-}
-
-const branches = [branch, branch2]
-
-export default function BookingModal({disabled}: {disabled: boolean}) {
+export default function BookingModal(
+  {
+    disabled, 
+    mediaLocationId,
+    mediaTitle,
+  }: 
+  {
+    disabled: boolean, 
+    mediaLocationId: number,
+    mediaTitle: string,
+  }) {
   const isSmallScreen = useMediaQuery('(max-width: 475px)');
+
+  const branchQuery = useQuery({
+    queryKey: ['branches', mediaLocationId],
+    queryFn: () => getBranchesByLocationId(mediaLocationId),
+  });
 
   const [bookingOpen, setBookingOpen] = useState(false);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
@@ -91,18 +57,20 @@ export default function BookingModal({disabled}: {disabled: boolean}) {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
-  const [branch, setBranch] = useState<Branch>(branches[0]);
+  const [branch, setBranch] = useState<Branch | undefined>(undefined);
   const [hasBorrowingData, setHasBorrowingData] = useState(false);
 
   const handleBookingOpen = () => setBookingOpen(true);
-  const handleBookingClose = () => setBookingOpen(false);
-
-  const handleSubmit = () => {
-    setBranch(branches[0]);
+  const handleBookingClose = () => {
+    setBranch(undefined);
     setStartDate(null);
     setEndDate(null);
 
     setBookingOpen(false);
+  }
+
+  const handleSubmit = () => {
+    handleBookingClose();
 
     handleConfirmationOpen();
   }
@@ -118,6 +86,8 @@ export default function BookingModal({disabled}: {disabled: boolean}) {
   useEffect(() => {
     if (startDate && endDate) {
       setHasBorrowingData(true);
+    } else {
+      setHasBorrowingData(false);
     }
   }, [startDate, endDate]);
 
@@ -141,26 +111,28 @@ export default function BookingModal({disabled}: {disabled: boolean}) {
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row'}}>
               <Typography variant="h6">Title: </Typography>
-              <Typography marginTop={0.7} marginLeft={1} variant="body1">{mediaItem.title}</Typography>
+              <Typography marginTop={0.7} marginLeft={1} variant="body1">{mediaTitle}</Typography>
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
               <Typography variant="h6">Branch: </Typography>
               <Select
-                value={branch?.branchId}
-                onChange={(event) => setBranch(branches.find(b => b.branchId === event.target.value) || branches[0])}
+                value={branch?.branchId || -1}
+                onChange={(event) => setBranch(branchQuery.data?.find(b => b.branchId === event.target.value) || undefined)}
                 sx={{ marginLeft: 1, marginTop: 2, marginBottom: 2, minWidth: 200 }}
                 size="small"
+                disabled={branchQuery.isLoading}
               >
-                {branches.map((branch) => (
+                <MenuItem value={-1}>Select Branch</MenuItem>
+                {branchQuery.data?.map((branch) => (
                   <MenuItem value={branch.branchId}>{branch.name}</MenuItem>
                 ))}
               </Select>
             </Box>
             <Box sx={{marginBottom: 2, marginTop: isSmallScreen ? 2 : 0, width: '100%'}}>
               <BorrowingDateTimeRangePicker
-                maxBorrowingDuration={branch.borrowingConfig.maxBorrowingPeriod}
+                maxBorrowingDuration={branch?.borrowingConfig.maxBorrowingPeriod || 0}
                 layout={isSmallScreen ? 'column' : 'row'}
-                branchOpeningHours={branch.openingHours}
+                branchOpeningHours={branch?.openingHours || new Map()}
                 onStartDateChange={setStartDate}
                 onEndDateChange={setEndDate}
               />

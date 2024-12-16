@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import { Box, useMediaQuery } from '@mui/material';
 
-import { MediaDocument } from '../api/types/mediaSearchResult';
+import { MediaDocument } from '../api/media-search/types/mediaSearchResult';
 
 export default function ResultCard({ media, onClick }: { media: MediaDocument, onClick?: (key: string) => void}) {
   const isSmallerDevice = useMediaQuery('(max-width:1150px)');

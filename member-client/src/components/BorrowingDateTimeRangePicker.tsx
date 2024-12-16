@@ -30,10 +30,14 @@ export const BorrowingDateTimeRangePicker = ({
 
   const [minStartDateNoTime] = useState<Dayjs>(() => {
     const currentDate = dayjs()
-    const branchOpeningHoursForDayX = branchOpeningHours.get(currentDate.day())!
-    const closingTime = branchOpeningHoursForDayX[branchOpeningHoursForDayX.length - 1][1]
-    const closingDateTime = getDayJsFromBranchOpeningHours(currentDate, closingTime)
-    return closingDateTime.isBefore(currentDate) ? closingDateTime.add(1, 'day') : closingDateTime
+    if (branchOpeningHours.size > 0) {
+      const branchOpeningHoursForDayX = branchOpeningHours.get(currentDate.day())!
+      const closingTime = branchOpeningHoursForDayX[branchOpeningHoursForDayX.length - 1][1]
+      const closingDateTime = getDayJsFromBranchOpeningHours(currentDate, closingTime)
+      return closingDateTime.isBefore(currentDate) ? closingDateTime.add(1, 'day') : closingDateTime
+    }
+
+    return currentDate
   });
 
   const [maxStartDateNoTime] = useState<Dayjs>(dayjs(minStartDateNoTime).add(1, 'day'));
@@ -48,7 +52,7 @@ export const BorrowingDateTimeRangePicker = ({
   const [endDateError, setEndDateError] = useState<DateTimeValidationError | null>(null);
 
   const [startDateMinTime, startDateMaxTime] = useMemo(() => {
-    if (startDate) {
+    if (startDate && branchOpeningHours.size > 0) {
       const branchOpeningHoursForDayX = branchOpeningHours.get(startDate.day())!
       const openingTime = branchOpeningHoursForDayX[0][0]
       const minimumValidStartTime = getDayJsFromBranchOpeningHours(startDate, openingTime)
@@ -62,7 +66,7 @@ export const BorrowingDateTimeRangePicker = ({
   }, [startDate, branchOpeningHours, getDayJsFromBranchOpeningHours]);
 
   const [endDateMinTime, endDateMaxTime] = useMemo(() => {
-    if (endDate) {
+    if (endDate && branchOpeningHours.size > 0) {
       const branchOpeningHoursForDayX = branchOpeningHours.get(endDate.day())!
       const openingTime = branchOpeningHoursForDayX[0][0]
       const minimumValidEndTime = getDayJsFromBranchOpeningHours(endDate, openingTime)
@@ -120,6 +124,7 @@ export const BorrowingDateTimeRangePicker = ({
 
   useEffect(() => {
     if (!startDateError) {
+      console.log(startDate)
       onStartDateChange(startDate);
     } else {
       onStartDateChange(null);
@@ -173,6 +178,7 @@ export const BorrowingDateTimeRangePicker = ({
       <Box sx={{ height: '100px', display: 'flex', flexDirection: layout === 'row' ? 'row' : 'column', gap: 2, alignItems: 'center', width: '100%' }}>
         <DateTimePicker
           label="Start Date & Time"
+          sx={{width: '100%', color: (startDateError !== null) ? 'error.main' : 'inherit'}}
           value={startDate}
           onChange={handleStartDateChange}
           onError={(newError) => setStartDateError(newError)}
@@ -181,10 +187,11 @@ export const BorrowingDateTimeRangePicker = ({
           maxDate={maxStartDateNoTime}
           maxTime={startDateMaxTime}
           disablePast={true}
-          sx={{width: '100%'}}
+          disabled={branchOpeningHours.size === 0}
         />
         <DateTimePicker
           label="End Date & Time"
+          sx={{width: '100%', color: (endDateError !== null) ? 'error.main' : 'inherit'}}
           value={endDate}
           onChange={handleEndDateChange}
           onError={(newError) => setEndDateError(newError)}
@@ -193,8 +200,7 @@ export const BorrowingDateTimeRangePicker = ({
           maxDate={maxEndDateNoTime ?? undefined}
           maxTime={endDateMaxTime}
           disablePast={true}
-          disabled={startDate === null || startDateError !== null}
-          sx={{width: '100%'}}
+          disabled={startDate === null || startDateError !== null || branchOpeningHours.size === 0}
         />
       </Box>
       <Box>
