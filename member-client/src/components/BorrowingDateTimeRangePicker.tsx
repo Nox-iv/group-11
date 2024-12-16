@@ -20,6 +20,7 @@ export const BorrowingDateTimeRangePicker = ({
   onStartDateChange,
   onEndDateChange,
 }: DateTimeRangePickerProps) => {
+
   const getDayJsFromBranchOpeningHours = useCallback((date: Dayjs, openingHour: number) => {
     return dayjs(date)
       .set('hours', Math.floor(openingHour / 100))
@@ -30,14 +31,15 @@ export const BorrowingDateTimeRangePicker = ({
 
   const [minStartDateNoTime] = useState<Dayjs>(() => {
     const currentDate = dayjs()
+    const currentDateNoTime = dayjs(currentDate).set('hours', 0).set('minutes', 0).set('seconds', 0).set('milliseconds', 0)
     if (branchOpeningHours.size > 0) {
-      const branchOpeningHoursForDayX = branchOpeningHours.get(currentDate.day())!
+      const branchOpeningHoursForDayX = branchOpeningHours.get(currentDateNoTime.day())!
       const closingTime = branchOpeningHoursForDayX[branchOpeningHoursForDayX.length - 1][1]
-      const closingDateTime = getDayJsFromBranchOpeningHours(currentDate, closingTime)
-      return closingDateTime.isBefore(currentDate) ? closingDateTime.add(1, 'day') : closingDateTime
+      const closingDateTime = getDayJsFromBranchOpeningHours(currentDateNoTime, closingTime)
+      return closingDateTime.isBefore(currentDate) ? currentDateNoTime.add(1, 'day') : currentDateNoTime
     }
 
-    return currentDate
+    return currentDateNoTime
   });
 
   const [maxStartDateNoTime] = useState<Dayjs>(dayjs(minStartDateNoTime).add(1, 'day'));
