@@ -63,7 +63,11 @@ export default function BookingModal(
     renewal?: RenewalProps | null,
     open?: boolean,
     onClose: () => void,
-    onSubmit: () => boolean
+    onSubmit: (
+      branchId: number,
+      startDate: Date,
+      endDate: Date
+    ) => Promise<boolean>
   }) {
   const isSmallScreen = useMediaQuery('(max-width: 475px)');
 
@@ -120,17 +124,19 @@ export default function BookingModal(
     onClose();
   }
 
-  const handleSubmit = () => {
-    const result = onSubmit();
+  const handleSubmit = async () => {
+    if (startDate && endDate && branch) {
+      const result = await onSubmit(branch.branchId, startDate.toDate(), endDate.toDate());
 
-    setResultModalProps({
-      isSuccess: result,
-      open: true,
-      onClose: () => {
-        setResultModalProps(prev => ({ ...prev, open: false }))
-        handleBookingClose();
-      }
-    });
+      setResultModalProps({
+        isSuccess: result,
+        open: true,
+        onClose: () => {
+          setResultModalProps(prev => ({ ...prev, open: false }))
+          handleBookingClose();
+        }
+      });
+    }
   }
 
   const handleBranchChange = (branch: Branch | undefined) => {

@@ -14,6 +14,7 @@ import { MediaBorrowingRecordDetails } from "../api/media-borrowing/types/mediaB
 import ResultCard from "../components/result/ResultCard";
 import BookingModal from "../components/media-borrowing/BookingModal";
 import dayjs from "dayjs";
+import { renewMedia } from "../api/media-borrowing/renewMedia";
 
 export default function MediaBorrowingRecordListing() {
     const { userId } = useParams();
@@ -84,7 +85,9 @@ export default function MediaBorrowingRecordListing() {
                                     }
                                 }
                                 open={openRenewalModal}
-                                onSubmit={() => {return true}}
+                                onSubmit={async (branchId: number, startDate: Date, endDate: Date) => {
+                                    return await renewMedia(selectedRecord.mediaId, endDate);
+                                }}
                                 onClose={() => {
                                     setOpenRenewalModal(false);
                                     setSelectedRecord(null);

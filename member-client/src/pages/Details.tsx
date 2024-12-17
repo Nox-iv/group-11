@@ -11,6 +11,8 @@ import BookingModal from "../components/media-borrowing/BookingModal";
 import { MediaDocument } from "../api/media-search/types/mediaSearchResult";
 import { getMediaById } from "../api/media-search/searchMedia";
 
+import { borrowMedia } from "../api/media-borrowing/borrowMedia";
+
 export default function Details() {
     const location = useLocation();
     const { mediaId } = useParams();
@@ -158,7 +160,9 @@ export default function Details() {
                                                 mediaLocationId={stock.locationId} 
                                                 mediaTitle={mediaDocument.title} 
                                                 open={!!openBorrowModals[stock.locationId]}
-                                                onSubmit={() => {return false}}
+                                                onSubmit={async (branchId: number, startDate: Date, endDate: Date) => {
+                                                    return await borrowMedia(mediaDocument.mediaId, 1, branchId, startDate, endDate);
+                                                }}
                                                 onClose={() => setOpenBorrowModals(prev => ({
                                                     ...prev,
                                                     [stock.locationId]: false
