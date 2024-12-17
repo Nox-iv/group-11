@@ -158,7 +158,8 @@ export default function Details() {
                                                 mediaLocationId={stock.locationId} 
                                                 mediaTitle={mediaDocument.title} 
                                                 open={!!openBorrowModals[stock.locationId]}
-                                                handleClose={() => setOpenBorrowModals(prev => ({
+                                                onSubmit={() => {return false}}
+                                                onClose={() => setOpenBorrowModals(prev => ({
                                                     ...prev,
                                                     [stock.locationId]: false
                                                 }))}

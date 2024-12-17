@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { useParams } from "react-router";
 
-import { Box, Typography, CircularProgress, Stack, IconButton, Tooltip } from "@mui/material";
+import { Box, Typography, CircularProgress, Stack, Tooltip } from "@mui/material";
 import HelpIcon from '@mui/icons-material/Help';
 
 import Navigation from "../components/navigation/Navigation";
@@ -84,7 +84,8 @@ export default function MediaBorrowingRecordListing() {
                                     }
                                 }
                                 open={openRenewalModal}
-                                handleClose={() => {
+                                onSubmit={() => {return true}}
+                                onClose={() => {
                                     setOpenRenewalModal(false);
                                     setSelectedRecord(null);
                                 }}

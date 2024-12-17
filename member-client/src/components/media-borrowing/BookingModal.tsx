@@ -40,6 +40,12 @@ interface RenewalProps {
   branch: Branch
 }
 
+interface ResultModalProps {
+  isSuccess: boolean;
+  open: boolean;
+  onClose: () => void;
+}
+
 export default function BookingModal(
   {
     label,
@@ -47,7 +53,8 @@ export default function BookingModal(
     mediaTitle,
     renewal = null,
     open = false,
-    handleClose
+    onClose,
+    onSubmit
   }: 
   {
     label: string,
@@ -55,7 +62,8 @@ export default function BookingModal(
     mediaTitle: string,
     renewal?: RenewalProps | null,
     open?: boolean,
-    handleClose: () => void
+    onClose: () => void,
+    onSubmit: () => boolean
   }) {
   const isSmallScreen = useMediaQuery('(max-width: 475px)');
 
@@ -66,11 +74,15 @@ export default function BookingModal(
 
   const [branch, setBranch] = useState<Branch | undefined>(renewal?.branch ?? undefined)
 
-  const [confirmationOpen, setConfirmationOpen] = useState(false);
-
   const [startDate, setStartDate] = useState<Dayjs | null>(renewal?.endDate ?? null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [dateErrors, setDateErrors] = useState<string | null>(null);
+
+  const [resultModalProps, setResultModalProps] = useState<ResultModalProps>({
+    isSuccess: false,
+    open: false,
+    onClose: () => {}
+  });
 
   const getSoonestBranchOpenDate = useCallback((date: Dayjs) => {
       let currentDate = date;
@@ -105,16 +117,21 @@ export default function BookingModal(
     }
 
     setEndDate(null);
-    handleClose();
+    onClose();
   }
 
   const handleSubmit = () => {
-    handleBookingClose();
-    handleConfirmationOpen();
-  }
+    const result = onSubmit();
 
-  const handleConfirmationOpen = () => setConfirmationOpen(true);
-  const handleConfirmationClose = () => setConfirmationOpen(false);
+    setResultModalProps({
+      isSuccess: result,
+      open: true,
+      onClose: () => {
+        setResultModalProps(prev => ({ ...prev, open: false }))
+        handleBookingClose();
+      }
+    });
+  }
 
   const handleBranchChange = (branch: Branch | undefined) => {
     if (branch) {
@@ -127,7 +144,7 @@ export default function BookingModal(
   return (
     <div>
       <Modal
-      open={open}
+      open={open && !resultModalProps.open}
       onClose={handleBookingClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -194,19 +211,24 @@ export default function BookingModal(
       </Modal>
 
       <Modal
-      open={confirmationOpen}
-      onClose={handleConfirmationClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-      sx={{ 
-        maxWidth: isSmallScreen ? '95%' : '600px', 
-        margin: '0 auto',
-      }}
+        open={resultModalProps.open}
+        onClose={resultModalProps.onClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        sx={{ 
+          maxWidth: isSmallScreen ? '95%' : '600px', 
+          margin: '0 auto',
+        }}
       >
         <Box sx={style}>
-          <Typography variant="h5">Confirmation</Typography>
-          <Typography variant="body1">Your {renewal !== null ? 'renewal' : 'borrowing'} request has been confirmed.</Typography>
-          <Button onClick={handleConfirmationClose}>Close</Button>
+          <Typography variant="h5">{resultModalProps.isSuccess ? 'Success' : 'Error'}</Typography>
+          <Typography variant="body1">
+            {resultModalProps.isSuccess 
+              ? `Your ${renewal !== null ? 'renewal' : 'borrowing'} request has been confirmed.`
+              : `Your ${renewal !== null ? 'renewal' : 'borrowing'} request could not be processed. Please try again.`
+            }
+          </Typography>
+          <Button onClick={resultModalProps.onClose}>Close</Button>
         </Box>
       </Modal>
     </div>
