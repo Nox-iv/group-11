@@ -8,6 +8,5 @@ export interface MediaBorrowingRecordDetails {
     title : string,
     author : string,
     assetUrl : string,
-    branchId : number,
-    branchName : string,
+    branch : Branch,
 }

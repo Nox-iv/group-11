@@ -513,8 +513,7 @@ export const mockBorrowingRecords: MediaBorrowingRecordDetails[] = [
       title: '1984',
       author: 'George Orwell',
       assetUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/04/Nineteen_Eighty-Four_cover_Soviet_1984.jpg',
-      branchId: 1,
-      branchName: 'Sheffield Central'
+      branch: branch
     },
     {
       mediaBorrowingRecordId: 2,
@@ -536,12 +535,11 @@ export const mockBorrowingRecords: MediaBorrowingRecordDetails[] = [
       title: 'Inception',
       author: 'Christopher Nolan',
       assetUrl: 'https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg',
-      branchId: 3,
-      branchName: 'Manchester Central'
+      branch: branch3
     },
     {
       mediaBorrowingRecordId: 3,
-      renewals: 1,
+      renewals: 0,
       startDate: (() => {
         const date = new Date();
         date.setDate(date.getDate() + 1);
@@ -559,8 +557,7 @@ export const mockBorrowingRecords: MediaBorrowingRecordDetails[] = [
       title: 'The Legend of Zelda: Breath of the Wild',
       author: 'Nintendo',
       assetUrl: 'https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild.jpg',
-      branchId: 1,
-      branchName: 'Sheffield South'
+      branch: branch
     }
 ];
 

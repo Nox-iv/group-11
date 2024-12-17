@@ -16,17 +16,18 @@ export interface ResultCardProps {
     resultCardMedia: ResultCardMediaProps;
     resultCardTitle: ResultCardTitleProps;
     resultCardFields: ResultCardFieldProps[];
+    disabled?: boolean;
     onClick?: (key: string) => void;
-    slot?: React.ReactNode;
 }
 
-export default function ResultCard({ key, resultCardMedia, resultCardTitle, resultCardFields, onClick, slot }: ResultCardProps) {
+export default function ResultCard({ key, resultCardMedia, resultCardTitle, resultCardFields, disabled = false, onClick }: ResultCardProps) {
 
   const isMobile = useMediaQuery('(max-width:600px)');
 
   return (
     <Card sx={{ width: '100%' }}>
       <CardActionArea 
+        disabled={disabled}
         onClick={() => onClick?.(key)}
         sx={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row'}}>
         <Box sx={{ 
@@ -47,9 +48,6 @@ export default function ResultCard({ key, resultCardMedia, resultCardTitle, resu
                     <ResultCardField key={index} label={field.label} value={field.value} hidden={field.hidden} />
                 ))}
             </CardContent>
-        </Box>
-        <Box>
-          {slot}
         </Box>
       </CardActionArea>
     </Card>

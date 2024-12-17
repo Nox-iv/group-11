@@ -6,6 +6,7 @@ import { DateTimePicker, DateTimeValidationError, TimeView } from '@mui/x-date-p
 import dayjs, { Dayjs } from 'dayjs';
 
 interface DateTimeRangePickerProps {
+  isRenewal?: boolean;
   minimumStartDateTime: Dayjs | null;
   maximumStartDateTime: Dayjs | null;
   maxBorrowingDuration: number;
@@ -17,6 +18,7 @@ interface DateTimeRangePickerProps {
 }
 
 export const BorrowingDateTimeRangePicker = ({
+  isRenewal,
   minimumStartDateTime,
   maximumStartDateTime,
   maxBorrowingDuration,
@@ -95,7 +97,6 @@ export const BorrowingDateTimeRangePicker = ({
     }
     return enabledDatesInRange;
   }, [branchOpeningHours]);
-
 
   const isTimeEnabled = useCallback((date: Dayjs, openingHours: Dayjs[][]) => {
     for (const [open, close] of openingHours) {
@@ -215,12 +216,12 @@ export const BorrowingDateTimeRangePicker = ({
           value={startDate}
           onChange={handleStartDateChange}
           onError={handleStartDateError}
-          minDate={minimumStartDateTime ?? undefined}
-          maxDate={maximumStartDateTime ?? undefined}
-          disablePast={true}
-          shouldDisableDate={shouldDisableStartDate}
-          shouldDisableTime={shouldDisableStartTime}
-          disabled={!minimumStartDateTime || !maximumStartDateTime || !branchOpeningHours.size}
+          minDate={isRenewal ? undefined : minimumStartDateTime ?? undefined}
+          maxDate={isRenewal ? undefined : maximumStartDateTime ?? undefined}
+          disablePast={isRenewal ? false : true}
+          shouldDisableDate={isRenewal ? undefined : shouldDisableStartDate}
+          shouldDisableTime={isRenewal ? undefined : shouldDisableStartTime}
+          disabled={!minimumStartDateTime || !maximumStartDateTime || !branchOpeningHours.size || isRenewal}
         />
         <DateTimePicker
           label="End Date & Time"

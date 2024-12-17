@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
@@ -34,18 +34,28 @@ const style = {
   p: 4,
 };
 
+interface RenewalProps {
+  startDate: Dayjs
+  endDate: Dayjs
+  branch: Branch
+}
+
 export default function BookingModal(
   {
-    disabled, 
     label,
     mediaLocationId,
     mediaTitle,
+    renewal = null,
+    open = false,
+    handleClose
   }: 
   {
-    disabled: boolean, 
     label: string,
     mediaLocationId: number,
     mediaTitle: string,
+    renewal?: RenewalProps | null,
+    open?: boolean,
+    handleClose: () => void
   }) {
   const isSmallScreen = useMediaQuery('(max-width: 475px)');
 
@@ -54,15 +64,13 @@ export default function BookingModal(
     queryFn: () => getBranchesByLocationId(mediaLocationId),
   });
 
-  const [bookingOpen, setBookingOpen] = useState(false);
+  const [branch, setBranch] = useState<Branch | undefined>(renewal?.branch ?? undefined)
+
   const [confirmationOpen, setConfirmationOpen] = useState(false);
 
-  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [startDate, setStartDate] = useState<Dayjs | null>(renewal?.endDate ?? null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
-
-  const [branch, setBranch] = useState<Branch | undefined>(undefined);
   const [dateErrors, setDateErrors] = useState<string | null>(null);
-  const [hasBorrowingData, setHasBorrowingData] = useState(false);
 
   const getSoonestBranchOpenDate = useCallback((date: Dayjs) => {
       let currentDate = date;
@@ -88,46 +96,38 @@ export default function BookingModal(
       }
     
       return null;
-    }, [branch?.openingHours]);
+  }, [branch?.openingHours]);
 
-  const handleBookingOpen = () => setBookingOpen(true);
   const handleBookingClose = () => {
-    setBranch(undefined);
-    setStartDate(null);
-    setEndDate(null);
+    if (renewal == null) {
+      setBranch(undefined);
+      setStartDate(null);
+    }
 
-    setBookingOpen(false);
+    setEndDate(null);
+    handleClose();
   }
 
   const handleSubmit = () => {
     handleBookingClose();
-    console.log(startDate);
-    console.log(endDate);
-
     handleConfirmationOpen();
   }
 
   const handleConfirmationOpen = () => setConfirmationOpen(true);
   const handleConfirmationClose = () => setConfirmationOpen(false);
 
-  useEffect(() => {
-    setStartDate(null);
-    setEndDate(null);
-  }, [branch]);
-
-  useEffect(() => {
-    if (startDate !== null && endDate !== null && !dateErrors && branch) {
-      setHasBorrowingData(true);
-    } else {
-      setHasBorrowingData(false);
+  const handleBranchChange = (branch: Branch | undefined) => {
+    if (branch) {
+      setBranch(branch);
+      setStartDate(null);
+      setEndDate(null);
     }
-  }, [startDate, endDate, dateErrors, branch]);
+  }
 
   return (
     <div>
-      <Button disabled={disabled} onClick={handleBookingOpen}>{label}</Button>
       <Modal
-      open={bookingOpen}
+      open={open}
       onClose={handleBookingClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
@@ -139,7 +139,7 @@ export default function BookingModal(
         <Box sx={{...style, flexDirection: 'row', justifyContent: 'flex-start'}}>
           <Box sx={{ display: 'flex', flexDirection: 'column', marginLeft: 3}}>
             <Box sx={{marginBottom: 2,}}>
-                <Typography variant="h5">Borrow Item</Typography>
+                <Typography variant="h5">{label} Item</Typography>
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row'}}>
               <Typography variant="h6">Title: </Typography>
@@ -147,37 +147,47 @@ export default function BookingModal(
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
               <Typography variant="h6">Branch: </Typography>
-              <Select
-                value={branch?.branchId || -1}
-                onChange={(event) => setBranch(branchQuery.data?.find(b => b.branchId === event.target.value) || undefined)}
-                sx={{ marginLeft: 1, marginTop: 2, marginBottom: 2, minWidth: 200 }}
-                size="small"
-                disabled={branchQuery.isLoading}
-              >
-                <MenuItem value={-1}>Select Branch</MenuItem>
-                {branchQuery.data?.map((branch) => (
-                  <MenuItem value={branch.branchId}>{branch.name}</MenuItem>
-                ))}
-              </Select>
+                {renewal === null && (
+                  <Select
+                    value={branch?.branchId || -1}
+                    onChange={(event) => handleBranchChange(branchQuery.data?.find(b => b.branchId === event.target.value))}
+                    sx={{ marginLeft: 1, marginTop: 2, marginBottom: 2, minWidth: 200 }}
+                    size="small"
+                    disabled={branchQuery.isLoading}
+                  >
+                    <MenuItem value={-1}>Select Branch</MenuItem>
+                    {branchQuery.data?.map((branch) => (
+                      <MenuItem value={branch.branchId}>{branch.name}</MenuItem>
+                    ))}
+                  </Select>
+                )}
+                {renewal !== null && (
+                  <Typography marginTop={0.7} marginLeft={1} variant="body1">{renewal.branch.name}</Typography>
+                )}
             </Box>
             <Box sx={{marginBottom: 2, marginTop: isSmallScreen ? 2 : 0, width: '100%'}}>
               <BorrowingDateTimeRangePicker
+                isRenewal={renewal !== null}
                 maxBorrowingDuration={branch?.borrowingConfig.maxBorrowingPeriod || 0}
                 layout={isSmallScreen ? 'column' : 'row'}
                 branchOpeningHours={branch?.openingHours || new Map()}
-                minimumStartDateTime={
-                  getSoonestBranchOpenDate(dayjs())
-                }
-                maximumStartDateTime={
-                  getSoonestBranchOpenDate(dayjs().add(1, 'day'))
-                }
-                onStartDateChange={setStartDate}
+                minimumStartDateTime={renewal === null ? getSoonestBranchOpenDate(dayjs()) : renewal.endDate}
+                maximumStartDateTime={renewal === null ? getSoonestBranchOpenDate(dayjs().add(1, 'day')) : renewal.endDate}
+                onStartDateChange={renewal === null ? setStartDate : () => startDate}
                 onEndDateChange={setEndDate}
                 onError={setDateErrors}
               />
             </Box>
             <Box sx={{width: '100%', height: '50px', textAlign: 'center', marginTop: isSmallScreen ? 5 : 0}}>
-              <Button sx={{width: '100%', height: '100%'}} variant="contained" color="primary" disabled={!hasBorrowingData} onClick={handleSubmit}>Confirm</Button>
+              <Button 
+                sx={{width: '100%', height: '100%'}} 
+                variant="contained" 
+                color="primary" 
+                disabled={(!startDate || !endDate || !!dateErrors || !branch)} 
+                onClick={handleSubmit}
+              >
+                Confirm
+              </Button>
             </Box>
           </Box>
         </Box>
@@ -195,7 +205,7 @@ export default function BookingModal(
       >
         <Box sx={style}>
           <Typography variant="h5">Confirmation</Typography>
-          <Typography variant="body1">Your {label} request has been confirmed.</Typography>
+          <Typography variant="body1">Your {renewal !== null ? 'renewal' : 'borrowing'} request has been confirmed.</Typography>
           <Button onClick={handleConfirmationClose}>Close</Button>
         </Box>
       </Modal>

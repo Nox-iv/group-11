@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useParams } from "react-router";
 
-import { Box, Typography,Paper, List, ListItem, ListItemText, useMediaQuery, CircularProgress} from "@mui/material";
+import { Box, Typography,Paper, List, ListItem, ListItemText, useMediaQuery, CircularProgress, Button} from "@mui/material";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 import Navigation from "../components/navigation/Navigation";
@@ -19,6 +19,8 @@ export default function Details() {
 
     const [mediaDocument, setMediaDocument] = useState<MediaDocument | undefined>(undefined);
     const [hasMediaData, setHasMediaData] = useState(false);
+
+    const [openBorrowModals, setOpenBorrowModals] = useState<Record<number, boolean>>({});
 
     useEffect(() => {
         if (location.state?.media) {
@@ -129,7 +131,7 @@ export default function Details() {
                                             p: 2, 
                                             display: 'flex', 
                                             alignItems: 'center', 
-                                            justifyContent: 'space-between' 
+                                            justifyContent: 'space-between',
                                         }}
                                     >
                                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -141,7 +143,27 @@ export default function Details() {
                                             />
                                             <Typography>{stock.locationName}</Typography>
                                         </Box>
-                                        <BookingModal label="borrow" disabled={stock.stockCount === 0} mediaLocationId={stock.locationId} mediaTitle={mediaDocument.title} />
+                                        <Box>
+                                            <Button 
+                                                disabled={stock.stockCount === 0}  
+                                                onClick={() => setOpenBorrowModals(prev => ({
+                                                    ...prev,
+                                                    [stock.locationId]: true
+                                                }))}
+                                            >
+                                                Borrow
+                                            </Button>
+                                            <BookingModal 
+                                                label="Borrow" 
+                                                mediaLocationId={stock.locationId} 
+                                                mediaTitle={mediaDocument.title} 
+                                                open={!!openBorrowModals[stock.locationId]}
+                                                handleClose={() => setOpenBorrowModals(prev => ({
+                                                    ...prev,
+                                                    [stock.locationId]: false
+                                                }))}
+                                            />
+                                        </Box>
                                     </Paper>
                                 </Box>
                             ))}
