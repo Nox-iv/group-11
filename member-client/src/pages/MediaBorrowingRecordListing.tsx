@@ -86,7 +86,7 @@ export default function MediaBorrowingRecordListing() {
                                 }
                                 open={openRenewalModal}
                                 onSubmit={async (branchId: number, startDate: Date, endDate: Date) => {
-                                    return await renewMedia(selectedRecord.mediaId, endDate);
+                                    return await renewMedia(selectedRecord.mediaBorrowingRecordId, endDate);
                                 }}
                                 onClose={() => {
                                     setOpenRenewalModal(false);

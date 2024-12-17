@@ -1,6 +1,6 @@
 import { BorrowingResponse } from "./types/BorrowingResponse";
 
-export const renewMedia = async (mediaId: number, renewedEndDate: Date) : Promise<BorrowingResponse> => {
+export const renewMedia = async (mediaBorrowingRecordId: number, renewedEndDate: Date) : Promise<BorrowingResponse> => {
     if (process.env.NODE_ENV === 'development') {
         return { success: true, errors: [] };
     }
@@ -10,7 +10,7 @@ export const renewMedia = async (mediaId: number, renewedEndDate: Date) : Promis
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ mediaId, renewedEndDate }),
+        body: JSON.stringify({ mediaBorrowingRecordId, renewedEndDate }),
     });
 
     if (response.ok) {
