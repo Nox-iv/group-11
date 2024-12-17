@@ -6,7 +6,7 @@ import { Box, Typography,Paper, List, ListItem, ListItemText, useMediaQuery, Cir
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 import Navigation from "../components/navigation/Navigation";
-import BookingModal from "../components/media-borrowing/BookingModal";
+import BorrowingModal from "../components/media-borrowing/BorrowingModal";
 
 import { MediaDocument } from "../api/media-search/types/mediaSearchResult";
 import { getMediaById } from "../api/media-search/searchMedia";
@@ -155,7 +155,7 @@ export default function Details() {
                                             >
                                                 Borrow
                                             </Button>
-                                            <BookingModal 
+                                            <BorrowingModal 
                                                 label="Borrow" 
                                                 mediaLocationId={stock.locationId} 
                                                 mediaTitle={mediaDocument.title} 

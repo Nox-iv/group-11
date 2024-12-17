@@ -12,7 +12,7 @@ import Navigation from "../components/navigation/Navigation";
 import { getMediaBorrowingRecords } from "../api/media-borrowing/getMediaBorrowingRecords";
 import { MediaBorrowingRecordDetails } from "../api/media-borrowing/types/mediaBorrowingRecordDetails";
 import ResultCard from "../components/result/ResultCard";
-import BookingModal from "../components/media-borrowing/BookingModal";
+import BorrowingModal from "../components/media-borrowing/BorrowingModal";
 import dayjs from "dayjs";
 import { renewMedia } from "../api/media-borrowing/renewMedia";
 
@@ -73,7 +73,7 @@ export default function MediaBorrowingRecordListing() {
                             ))}
                         </Stack>
                         {selectedRecord && (
-                            <BookingModal 
+                            <BorrowingModal 
                                 label="Renew"
                                 mediaLocationId={selectedRecord.branch.locationId} 
                                 mediaTitle={selectedRecord.title} 

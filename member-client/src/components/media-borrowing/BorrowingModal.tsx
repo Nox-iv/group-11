@@ -9,6 +9,9 @@ import Modal from '@mui/material/Modal';
 import { MenuItem } from '@mui/material';
 import Select from '@mui/material/Select';
 import { useMediaQuery } from '@mui/material';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
 
 import { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
@@ -17,6 +20,8 @@ import { BorrowingDateTimeRangePicker } from './BorrowingDateTimeRangePicker';
 
 import { getBranchesByLocationId } from '../../api/media-borrowing/getBranch';
 import { Branch } from '../../api/media-borrowing/types/Branch';
+
+import { BorrowingResponse } from '../../api/media-borrowing/types/BorrowingResponse';
 
 const style = {
   display: 'flex',
@@ -42,11 +47,12 @@ interface RenewalProps {
 
 interface ResultModalProps {
   isSuccess: boolean;
+  errors: string[];
   open: boolean;
   onClose: () => void;
 }
 
-export default function BookingModal(
+export default function BorrowingModal(
   {
     label,
     mediaLocationId,
@@ -67,7 +73,7 @@ export default function BookingModal(
       branchId: number,
       startDate: Date,
       endDate: Date
-    ) => Promise<boolean>
+    ) => Promise<BorrowingResponse>
   }) {
   const isSmallScreen = useMediaQuery('(max-width: 475px)');
 
@@ -84,6 +90,7 @@ export default function BookingModal(
 
   const [resultModalProps, setResultModalProps] = useState<ResultModalProps>({
     isSuccess: false,
+    errors: [],
     open: false,
     onClose: () => {}
   });
@@ -129,7 +136,8 @@ export default function BookingModal(
       const result = await onSubmit(branch.branchId, startDate.toDate(), endDate.toDate());
 
       setResultModalProps({
-        isSuccess: result,
+        isSuccess: result.success,
+        errors: result.errors,
         open: true,
         onClose: () => {
           setResultModalProps(prev => ({ ...prev, open: false }))
@@ -231,9 +239,18 @@ export default function BookingModal(
           <Typography variant="body1">
             {resultModalProps.isSuccess 
               ? `Your ${renewal !== null ? 'renewal' : 'borrowing'} request has been confirmed.`
-              : `Your ${renewal !== null ? 'renewal' : 'borrowing'} request could not be processed. Please try again.`
+              : `Your ${renewal !== null ? 'renewal' : 'borrowing'} request could not be processed. Please try again.}`
             }
           </Typography>
+          {!resultModalProps.isSuccess && resultModalProps.errors.length > 0 && (
+            <List>
+              {resultModalProps.errors.map((error, index) => (
+                <ListItem key={index}>
+                  <ListItemText primary={error} />
+                </ListItem>
+              ))}
+            </List>
+          )}
           <Button onClick={resultModalProps.onClose}>Close</Button>
         </Box>
       </Modal>
