@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useQuery } from '@tanstack/react-query';
 
@@ -11,6 +11,7 @@ import Select from '@mui/material/Select';
 import { useMediaQuery } from '@mui/material';
 
 import { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 
 import { BorrowingDateTimeRangePicker } from './BorrowingDateTimeRangePicker';
 
@@ -36,11 +37,13 @@ const style = {
 export default function BookingModal(
   {
     disabled, 
+    label,
     mediaLocationId,
     mediaTitle,
   }: 
   {
     disabled: boolean, 
+    label: string,
     mediaLocationId: number,
     mediaTitle: string,
   }) {
@@ -58,7 +61,34 @@ export default function BookingModal(
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
   const [branch, setBranch] = useState<Branch | undefined>(undefined);
+  const [dateErrors, setDateErrors] = useState<string | null>(null);
   const [hasBorrowingData, setHasBorrowingData] = useState(false);
+
+  const getSoonestBranchOpenDate = useCallback((date: Dayjs) => {
+      let currentDate = date;
+      let daysChecked = 0;
+      
+      while (daysChecked < 7) {
+        const dayOfWeek = currentDate.day();
+        const openingHours = branch?.openingHours.get(dayOfWeek);
+    
+        if (openingHours && openingHours.length > 0) {
+          const closingTime = openingHours[openingHours.length - 1][1];
+          const closingDateTime = dayjs(
+            `${currentDate.format('YYYY-MM-DD')} ${closingTime}`
+          );
+    
+          if (currentDate.isBefore(closingDateTime)) {
+            return currentDate;
+          }
+        }
+    
+        currentDate = currentDate.add(1, 'day').startOf('day');
+        daysChecked++;
+      }
+    
+      return null;
+    }, [branch?.openingHours]);
 
   const handleBookingOpen = () => setBookingOpen(true);
   const handleBookingClose = () => {
@@ -71,6 +101,8 @@ export default function BookingModal(
 
   const handleSubmit = () => {
     handleBookingClose();
+    console.log(startDate);
+    console.log(endDate);
 
     handleConfirmationOpen();
   }
@@ -84,16 +116,16 @@ export default function BookingModal(
   }, [branch]);
 
   useEffect(() => {
-    if (startDate && endDate) {
+    if (startDate !== null && endDate !== null && !dateErrors && branch) {
       setHasBorrowingData(true);
     } else {
       setHasBorrowingData(false);
     }
-  }, [startDate, endDate]);
+  }, [startDate, endDate, dateErrors, branch]);
 
   return (
     <div>
-      <Button disabled={disabled} onClick={handleBookingOpen}>Book</Button>
+      <Button disabled={disabled} onClick={handleBookingOpen}>{label}</Button>
       <Modal
       open={bookingOpen}
       onClose={handleBookingClose}
@@ -133,8 +165,15 @@ export default function BookingModal(
                 maxBorrowingDuration={branch?.borrowingConfig.maxBorrowingPeriod || 0}
                 layout={isSmallScreen ? 'column' : 'row'}
                 branchOpeningHours={branch?.openingHours || new Map()}
+                minimumStartDateTime={
+                  getSoonestBranchOpenDate(dayjs())
+                }
+                maximumStartDateTime={
+                  getSoonestBranchOpenDate(dayjs().add(1, 'day'))
+                }
                 onStartDateChange={setStartDate}
                 onEndDateChange={setEndDate}
+                onError={setDateErrors}
               />
             </Box>
             <Box sx={{width: '100%', height: '50px', textAlign: 'center', marginTop: isSmallScreen ? 5 : 0}}>
@@ -156,7 +195,7 @@ export default function BookingModal(
       >
         <Box sx={style}>
           <Typography variant="h5">Confirmation</Typography>
-          <Typography variant="body1">Your booking has been confirmed.</Typography>
+          <Typography variant="body1">Your {label} request has been confirmed.</Typography>
           <Button onClick={handleConfirmationClose}>Close</Button>
         </Box>
       </Modal>

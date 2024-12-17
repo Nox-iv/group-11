@@ -141,7 +141,7 @@ export default function Details() {
                                             />
                                             <Typography>{stock.locationName}</Typography>
                                         </Box>
-                                        <BookingModal disabled={stock.stockCount === 0} mediaLocationId={stock.locationId} mediaTitle={mediaDocument.title} />
+                                        <BookingModal label="borrow" disabled={stock.stockCount === 0} mediaLocationId={stock.locationId} mediaTitle={mediaDocument.title} />
                                     </Paper>
                                 </Box>
                             ))}

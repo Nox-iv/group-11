@@ -1,216 +1,245 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Box, Typography } from '@mui/material';
-import { DateTimePicker, DateTimeValidationError } from '@mui/x-date-pickers';
+import { DateTimePicker, DateTimeValidationError, TimeView } from '@mui/x-date-pickers';
 
 import dayjs, { Dayjs } from 'dayjs';
 
 interface DateTimeRangePickerProps {
+  minimumStartDateTime: Dayjs | null;
+  maximumStartDateTime: Dayjs | null;
   maxBorrowingDuration: number;
   branchOpeningHours: Map<number, [number, number][]>
   layout: 'row' | 'column';
   onStartDateChange: (date: Dayjs | null) => void;
   onEndDateChange: (date: Dayjs | null) => void;
+  onError: (status: string | null) => void;
 }
 
 export const BorrowingDateTimeRangePicker = ({
+  minimumStartDateTime,
+  maximumStartDateTime,
   maxBorrowingDuration,
   branchOpeningHours,
   layout,
   onStartDateChange,
   onEndDateChange,
+  onError,
 }: DateTimeRangePickerProps) => {
 
-  const getDayJsFromBranchOpeningHours = useCallback((date: Dayjs, openingHour: number) => {
-    return dayjs(date)
-      .set('hours', Math.floor(openingHour / 100))
-      .set('minutes', openingHour % 100)
-      .set('seconds', 0)
-      .set('milliseconds', 0)
-  }, []);
-
-  const minStartDateNoTime = useMemo<Dayjs>(() => {
-    const currentDate = dayjs()
-    const currentDateNoTime = dayjs(currentDate).set('hours', 0).set('minutes', 0).set('seconds', 0).set('milliseconds', 0)
-    if (branchOpeningHours.size > 0) {
-      const branchOpeningHoursForDayX = branchOpeningHours.get(currentDateNoTime.day())!
-      const closingTime = branchOpeningHoursForDayX[branchOpeningHoursForDayX.length - 1][1]
-      const closingDateTime = getDayJsFromBranchOpeningHours(currentDateNoTime, closingTime)
-      return closingDateTime.isBefore(currentDate) ? currentDateNoTime.add(1, 'day') : currentDateNoTime
-    }
-
-    return currentDateNoTime
-  }, [branchOpeningHours, getDayJsFromBranchOpeningHours]);
-
-  const maxStartDateNoTime = useMemo<Dayjs>(() => {
-    return dayjs(minStartDateNoTime).add(1, 'day')
-  }, [minStartDateNoTime]);
-
-  const [startDate, setStartDate] = useState<Dayjs | null>(null);
-
-
-  const [minEndDateNoTime, setMinEndDateNoTime] = useState<Dayjs | null>(startDate?.add(1, 'day') ?? null);
-  const [maxEndDateNoTime, setMaxEndDateNoTime] = useState<Dayjs | null>(null);
+  const [startDate, setStartDate] = useState<Dayjs | null>(minimumStartDateTime);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
 
   const [startDateError, setStartDateError] = useState<DateTimeValidationError | null>(null);
   const [endDateError, setEndDateError] = useState<DateTimeValidationError | null>(null);
 
-  const [startDateMinTime, startDateMaxTime] = useMemo(() => {
-    if (startDate && branchOpeningHours.size > 0) {
-      const branchOpeningHoursForDayX = branchOpeningHours.get(startDate.day())!
-      const openingTime = branchOpeningHoursForDayX[0][0]
-      const minimumValidStartTime = getDayJsFromBranchOpeningHours(startDate, openingTime)
+  useEffect(() => {
+    setStartDate(minimumStartDateTime);
+    setEndDate(null);
+    setStartDateError(null);
+    setEndDateError(null);
+  }, [branchOpeningHours]);
 
-      const closingTime = branchOpeningHoursForDayX[branchOpeningHoursForDayX.length - 1][1]
-      const maximumValidStartTime = getDayJsFromBranchOpeningHours(startDate, closingTime)
+  const getDateTimeErrorMessage = (error: DateTimeValidationError | null, dateType: string): string | null => {
+    if (!error) return null;
 
-      return [minimumValidStartTime, maximumValidStartTime]
+    switch (error) {
+      case 'invalidDate':
+        return 'Invalid date format';
+      case 'disablePast':
+        return 'You cannot select a date in the past';
+      case 'shouldDisableDate':
+      case 'shouldDisableMonth':
+      case 'shouldDisableYear':
+      case 'shouldDisableTime-hours':
+      case 'shouldDisableTime-minutes':
+      case 'shouldDisableTime-seconds': 
+        return 'Please select a time within the branch opening hours';
+      case 'minDate':
+      case 'minTime':
+        return `The ${dateType} date you have selected is before the minimum allowed date`;
+      case 'maxDate':
+      case 'maxTime':
+        return `The ${dateType} date you have selected is after the maximum allowed date`;
+      case 'minutesStep':
+        return 'Invalid time selection';
+      default:
+        return 'Invalid date or time selection';
     }
-    return [undefined, undefined]
-  }, [startDate, branchOpeningHours, getDayJsFromBranchOpeningHours]);
-
-  const [endDateMinTime, endDateMaxTime] = useMemo(() => {
-    if (endDate && branchOpeningHours.size > 0) {
-      const branchOpeningHoursForDayX = branchOpeningHours.get(endDate.day())!
-      const openingTime = branchOpeningHoursForDayX[0][0]
-      const minimumValidEndTime = getDayJsFromBranchOpeningHours(endDate, openingTime)
-
-      const closingTime = branchOpeningHoursForDayX[branchOpeningHoursForDayX.length - 1][1]
-      const maximumValidEndTime = getDayJsFromBranchOpeningHours(endDate, closingTime)
-      return [minimumValidEndTime, maximumValidEndTime]
-    }
-    return [undefined, undefined]
-  }, [endDate, branchOpeningHours, getDayJsFromBranchOpeningHours]);
-
-  const validateTimeSelectionIsWithinBranchOpeningHours = useCallback((date: Dayjs, validTimes: [number, number][], errorCb: (error: DateTimeValidationError) => void) => {
-    for (const [open, close] of validTimes) {
-      const openDate = getDayJsFromBranchOpeningHours(date, open)
-      const closeDate = getDayJsFromBranchOpeningHours(date, close)
-
-      if (date >= openDate && date <= closeDate) {
-        errorCb(null)
-        return
-      }
-    }
-
-    errorCb('minTime')
-  }, [getDayJsFromBranchOpeningHours]);
+  };
 
   const startDateErrorMsg = useMemo(() => {
-    switch (startDateError) {
-      case 'minDate':
-        return 'Please select a start date on the current day or the next day.';
-      case 'maxDate':
-        return 'Please select a start date within the next 24 hours.';
-      case 'minTime':
-        return 'Please select a pick-up time within the branch opening hours.';
-      case 'maxTime':
-        return 'Please select a pick-up time within the branch opening hours.';
-      default:
-        return null;
+    if(!startDate) {
+      return null;
     }
-  }, [startDateError]);
+
+    return getDateTimeErrorMessage(startDateError, 'start');
+  }, [startDate, startDateError]);
 
   const endDateErrorMsg = useMemo(() => {
-    switch (endDateError) {
-      case 'minDate':
-        return 'Please select an end date at least 1 day after the start date.';
-      case 'maxDate':
-        return 'Please select an end date within the maximum borrowing duration.';
-      case 'minTime':
-        return 'Please select a drop-off time within the branch opening hours.';
-      case 'maxTime':
-        return 'Please select a drop-off time within the branch opening hours.';
-      default:
-        return null;
-    }
-  }, [endDateError]);
-
-  useEffect(() => {
-    if (!startDateError) {
-      console.log(startDate)
-      onStartDateChange(startDate);
-    } else {
-      onStartDateChange(null);
-    }
-  }, [startDateError, startDate, onStartDateChange]);
-
-  useEffect(() => {
-    if (!endDateError) {
-      onEndDateChange(endDate);
-    } else {
-      onEndDateChange(null);
-    }
-  }, [endDateError, endDate, onEndDateChange]);
-
-  const handleStartDateChange = (newDate: Dayjs | null) => {
-    if (startDate && newDate) {
-      const newDateNoTime = dayjs(newDate).set('hours', 0).set('minutes', 0).set('seconds', 0).set('milliseconds', 0)
-      const startDateNoTime = dayjs(startDate).set('hours', 0).set('minutes', 0).set('seconds', 0).set('milliseconds', 0)
-
-      if (newDateNoTime != startDateNoTime) {
-        setMinEndDateNoTime(newDateNoTime.add(1, 'day'));
-        setMaxEndDateNoTime(newDateNoTime.add(maxBorrowingDuration, 'day'));
-        handleEndDateChange(null);
-      } 
-    } else if (startDate === null && newDate) {
-      setMinEndDateNoTime(newDate.add(1, 'day'));
-      setMaxEndDateNoTime(newDate.add(maxBorrowingDuration, 'day'));
-      handleEndDateChange(null);
-    } else if (startDate && newDate === null) {
-      setMinEndDateNoTime(null);
-      setMaxEndDateNoTime(null);
-      handleEndDateChange(null);
+    if(!endDate) {
+      return null;
     }
 
-    setStartDate(newDate);
-    if (newDate) {
-      validateTimeSelectionIsWithinBranchOpeningHours(newDate, branchOpeningHours.get(newDate.day())!, setStartDateError)
+    return getDateTimeErrorMessage(endDateError, 'end');
+  }, [endDate, endDateError]);
+  
+  const getEnabledDatesInRange = useCallback((startDate: Dayjs, endDate: Dayjs) => {
+    const enabledDatesInRange = new Set<Dayjs>();
+    for (let currentDate = startDate; currentDate <= endDate; currentDate = currentDate.add(1, 'day')) {
+      const dayOfWeek = currentDate.day();
+      const openingHours = branchOpeningHours.get(dayOfWeek);
+      if (openingHours) {
+        enabledDatesInRange.add(currentDate);
+      }
     }
-  };
+    return enabledDatesInRange;
+  }, [branchOpeningHours]);
 
-  const handleEndDateChange = (newDate: Dayjs | null) => {
-    setEndDate(newDate);
 
-    if (newDate) {
-      validateTimeSelectionIsWithinBranchOpeningHours(newDate, branchOpeningHours.get(newDate.day())!, setEndDateError)
+  const isTimeEnabled = useCallback((date: Dayjs, openingHours: Dayjs[][]) => {
+    for (const [open, close] of openingHours) {
+      if (date >= open && date <= close) {
+        return true;
+      }
     }
-  };
+    return false;
+  }, []);
+
+  const enabledStartDates = useMemo(() => {
+    if(!minimumStartDateTime || !maximumStartDateTime || !branchOpeningHours.size) {
+      return undefined;
+    }
+
+    return getEnabledDatesInRange(minimumStartDateTime, maximumStartDateTime);
+  }, [minimumStartDateTime, maximumStartDateTime, branchOpeningHours, getEnabledDatesInRange]);
+
+  const [minmimumEndDate, maximumEndDate] = useMemo(() => {
+    if(!startDate) {
+      return [undefined, undefined];
+    }
+
+    return [startDate.add(1, 'day'), startDate.add(maxBorrowingDuration, 'day')];
+  }, [startDate, maxBorrowingDuration]);
+
+  const enabledEndDates = useMemo(() => {
+    if(!minmimumEndDate || !maximumEndDate || !branchOpeningHours.size) {
+      return undefined;
+    }
+
+    return getEnabledDatesInRange(minmimumEndDate, maximumEndDate);
+  }, [minmimumEndDate, maximumEndDate, branchOpeningHours, getEnabledDatesInRange]);
+
+
+  const shouldDisableStartDate = useCallback((date: Dayjs) => {
+    return !!(enabledStartDates && enabledStartDates.has(date));
+  }, [enabledStartDates]);
+
+  const startDateOpeningHours = useMemo(() => {
+    let startDateOpeningHoursArray;
+    if(!startDate || !(startDateOpeningHoursArray = branchOpeningHours.get(startDate.day()))) {
+      return undefined;
+    }
+
+    return startDateOpeningHoursArray
+      .map(([open, close]) => {
+        const openTime = dayjs(startDate).hour(Math.floor(open / 100)).minute(open % 100);
+        const closeTime = dayjs(startDate).hour(Math.floor(close / 100)).minute(close % 100);
+        return [openTime, closeTime];
+      });
+  }, [startDate, branchOpeningHours]);
+
+  const shouldDisableStartTime = useCallback((date: Dayjs, _: TimeView) => {
+    if(!startDateOpeningHours) {
+      return true;
+    }
+
+    return (!isTimeEnabled(date, startDateOpeningHours));
+  }, [startDateOpeningHours, isTimeEnabled]);
+
+  const shouldDisableEndDate = useCallback((date: Dayjs) => {
+    return !!(enabledEndDates && enabledEndDates.has(date));
+  }, [enabledEndDates]);
+
+  const endDateOpeningHours = useMemo(() => {
+    let endDateOpeningHoursArray;
+    if(!endDate || !(endDateOpeningHoursArray = branchOpeningHours.get(endDate.day()))) {
+      return undefined;
+    }
+
+    return endDateOpeningHoursArray
+      .map(([open, close]) => {
+        const openTime = dayjs(endDate).hour(Math.floor(open / 100)).minute(open % 100);
+        const closeTime = dayjs(endDate).hour(Math.floor(close / 100)).minute(close % 100);
+        return [openTime, closeTime];
+      });
+  }, [endDate, branchOpeningHours]);
+
+  const shouldDisableEndTime = useCallback((date: Dayjs, _: TimeView) => {
+    if(!endDateOpeningHours) {
+      return true;
+    }
+
+    return !isTimeEnabled(date, endDateOpeningHours);
+  }, [endDateOpeningHours, isTimeEnabled]);
+
+  const handleStartDateChange = useCallback((date: Dayjs | null) => {
+    setStartDate(date);
+    onStartDateChange(date);
+
+    setEndDate(null);
+    onEndDateChange(null);
+  }, [onStartDateChange, onEndDateChange]);
+
+  const handleEndDateChange = useCallback((date: Dayjs | null) => {
+    setEndDate(date);
+    onEndDateChange(date);
+  }, [onEndDateChange]);
+
+  const handleStartDateError = useCallback((error: DateTimeValidationError | null) => {
+    setStartDateError(error);
+    onError(error);
+  }, [setStartDateError, onError]);
+
+  const handleEndDateError = useCallback((error: DateTimeValidationError | null) => {
+    setEndDateError(error);
+    onError(error);
+  }, [setEndDateError, onError]);
+
 
   return (
     <Box sx={{width: '100%'}}>
       <Box sx={{ height: '100px', display: 'flex', flexDirection: layout === 'row' ? 'row' : 'column', gap: 2, alignItems: 'center', width: '100%' }}>
         <DateTimePicker
           label="Start Date & Time"
-          sx={{width: '100%', color: (startDateError !== null) ? 'error.main' : 'inherit'}}
           value={startDate}
           onChange={handleStartDateChange}
-          onError={(newError) => setStartDateError(newError)}
-          minDate={minStartDateNoTime}
-          minTime={startDateMinTime}
-          maxDate={maxStartDateNoTime}
-          maxTime={startDateMaxTime}
+          onError={handleStartDateError}
+          minDate={minimumStartDateTime ?? undefined}
+          maxDate={maximumStartDateTime ?? undefined}
           disablePast={true}
-          disabled={branchOpeningHours.size === 0}
+          shouldDisableDate={shouldDisableStartDate}
+          shouldDisableTime={shouldDisableStartTime}
+          disabled={!minimumStartDateTime || !maximumStartDateTime || !branchOpeningHours.size}
         />
         <DateTimePicker
           label="End Date & Time"
-          sx={{width: '100%', color: (endDateError !== null) ? 'error.main' : 'inherit'}}
           value={endDate}
           onChange={handleEndDateChange}
-          onError={(newError) => setEndDateError(newError)}
-          minDate={minEndDateNoTime ?? undefined}
-          minTime={endDateMinTime}
-          maxDate={maxEndDateNoTime ?? undefined}
-          maxTime={endDateMaxTime}
+          onError={handleEndDateError}
+          minDate={minmimumEndDate}
+          maxDate={maximumEndDate}
           disablePast={true}
-          disabled={startDate === null || startDateError !== null || branchOpeningHours.size === 0}
+          shouldDisableDate={shouldDisableEndDate}
+          shouldDisableTime={shouldDisableEndTime}
+          disabled={!startDate || !!startDateError || branchOpeningHours.size === 0}
         />
       </Box>
       <Box>
-        <Typography variant="caption" color="error">{startDateErrorMsg}</Typography>
-        <Typography variant="caption" color="error">{endDateErrorMsg}</Typography>
+        <Box sx={{display: 'flex', flexDirection: 'column', gap: 1}}>
+          {startDateErrorMsg && <Typography color="error">Start Date Error: {startDateErrorMsg}</Typography>}
+          {endDateErrorMsg && <Typography color="error">End Date Error: {endDateErrorMsg}</Typography>}
+        </Box>
       </Box>
     </Box>
   );
