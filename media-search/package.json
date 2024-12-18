@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "rimraf ./build && npx tsc",
+    "start": "npm run build && npx functions-framework --source=./build/index.js --target=mediaSearch",
     "test:api": "jest --silent=false --forceExit app.test.ts"
   },
   "keywords": [],

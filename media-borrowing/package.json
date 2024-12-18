@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./build && npx tsc",
-    "start": "npm run build && npx functions-framework --source=./build/index.js --target=myHttpFunction",
+    "start": "npm run build && npx functions-framework --source=./build/index.js --target=mediaBorrowing",
     "migrate:up": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down",
     "migrate:redo": "node-pg-migrate redo",
