@@ -6,13 +6,16 @@ services:
     ports:
       - 3000:8080
     environment:
-      - ELASTICSEARCH_URL=http://localhost:9200
+      - ELASTICSEARCH_URL=http://elasticsearch-dev:9200
       - NODE_ENV=development
+      - DATA_FILE_PATH=/usr/dev-seed/data.json
     depends_on:
       elasticsearch-dev:
         condition: service_healthy
     restart: always
-    command: pnpm run dev
+    command: ${APP_COMMAND_MEDIA_SEARCH:-pnpm run dev}
+    volumes:
+      - ../dev-seed:/usr/dev-seed
 
   elasticsearch-dev:
     image: elasticsearch:8.16.1

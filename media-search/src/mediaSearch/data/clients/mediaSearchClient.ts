@@ -18,38 +18,43 @@ export default class MediaSearchClient extends IMediaSearchClient {
             parentQuery.must = [];
             parentQuery.filter = [];
 
-            if (searchParams.searchTerm) {
+            if (searchParams.searchTerm && searchParams.searchTerm.length > 0) {
                 parentQuery.must.push(
                     {
                         multi_match: {
                             query: searchParams.searchTerm,
-                            fields: ["title", "description", "author", "genres"]
+                            fields: ["title", "author", "genres"]
                         }
                     }
                 );
             }
 
             if (searchParams.range) {
-                const rangeQueries = Object.entries(searchParams.range).map(([key, value]) => ({
-                    range: {
-                        [key]: {
-                            ...(value.from && { gte: value.from }),
-                            ...(value.to && { lte: value.to })
+                const rangeQueries = Object.entries(searchParams.range)
+                    .filter(([key, value]) => value.from || value.to)
+                    .map(([key, value]) => ({
+                        range: {
+                            [key]: {
+                                ...(value.from && { gte: value.from }),
+                                ...(value.to && { lte: value.to })
+                            }
                         }
-                    }
-                }));
+                    }));
 
                 parentQuery.must.push(...rangeQueries);
             }
 
             if (searchParams.filters) {
-                parentQuery.filter.push(...Object.entries(searchParams.filters).map(
-                    ([key, value]) => (
-                        {
-                             terms: { [key]: value } 
-                        }
+                parentQuery.filter.push(...Object.entries(searchParams.filters)
+                    .filter(([key, value]) => value.length > 0)
+                    .map(
+                        ([key, value]) => (
+                            {
+                                terms: { [key]: value } 
+                            }
+                        )
                     )
-                ));
+                );
             }
 
             if (searchParams.availableAtLocation) {
