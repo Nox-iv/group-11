@@ -6,13 +6,13 @@ services:
     ports:
       - 3000:8080
     environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
+      - ELASTICSEARCH_URL=http://localhost:9200
       - NODE_ENV=development
     depends_on:
       elasticsearch-dev:
         condition: service_healthy
     restart: always
-    command: pnpm start
+    command: pnpm run dev
 
   elasticsearch-dev:
     image: elasticsearch:8.16.1
@@ -27,7 +27,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "curl -s http://elasticsearch:9200 >/dev/null || exit 1"
+          "curl -s http://elasticsearch-dev:9200 >/dev/null || exit 1"
         ]
       interval: 10s
       timeout: 10s

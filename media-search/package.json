@@ -6,6 +6,7 @@
   "scripts": {
     "build": "rimraf ./build && npx tsc",
     "start": "npm run build && npx functions-framework --source=./build/index.js --target=mediaSearch",
+    "dev": "NODE_ENV=development npm run build && npx functions-framework --source=./build/index.js --target=mediaSearch",
     "test:api": "jest --silent=false --forceExit app.test.ts"
   },
   "keywords": [],
@@ -14,6 +15,7 @@
   "devDependencies": {
     "@google-cloud/functions-framework": "^3.4.2",
     "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.1",
@@ -28,6 +30,9 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.16.2",
-    "@types/elasticsearch": "^5.0.43"
+    "@google-cloud/functions-framework": "^3.4.2",
+    "@types/elasticsearch": "^5.0.43",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
   }
 }

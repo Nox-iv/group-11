@@ -108,7 +108,7 @@ export default class MediaSearchClient extends IMediaSearchClient {
             };
         } catch (error) {
             log(error)
-            throw new Error('Internal search error');
+            throw error;
         }
     }
 

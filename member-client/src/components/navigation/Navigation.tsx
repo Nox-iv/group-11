@@ -31,12 +31,12 @@ export default function Navigation({ searchHidden = false }: { searchHidden?: bo
     return (
         <Box>
             <AppBar position="static" sx={{ height: '100px'}}>
-                <Toolbar>
+                <Toolbar sx={{ marginTop: '1px'}}>
                     {(!isMobile || (isMobile && hideSearch)) && (
                         <>
                             <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
                                 <Link href="/">
-                                    <img src={'../../public/logo.png'} height={100} alt="Logo" />
+                                    <img src={'/logo.png'} height={100} alt="Logo" />
                                 </Link>
                             </Typography>
                             <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
