@@ -2,7 +2,6 @@ import { Message } from "../../../shared/messaging/Message";
 import { MediaBorrowingRecord } from "../../data/models";
 import { IMediaBorrowingLogic } from "../../interfaces/logic/mediaBorrowing/IMediaBorrowingLogic";
 import { IDbContext } from "../../../db/interfaces/dbContext";
-import { Inject } from "typedi";
 import { InvalidUserError } from "../../../amlUsers/logic/errors/invalidUserError";
 import { InvalidBorrowingRecordError } from "./errors/invalidBorrowingRecordError";
 import { IMediaBorrowingDateValidator } from "../../interfaces/logic/mediaBorrowingDateValidation/IMediaBorrowingDateValidator";
@@ -13,10 +12,10 @@ import { IDbContextFactory } from "../../../db/interfaces/dbContext/IDbContextFa
 
 export class MediaBorrowingLogic extends IMediaBorrowingLogic {
     constructor(
-        @Inject() dbContextFactory : IDbContextFactory,
-        @Inject() userEligibilityLogic : IUserEligibilityLogic,
-        @Inject() mediaInventoryLogic : IMediaInventoryLogic,
-        @Inject() mediaBorrowingDateValidator : IMediaBorrowingDateValidator
+        dbContextFactory : IDbContextFactory,
+        userEligibilityLogic : IUserEligibilityLogic,
+        mediaInventoryLogic : IMediaInventoryLogic,
+        mediaBorrowingDateValidator : IMediaBorrowingDateValidator
     ) {
         super()
         this.dbContextFactory = dbContextFactory

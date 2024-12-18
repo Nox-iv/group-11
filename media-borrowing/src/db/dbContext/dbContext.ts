@@ -1,4 +1,3 @@
-import { Inject } from "typedi"
 import { IUnitOfWorkFactory } from "../interfaces/uow"
 import { IDbContext } from "../interfaces/dbContext"
 import { IMediaBorrowingRepository, IMediaBorrowingConfigRepository } from  "../../mediaBorrowing/interfaces/data/repositories"
@@ -13,7 +12,7 @@ import { BranchRepository } from "../../amlBranches/data/repositories/branchRepo
 
 export class DbContext extends IDbContext {
     constructor(
-        @Inject() unitOfWorkFactory : IUnitOfWorkFactory
+        unitOfWorkFactory : IUnitOfWorkFactory
     ) {
         super()
         this.unitOfWorkFactory = unitOfWorkFactory

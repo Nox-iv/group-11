@@ -3,12 +3,11 @@ import { IDbContextFactory } from "../../../db/interfaces/dbContext";
 import { Message } from "../../../shared/messaging/Message";
 import { InvalidBorrowingRecordError } from "../mediaBorrowing";
 import { IMediaInventoryLogic } from "../../../mediaInventory/interfaces/logic/IMediaInventoryLogic";
-import { Inject } from "typedi";
 
 export class MediaReturnLogic extends IMediaReturnLogic {
     constructor (
-        @Inject() dbContextFactory : IDbContextFactory,
-        @Inject() mediaInventoryLogic : IMediaInventoryLogic
+        dbContextFactory : IDbContextFactory,
+        mediaInventoryLogic : IMediaInventoryLogic
     ) {
         super()
         this.dbContextFactory = dbContextFactory

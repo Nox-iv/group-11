@@ -1,4 +1,4 @@
-import { Request, Response } from '@google-cloud/functions-framework';
+import { Request, Response } from 'express';
 import { IMediaBorrowingLogic } from '../interfaces/logic/mediaBorrowing/IMediaBorrowingLogic';
 import { IMediaRenewalLogic } from '../interfaces/logic/mediaRenewals/IMediaRenewalLogic';
 import { IMediaReturnLogic } from '../interfaces/logic/mediaReturns/IMediaReturnLogic';

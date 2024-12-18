@@ -3,7 +3,6 @@ import { Service } from "typedi";
 import { NotImplementedError } from "../../../shared/errors/notImplementedError";
 import { IDbContextFactory } from "../../../db/interfaces/dbContext/IDbContextFactory";
 
-@Service()
 export class IUserEligibilityLogic {
     //@ts-ignore
     protected dbContextFactory : IDbContextFactory

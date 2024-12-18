@@ -1,4 +1,3 @@
-import { Inject } from 'typedi'
 import { IMediaBorrowingDateValidator } from '../../interfaces/logic/mediaBorrowingDateValidation/IMediaBorrowingDateValidator'
 import { Message } from '../../../shared/messaging/Message'
 import { InvalidBorrowingDateError, BorrowingDateValidationRequest} from "."
@@ -8,7 +7,7 @@ import { IDbContextFactory } from '../../../db/interfaces/dbContext/IDbContextFa
 import { IDbContext } from '../../../db/interfaces/dbContext'
 
 export class MediaBorrowingDateValidator extends IMediaBorrowingDateValidator {
-    constructor(@Inject() dbContextFactory : IDbContextFactory) {
+    constructor(dbContextFactory : IDbContextFactory) {
         super()
         this.dbContextFactory = dbContextFactory
     }

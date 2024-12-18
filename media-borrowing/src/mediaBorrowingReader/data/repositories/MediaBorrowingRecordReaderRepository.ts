@@ -1,4 +1,3 @@
-import { Inject } from "typedi";
 import { IMediaBorrowingReaderRepository } from "../../interfaces/data/repositories/IMediaBorrowingReaderRepository";
 import { MediaBorrowingRecordListingDetails } from "../models/mediaBorrowingRecordListingDetails";
 import { IDbConnectionFactory } from "../../../db/interfaces/connection/IDbConnectionFactory";
@@ -6,7 +5,7 @@ import { MediaBorrowingRecordListingDetailsEntity } from "../entities/mediaBorro
 
 
 export class MediaBorrowingRecordReaderRepository extends IMediaBorrowingReaderRepository {
-    constructor(@Inject() dbConnectionFactory : IDbConnectionFactory) {
+    constructor(dbConnectionFactory : IDbConnectionFactory) {
         super()
         this.dbConnectionFactory = dbConnectionFactory
     }

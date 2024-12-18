@@ -1,4 +1,4 @@
-import { Request, Response } from '@google-cloud/functions-framework';
+import { Request, Response } from 'express';
 import { IMediaBorrowingReader } from '../interfaces/logic/IMediaBorrowingReader';
 import { HttpErrorHandler } from '../../shared/http/httpErrorHandler';
 import { RequestParsingError } from '../../shared/errors/requestParsingError';

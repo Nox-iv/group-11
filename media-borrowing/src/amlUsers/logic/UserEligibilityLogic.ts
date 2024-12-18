@@ -6,11 +6,9 @@ import { InvalidLocationError } from "./errors/invalidLocationError"
 import { InvalidUserError } from "./errors/invalidUserError"
 import { InvalidBranchError } from "../../amlBranches/logic/errors/invalidBranchError"
 import { IDbContextFactory } from "../../db/interfaces/dbContext/IDbContextFactory"
-import { Inject, Service } from "typedi"
 
-@Service()
 export class UserEligibilityLogic extends IUserEligibilityLogic {
-    constructor(@Inject() dbContextFactory : IDbContextFactory) {
+    constructor(dbContextFactory : IDbContextFactory) {
         super()
         this.dbContextFactory = dbContextFactory
     }

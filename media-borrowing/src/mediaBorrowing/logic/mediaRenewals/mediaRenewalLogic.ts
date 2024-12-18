@@ -1,6 +1,5 @@
 import { IMediaRenewalLogic } from "../../interfaces/logic/mediaRenewals/IMediaRenewalLogic";
 import { Message } from "../../../shared/messaging/Message";
-import { Inject } from "typedi";
 import { IDbContext, IDbContextFactory } from "../../../db/interfaces/dbContext";
 import { InvalidBorrowingDateError } from "../mediaBorrowingDateValidation";
 import { MaxRenewalsExceededError } from "../mediaBorrowingConfig";
@@ -11,8 +10,8 @@ import { BorrowingDateValidationRequest } from "../mediaBorrowingDateValidation/
 
 export class MediaRenewalLogic extends IMediaRenewalLogic {
     constructor(
-        @Inject() dbContextFactory : IDbContextFactory,
-        @Inject() mediaBorrowingDateValidator : IMediaBorrowingDateValidator
+        dbContextFactory : IDbContextFactory,
+        mediaBorrowingDateValidator : IMediaBorrowingDateValidator
     ) {
         super()
         this.dbContextFactory = dbContextFactory
