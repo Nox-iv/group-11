@@ -1,4 +1,4 @@
-interface BranchOpeningHoursEntity {
+export interface BranchOpeningHoursEntity {
     branchid : number,
     dayofweek : number,
     openingtime : number,

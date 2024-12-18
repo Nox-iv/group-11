@@ -698,6 +698,31 @@ describe('Media Borrowing Integration Tests', () => {
       expect(getBorrowedMediaItemsResponse.body.length).toBe(2);
       expect(getBorrowedMediaItemsResponse.body[0].mediaBorrowingRecordId).toBe(mediaBorrowingRecordId2);
       expect(getBorrowedMediaItemsResponse.body[1].mediaBorrowingRecordId).toBe(mediaBorrowingRecordId1);
+
+      const mediaBorrowingRecord = getBorrowedMediaItemsResponse.body[1];
+
+      expect(mediaBorrowingRecord.mediaId).toBe(DATABASE.MEDIA.INCEPTION);
+      expect(mediaBorrowingRecord.startDate).toBe(new Date(baseDate.setUTCHours(15, 0, 0, 0)).toISOString());
+      expect(mediaBorrowingRecord.endDate).toBe(new Date(baseDate.setUTCHours(15, 0, 0, 0) + 1000 * 60 * 60 * 24 * 7).toISOString());
+      expect(mediaBorrowingRecord.renewals).toBe(0);
+      expect(mediaBorrowingRecord.branch.branchId).toBe(DATABASE.BRANCHES.SHEFFIELD_CENTRAL);
+      expect(mediaBorrowingRecord.branch.name).toBe('Sheffield Central Library');
+      expect(mediaBorrowingRecord.branch.locationId).toBe(DATABASE.LOCATIONS.SHEFFIELD);
+      expect(mediaBorrowingRecord.branch.borrowingConfig.maxRenewals).toBe(1);
+      expect(mediaBorrowingRecord.branch.borrowingConfig.maxBorrowingPeriod).toBe(14);
+
+      for (let day of mediaBorrowingRecord.branch.openingHours) {
+        expect(day.length).toBe(2);
+        const openingHours = day[1];
+        const openingHoursLate = openingHours[0];
+        const openingHoursEarly = openingHours[1];
+        expect(openingHoursEarly.length).toBe(2);
+        expect(openingHoursEarly[0]).toBe(0);
+        expect(openingHoursEarly[1]).toBe(200);
+        expect(openingHoursLate.length).toBe(2);
+        expect(openingHoursLate[0]).toBe(900);
+        expect(openingHoursLate[1]).toBe(1700);
+      }
   
       const returnResponse1 = await supertest(app)
         .post('/return')
