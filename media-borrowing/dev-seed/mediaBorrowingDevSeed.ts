@@ -5,7 +5,7 @@ import fs from 'fs';
 const pool = new Pool();
 
 
-const dataPath = path.join(__dirname, '../../dev-seed/data.json');
+const dataPath = path.join(process.env.DATA_FILE_PATH as string);
 
 const readData = () => {
   const rawData = fs.readFileSync(dataPath, 'utf8');
@@ -79,8 +79,8 @@ const seedDatabase = async () => {
 
     for (const mediaItem of data.media) {
       const query = `
-        INSERT INTO Media (mediaId, mediaTypeId, title, author, assetUrl, description)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO Media (mediaId, mediaTypeId, title, author, assetUrl)
+        VALUES ($1, $2, $3, $4, $5)
         ON CONFLICT (mediaId) DO NOTHING;
       `;
       await pool.query(query, [
@@ -89,7 +89,6 @@ const seedDatabase = async () => {
         mediaItem.title,
         mediaItem.author,
         mediaItem.assetUrl,
-        mediaItem.description,
       ]);
     }
 

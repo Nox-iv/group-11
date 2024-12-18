@@ -16,6 +16,10 @@ export const getAllMediaWithType = async (mediaType: string, offset: number, lim
     } else {
         const response = await fetch(`${import.meta.env.VITE_MEDIA_SEARCH_API_URL}/search`, {
             method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify({
                 searchTerm: '',
                 page: offset,
@@ -24,6 +28,9 @@ export const getAllMediaWithType = async (mediaType: string, offset: number, lim
                     type: [mediaType],
                     genres: [],
                 },
+                range: {
+                    releaseDate: {}
+                }
             } as MediaSearchRequest),
         });
     
@@ -72,6 +79,10 @@ export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Prom
     } else {
         const response = await fetch(`${import.meta.env.VITE_MEDIA_SEARCH_API_URL}/search`, {
             method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
             body: JSON.stringify(mediaSearchRequest),
         });
 
