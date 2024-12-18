@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -23,6 +23,8 @@ export default function Search({
     filters = undefined,
     availableAtLocation = undefined,
     searchTerm = undefined,
+    rangeFrom = undefined,
+    rangeTo = undefined,
     onSearch = undefined,
 }: {
     label?: string;
@@ -33,16 +35,23 @@ export default function Search({
     filters?: MediaSearchFilters;
     availableAtLocation?: number;
     searchTerm?: string;
+    rangeFrom?: Date;
+    rangeTo?: Date;
     onSearch?: (searchTerm: string) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [realTimeSearchTerm, setRealTimeSearchTerm] = useState(searchTerm ?? '');
   const [searchRequest, setSearchRequest] = useState<MediaSearchRequest>({
     searchTerm: searchTerm ?? '',
     page,
     pageSize,
     availableAtLocation,
-    filters
+    filters,
+    range: {
+      releaseDate: {
+        from: rangeFrom ?? undefined,
+        to: rangeTo ?? undefined
+      }
+    }
   });
 
   const {data, isLoading} = useQuery({
@@ -53,6 +62,8 @@ export default function Search({
       searchRequest.availableAtLocation, 
       searchRequest.filters?.type,
       searchRequest.filters?.genres,
+      searchRequest.range?.releaseDate?.from,
+      searchRequest.range?.releaseDate?.to
     ],
     queryFn: () => searchMedia(searchRequest),
   })
@@ -65,9 +76,12 @@ export default function Search({
     setOpen(false);
   };
 
-  const debouncedSearch = debounce((value: string) => {
-    setSearchRequest({ ...searchRequest, searchTerm: value });
-  }, 50);
+  const debouncedSearch = useCallback(
+    debounce((value: string) => {
+      setSearchRequest(prev => ({ ...prev, searchTerm: value }));
+    }, 100),
+    [setSearchRequest]
+  );
 
   return (
     <Autocomplete
@@ -84,12 +98,12 @@ export default function Search({
       onInputChange={(_, value) => {
         if (value) {
           debouncedSearch(value);
-          setRealTimeSearchTerm(value);
         }
       }}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {
-          onSearch?.(realTimeSearchTerm);
+          console.log('onKeyDown', searchRequest.searchTerm);
+          onSearch?.(searchRequest.searchTerm);
         }
       }}
       renderInput={(params) => (

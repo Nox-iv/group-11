@@ -1,6 +1,16 @@
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent, useMemo } from "react";
 
-import { Box, CircularProgress, Stack, Typography, FormGroup, Checkbox, FormControlLabel, useMediaQuery, Pagination } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Stack,
+  Typography,
+  FormGroup,
+  Checkbox,
+  FormControlLabel,
+  useMediaQuery,
+  Pagination,
+} from "@mui/material";
 
 import { useQuery } from "@tanstack/react-query";
 
@@ -15,11 +25,14 @@ import { MediaSearchRequest } from "../api/media-search/types/mediaSearchRequest
 import { searchMedia } from "../api/media-search/searchMedia";
 import { getSearchFilters } from "../api/media-search/getSearchFilters";
 import { MediaSearchFilters } from "../api/media-search/types/mediaSearchFilters";
+import { Dayjs } from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DateValidationError } from "@mui/x-date-pickers/models";
 
 export default function MediaSearch() {
     const navigate = useNavigate();
 
-    // TODO : Hide filters behind dropdowns on mobile
+    // Responsive design hooks
     const isSmallDevice = useMediaQuery('(max-width:900px)');
     const isSmallerDevice = useMediaQuery('(max-width:1150px)');
     const isMediumDevice = useMediaQuery('(max-width:1700px)');
@@ -28,7 +41,20 @@ export default function MediaSearch() {
     const searchTerm = searchParams.get('searchTerm');
     const type = searchParams.get('type');
 
-    const [totalHits, setTotalHits] = useState<number>(0);
+    // State for date range
+    const [rangeFrom, setRangeFrom] = useState<Dayjs | null>(null);
+    const [rangeTo, setRangeTo] = useState<Dayjs | null>(null);
+    const [dateError, setDateError] = useState<DateValidationError | null>(null);
+
+    const dateValidationErrorMessage = useMemo(() => {
+        if (dateError === 'minDate') {
+            return 'From date cannot be after To date.';
+        } else if (dateError === 'maxDate') {
+            return 'To date cannot be before From date.';
+        }
+
+        return '';
+    }, [dateError]);
 
     const [searchRequest, setSearchRequest] = useState<MediaSearchRequest>({
         searchTerm: searchTerm != null ? searchTerm : '',
@@ -37,6 +63,13 @@ export default function MediaSearch() {
         availableAtLocation: undefined,
         filters: {
             type: type ? [type] : [],
+            genres: [],
+        },
+        range: {
+            releaseDate: {
+                from: undefined,
+                to: undefined,
+            }
         }
     });
 
@@ -47,7 +80,9 @@ export default function MediaSearch() {
             searchRequest.pageSize, 
             searchRequest.availableAtLocation, 
             searchRequest.filters?.type,
-            searchRequest.filters?.genres
+            searchRequest.filters?.genres,
+            searchRequest.range?.releaseDate?.from,
+            searchRequest.range?.releaseDate?.to
         ],
         queryFn: () => searchMedia(searchRequest),
     });
@@ -87,12 +122,44 @@ export default function MediaSearch() {
         });
     };
 
-    useEffect(() => {
-        if (mediaQuery.data?.totalHits) {
-            console.log(mediaQuery.data.totalHits);
-            setTotalHits(mediaQuery.data.totalHits);
+    // Handlers for date range changes
+    const handleRangeFromChange = (newValue: Dayjs | null) => {
+        if (newValue && rangeTo && newValue.isAfter(rangeTo)) {
+            setDateError('minDate');
+        } else {
+            setDateError(null);
+            setRangeFrom(newValue);
+            setSearchRequest({
+                ...searchRequest,
+                range: {
+                    ...searchRequest.range,
+                    releaseDate: {
+                        ...searchRequest.range?.releaseDate,
+                        from: newValue ? newValue.toDate() : undefined,
+                    },
+                },
+            });
         }
-    }, [mediaQuery.data?.totalHits]);
+    };
+
+    const handleRangeToChange = (newValue: Dayjs | null) => {
+        if (newValue && rangeFrom && newValue.isBefore(rangeFrom)) {
+            setDateError('maxDate');
+        } else {
+            setDateError(null);
+            setRangeTo(newValue);
+            setSearchRequest({
+                ...searchRequest,
+                range: {
+                    ...searchRequest.range,
+                    releaseDate: {
+                        ...searchRequest.range?.releaseDate,
+                        to: newValue ? newValue.toDate() : undefined,
+                    },
+                },
+            });
+        }
+    };
 
     return (
         <Box>
@@ -105,6 +172,8 @@ export default function MediaSearch() {
                     searchTerm={searchRequest.searchTerm}
                     filters={searchRequest.filters}
                     availableAtLocation={searchRequest.availableAtLocation}
+                    rangeFrom={searchRequest.range?.releaseDate?.from ? searchRequest.range.releaseDate.from : undefined}
+                    rangeTo={searchRequest.range?.releaseDate?.to ? searchRequest.range.releaseDate.to : undefined}
                 />
             </Box>
             <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
@@ -151,31 +220,59 @@ export default function MediaSearch() {
                     <Typography variant="h5" sx={{ marginBottom: 2 }}>Filters</Typography>
                     <Box>
                         {filterQuery.isLoading && <CircularProgress />}
-                        {!filterQuery.isLoading && filterQuery.data && Object.entries(filterQuery.data).map(([key, value]) => (
-                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                                <Typography variant="h6">{key.charAt(0).toUpperCase() + key.slice(1)}</Typography>
-                                <FormGroup sx={{ display: 'flex', flexDirection: isSmallDevice ? 'column' : 'row' }}>
-                                    {value.map((item: string) => (
-                                        <FormControlLabel
-                                            sx={{ width: isSmallerDevice ? '40%' : isMediumDevice ? '30%' : '20%' }}
-                                            control={
-                                                <Checkbox
-                                                    value={item}
-                                                    checked={searchRequest.filters?.[key as keyof MediaSearchFilters]?.includes(item) ?? false}
-                                                    onChange={(event) => handleFilterChange(event, key, item)}
-                                                />
-                                            }
-                                            label={item}
+                        {!filterQuery.isLoading && (
+                            <Box>
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                    <Typography variant="h6">Release Date</Typography>
+                                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        <DatePicker
+                                            label="From"
+                                            value={rangeFrom}
+                                            onChange={handleRangeFromChange}
+                                            disableFuture
+                                            maxDate={rangeTo ?? undefined}
+                                            onError={(error) => setDateError(error)}
                                         />
-                                    ))}
-                                </FormGroup>
+                                        <DatePicker
+                                            label="To"
+                                            value={rangeTo}
+                                            onChange={handleRangeToChange}
+                                            disableFuture
+                                            minDate={rangeFrom ?? undefined}
+                                            onError={(error) => setDateError(error)}
+                                        />
+                                    </Box>
+                                    {dateError && <Typography variant="body2" color="error">{dateValidationErrorMessage}</Typography>}
+                                </Box>
+                                {
+                                    filterQuery.data && Object.entries(filterQuery.data).map(([key, value]) => (
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                            <Typography variant="h6">{key.charAt(0).toUpperCase() + key.slice(1)}</Typography>
+                                            <FormGroup sx={{ display: 'flex', flexDirection: isSmallDevice ? 'column' : 'row' }}>
+                                                {value.map((item: string) => (
+                                                    <FormControlLabel
+                                                        sx={{ width: isSmallerDevice ? '40%' : isMediumDevice ? '30%' : '20%' }}
+                                                        control={
+                                                            <Checkbox
+                                                                value={item}
+                                                                checked={searchRequest.filters?.[key as keyof MediaSearchFilters]?.includes(item) ?? false}
+                                                                onChange={(event) => handleFilterChange(event, key, item)}
+                                                            />
+                                                        }
+                                                        label={item}
+                                                    />
+                                                ))}
+                                            </FormGroup>
+                                        </Box>
+                                    ))
+                                }
                             </Box>
-                        ))}
+                        )}
                     </Box>
                 </Box>
             </Box>
             <Stack spacing={2} sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', margin: 2 }}>
-                <Pagination count={Math.ceil(totalHits / searchRequest.pageSize)} page={searchRequest.page + 1} onChange={handlePageChange} />
+                <Pagination count={Math.ceil(mediaQuery.data?.totalHits ? mediaQuery.data.totalHits / searchRequest.pageSize : 1)} page={searchRequest.page + 1} onChange={handlePageChange} />
             </Stack>
         </Box>
     );

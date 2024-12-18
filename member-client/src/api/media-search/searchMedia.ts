@@ -1,6 +1,7 @@
 import { MediaSearchRequest } from "./types/mediaSearchRequest";
 import { MediaDocument, MediaSearchResult, MediaStock } from "./types/mediaSearchResult";
 import { mockContent } from "../../test/data/content";
+import dayjs from "dayjs";
 
 export const getAllMediaWithType = async (mediaType: string, offset: number, limit: number) : Promise<MediaSearchResult> => {
     if (process.env.NODE_ENV === 'development') {
@@ -52,6 +53,14 @@ export const searchMedia = async (mediaSearchRequest: MediaSearchRequest) : Prom
 
                 if (mediaSearchRequest.availableAtLocation) {
                     hasMatch = (hasMatch && media.mediaStock.some((stock: MediaStock) => stock.locationId === mediaSearchRequest.availableAtLocation))
+                }
+
+                if (mediaSearchRequest.range?.releaseDate?.from) {
+                    hasMatch = (hasMatch && dayjs(media.releaseDate).isAfter(dayjs(mediaSearchRequest.range.releaseDate.from)))
+                }
+
+                if (mediaSearchRequest.range?.releaseDate?.to) {
+                    hasMatch = (hasMatch && dayjs(media.releaseDate).isBefore(dayjs(mediaSearchRequest.range.releaseDate.to)))
                 }
 
                 return hasMatch
