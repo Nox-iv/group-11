@@ -10,6 +10,7 @@ export const getMediaBorrowingRecords = async (userId: number, offset: number, l
             .slice(offset, offset + limit);
     }
 
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/media-borrowing/user/${userId}/records?offset=${offset}&limit=${limit}`);
+    const response = await fetch(`${import.meta.env.MEDIA_BORROWING_API_URL}/user/${userId}/records?offset=${offset}&limit=${limit}`);
+
     return response.json();
 }

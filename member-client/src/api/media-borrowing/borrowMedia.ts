@@ -11,7 +11,7 @@ export const borrowMedia = async (
         return { success: true, errors: [] };
     }
 
-    const response = await fetch(`/api/media-borrowing/borrow`, {
+    const response = await fetch(`${import.meta.env.MEDIA_BORROWING_API_URL}/borrow`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

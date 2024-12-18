@@ -7,7 +7,7 @@ export const getBranchesByLocationId = async (locationId: number) : Promise<Bran
         return mockBranches.filter(b => b.locationId === locationId)
     }
 
-    const response = await fetch(`/api/borrowing/location/${locationId}/branches`)
+    const response = await fetch(`${import.meta.env.MEDIA_BORROWING_API_URL}/location/${locationId}/branches`)
     const data: BranchResponseModel[] = await response.json()
 
     return data.map((branch: BranchResponseModel) => ({
