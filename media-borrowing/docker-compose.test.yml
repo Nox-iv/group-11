@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   node-app-test:
-    container_name: media-borrowing-app
+    container_name: media-borrowing-app-test
     build: .
     ports:
       - "8080:8080"
@@ -26,8 +26,6 @@ services:
 
   postgres-test-db:
     image: postgres:13
-    volumes:
-      - aml-media-borrowing-dev-postgres-test-data:/var/lib/postgresql/test-data
     environment:
       - POSTGRES_USER=test-user
       - POSTGRES_PASSWORD=test-password
@@ -41,7 +39,3 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-
-volumes:
-  aml-media-borrowing-dev-postgres-test-data:
-    driver: local

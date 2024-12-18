@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 
@@ -20,6 +21,8 @@ export function createApp() {
     const app = express();
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
+
+    app.use(cors());
 
     const withRequestContext = (handler: (req: Request, res: Response, next: NextFunction) => void) => {
         return (req: Request, res: Response, next: NextFunction) => {

@@ -15,7 +15,7 @@ services:
       - DATABASE_URL=postgres://dev:dev@media-borrowing-db:5432/dev-db
     depends_on:
       - postgres  
-    command: ${APP_COMMAND:-pnpm start}
+    command: ${APP_COMMAND:-pnpm run dev}
 
   postgres:
     container_name: media-borrowing-db
