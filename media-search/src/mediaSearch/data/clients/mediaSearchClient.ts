@@ -111,4 +111,21 @@ export default class MediaSearchClient extends IMediaSearchClient {
             throw new Error('Internal search error');
         }
     }
+
+    public async getMediaById(mediaId: number): Promise<MediaSearchResult> {
+        try {
+            const response : estypes.SearchResponse<MediaSearchResult> = await this.client.search<MediaSearchResult>({
+                index: "m_index",
+                query: {
+                    term: { "mediaId": mediaId }
+                }
+            })
+
+            return response.hits.hits[0]._source as MediaSearchResult;
+        } catch (error) {
+            log(error)
+            throw new Error('Internal search error');
+        }
+    }
 }
+

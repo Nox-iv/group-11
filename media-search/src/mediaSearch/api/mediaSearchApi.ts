@@ -1,4 +1,3 @@
-import { log } from "console";
 import { Message } from "../../shared/messaging/message";
 import { MediaSearchLogicParams } from "../interfaces/dto/MediaSearchLogicParams";
 import IMediaSearchLogic from "../interfaces/logic/IMediaSearchLogic";
@@ -35,6 +34,23 @@ export default class MediaSearchApi {
         try {
             const filters = await this.mediaSearchLogic.getSearchFilters();
             response.status(200).json(filters);
+        } catch (error) {
+            response.status(500).json((error as Error).message);
+        }
+    }
+
+    public async getMediaById(request: Request, response: Response): Promise<void> {
+        try {
+            const mediaId = this.parseGetMediaByIdParams(request);
+
+            if (mediaId.hasErrors()) {
+                response.status(400).json({errors: mediaId.errors});
+                return;
+            }
+
+            const media = await this.mediaSearchLogic.getMediaById(mediaId.value!);
+
+            response.status(200).json({data : media});
         } catch (error) {
             response.status(500).json((error as Error).message);
         }
@@ -89,6 +105,18 @@ export default class MediaSearchApi {
             result.value = { searchTerm, page, pageSize, filters, range, availableAtLocation };
         }
 
+        return result;
+    }
+
+    private parseGetMediaByIdParams(request: Request): Message<number> {
+        const result = new Message<number>(null);
+
+        const mediaId = parseInt(request.params.mediaId);
+        if (isNaN(mediaId)) {
+            result.addError(new Error('Media ID must be a number'));
+        } else {
+            result.value = mediaId;
+        }
         return result;
     }
 }

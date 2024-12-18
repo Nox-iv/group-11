@@ -19,4 +19,8 @@ export default class IMediaSearchLogic {
     public getSearchFilters(): Promise<IMediaSearchFilters> {
         throw new NotImplementedError();
     }
+
+    public getMediaById(mediaId: number): Promise<MediaSearchResult> {
+        throw new NotImplementedError();
+    }
 }

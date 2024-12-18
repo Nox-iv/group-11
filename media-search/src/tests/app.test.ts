@@ -484,6 +484,15 @@ describe('Media Search API Tests', () => {
         });
     });
 
+    describe('200 GET /search/:mediaId', () => {
+        test('can get a media item by id', async () => {
+            const response = await agent.get(`/search/${mediaSearchResultTestData[testDataIdx.RED_DEAD_REDEMPTION_2].mediaId}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.data).toEqual(mediaSearchResultTestData[testDataIdx.RED_DEAD_REDEMPTION_2]);
+        });
+    });
+
     afterAll(async () => {
         log('Done!')
 

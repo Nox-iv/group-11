@@ -11,4 +11,8 @@ export default class IMediaSearchClient {
     public searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult> {
         throw new NotImplementedError();
     }
+
+    public getMediaById(mediaId: number): Promise<MediaSearchResult> {
+        throw new NotImplementedError();
+    }
 }

@@ -11,5 +11,6 @@ const { mediaSearchApi } = setup();
 
 app.post('/search', async (req, res) => mediaSearchApi.searchMedia(req, res));
 app.get('/filters', async (req, res) => mediaSearchApi.getSearchFilters(req, res));
+app.get('/search/:mediaId', async (req, res) => mediaSearchApi.getMediaById(req, res));
 
 export default app;

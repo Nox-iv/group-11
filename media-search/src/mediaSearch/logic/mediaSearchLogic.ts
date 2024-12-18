@@ -101,4 +101,8 @@ export default class MediaSearchLogic extends IMediaSearchLogic {
 
         return result;
     }
+
+    public async getMediaById(mediaId: number): Promise<MediaSearchResult> {
+        return await this.mediaSearchClient.getMediaById(mediaId);
+    }
 }
