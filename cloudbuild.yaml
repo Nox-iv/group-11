@@ -58,3 +58,6 @@ steps:
 substitutions:
   _PROJECT_ID: "saad-441415"
   _SOURCE_BUCKET: "cf-saad-441415"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
