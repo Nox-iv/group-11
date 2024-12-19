@@ -1,4 +1,4 @@
-@startuml
+@startuml media-search-classes
 
 interface IMediaSearchClient {
     +searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult>
