@@ -18,6 +18,9 @@ class Message<T> {
     +addErrorsFromMessage(rmessage: Message<any>): void
     +hasErrors(): boolean
 }
+note right of Message
+    used for message passing
+end note
 class HttpErrorHandler {
     +handle(error: unknown, res: GCloudResponse): void
 }
@@ -56,9 +59,6 @@ MediaBorrowingApi --> IMediaRenewalLogic : uses
 MediaBorrowingApi --> IMediaReturnLogic : uses
 MediaBorrowingReaderApi --> IMediaBorrowingReader : uses
 AmlBranchReaderApi --> IAmlBranchReader : uses
-MediaBorrowingApi -up-> Message : uses
-MediaBorrowingReaderApi -up-> Message : uses
-AmlBranchReaderApi -up-> Message : uses
 MediaBorrowingApi -up-> HttpErrorHandler : uses
 MediaBorrowingReaderApi -up-> HttpErrorHandler : uses
 AmlBranchReaderApi -up-> HttpErrorHandler : uses
