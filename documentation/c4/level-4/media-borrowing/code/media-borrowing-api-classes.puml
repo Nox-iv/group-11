@@ -1,0 +1,71 @@
+@startuml
+
+class MediaBorrowingApi {
+    +borrowMediaItem(req: Request, res: Response): Promise<void>
+    +renewMediaItem(req: Request, res: Response): Promise<void>
+    +returnMediaItem(req: Request, res: Response): Promise<void>
+}
+class MediaBorrowingReaderApi {
+    +getMediaBorrowingRecordsForUser(req: Request, res: Response): Promise<void>
+}
+class AmlBranchReaderApi {
+    +getBranchesByLocationId(req: Request, res: Response): Promise<void>
+}
+class Message<T> {
+    +value: T
+    +errors: Error[]
+    +addError(error: Error): void
+    +addErrorsFromMessage(rmessage: Message<any>): void
+    +hasErrors(): boolean
+}
+class HttpErrorHandler {
+    +handle(error: unknown, res: GCloudResponse): void
+}
+interface IMediaBorrowingLogic {
+    +BorrowMediaItem(mediaBorrowingRecord: MediaBorrowingRecord): Promise<Message<boolean>>
+}
+class MediaBorrowingLogic {
+    +BorrowMediaItem(mediaBorrowingRecord: MediaBorrowingRecord): Promise<Message<boolean>>
+}
+interface IMediaRenewalLogic {
+    +renewMediaItem(mediaRenewalRequest: MediaRenewalRequest): Promise<Message<boolean>>
+}
+class MediaRenewalLogic {
+    +renewMediaItem(mediaRenewalRequest: MediaRenewalRequest): Promise<Message<boolean>>
+}
+interface IMediaReturnLogic {
+    +returnMediaItem(mediaBorrowingRecordId: number): Promise<Message<boolean>>
+}
+class MediaReturnLogic {
+    +returnMediaItem(mediaBorrowingRecordId: number): Promise<Message<boolean>>
+}
+interface IMediaBorrowingReader {
+    +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number): Promise<Message<MediaBorrowingRecordListingDetails[]>>
+}
+class MediaBorrowingReader {
+    +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number): Promise<Message<MediaBorrowingRecordListingDetails[]>>
+}
+interface IAmlBranchReader {
+    +getBranchesByLocationId(locationId: number): Promise<Message<BranchReadModel[]>>
+}
+class AmlBranchReader {
+    +getBranchesByLocationId(locationId: number): Promise<Message<BranchReadModel[]>>
+}
+MediaBorrowingApi --> IMediaBorrowingLogic : uses
+MediaBorrowingApi --> IMediaRenewalLogic : uses
+MediaBorrowingApi --> IMediaReturnLogic : uses
+MediaBorrowingReaderApi --> IMediaBorrowingReader : uses
+AmlBranchReaderApi --> IAmlBranchReader : uses
+MediaBorrowingApi -up-> Message : uses
+MediaBorrowingReaderApi -up-> Message : uses
+AmlBranchReaderApi -up-> Message : uses
+MediaBorrowingApi -up-> HttpErrorHandler : uses
+MediaBorrowingReaderApi -up-> HttpErrorHandler : uses
+AmlBranchReaderApi -up-> HttpErrorHandler : uses
+IMediaBorrowingLogic <|-- MediaBorrowingLogic
+IMediaRenewalLogic <|-- MediaRenewalLogic
+IMediaReturnLogic <|-- MediaReturnLogic
+IMediaBorrowingReader <|-- MediaBorrowingReader
+IAmlBranchReader <|-- AmlBranchReader
+
+@enduml

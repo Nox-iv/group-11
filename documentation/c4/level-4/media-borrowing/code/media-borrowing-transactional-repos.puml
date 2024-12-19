@@ -1,0 +1,111 @@
+@startuml
+
+interface IDbContext {
+    +getMediaBorrowingRepository() : Promise<IMediaBorrowingRepository>
+    +getUserRepository() : Promise<IUserRepository>
+    +getMediaInventoryRepository() : Promise<IMediaInventoryRepository>
+    +getMediaBorrowingConfigRepository() : Promise<IMediaBorrowingConfigRepository>
+    +getBranchRepository() : Promise<IBranchRepository>
+    +commit() : Promise<void>
+    +rollback() : Promise<void>
+    +isClosed() : boolean
+}
+
+interface IUnitOfWork {
+    +getTransaction() : IDbTransaction
+    +commit() : Promise<void>
+    +rollback() : Promise<void>
+}
+
+interface IDbConnection {
+    +query<T>(queryText: string, params: any[] = []) : Promise<T[]>
+    +command<T>(commandText: string, params: any[]) : Promise<void>
+    +beginTransaction() : Promise<IDbTransaction>
+    +close() : void
+}
+
+interface IDbTransaction {
+    +getConnection() : IDbConnection
+    +commit() : Promise<void>
+    +rollback() : Promise<void>
+}
+
+interface IMediaBorrowingRepository {
+    +insertMediaBorrowingRecord(mediaBorrowingRecord: MediaBorrowingRecord): Promise<void>
+    +updateMediaBorrowingRecord(mediaBorrowingRecord: MediaBorrowingRecord): Promise<void>
+    +archiveMediaBorrowingRecord(mediaBorrowingRecordId: number, returnedOn: Date): Promise<void>
+    +hasMediaBorrowingRecordForMediaItem(userId: number, mediaId: number): Promise<boolean>
+    +getMediaBorrowingRecordById(mediaBorrowingRecordId: number): Promise<MediaBorrowingRecord | null>
+}
+
+class MediaBorrowingRepository extends IMediaBorrowingRepository {
+}
+
+interface IUserRepository {
+    +getUser(userId: number): Promise<User | null>
+}
+
+class UserRepository extends IUserRepository {
+}
+
+interface IMediaInventoryRepository {
+    +getInventoryByMediaAndBranchId(mediaId: number, branchId: number): Promise<MediaInventoryRecord | null>
+    +updateMediaItemAvailability(mediaInventoryRecord: MediaInventoryRecord): Promise<void>
+}
+
+class MediaInventoryRepository extends IMediaInventoryRepository {
+}
+
+interface IMediaBorrowingConfigRepository {
+    +getRenewalLimit(branchId: number): Promise<number | null>
+    +getMaximumBorrowingDurationInDays(branchId: number): Promise<number | null>
+}
+
+class MediaBorrowingConfigRepository extends IMediaBorrowingConfigRepository {
+}
+
+interface IBranchRepository {
+    +getOpeningHoursById(branchId: number): Promise<BranchOpeningHours | null>
+    +getBranchLocationId(branchId: number): Promise<number | null>
+}
+
+class BranchRepository extends IBranchRepository {
+}
+
+IDbContext --> IUnitOfWork : returns
+IUnitOfWork --> IDbConnection : uses
+IDbConnection --> IDbTransaction : creates
+
+IMediaBorrowingRepository <|-- MediaBorrowingRepository
+IUserRepository <|-- UserRepository
+IMediaInventoryRepository <|-- MediaInventoryRepository
+IMediaBorrowingConfigRepository <|-- MediaBorrowingConfigRepository
+IBranchRepository <|-- BranchRepository
+
+MediaBorrowingRepository --> IDbTransaction : uses getConnection()
+UserRepository --> IDbTransaction : uses getConnection()
+MediaInventoryRepository --> IDbTransaction : uses getConnection()
+MediaBorrowingConfigRepository --> IDbTransaction : uses getConnection()
+BranchRepository --> IDbTransaction : uses getConnection()
+
+note right of IDbContext
+  Refer to media-borrowing-db-classes.puml
+  for concrete instances.
+end note
+
+note right of IUnitOfWork
+  Refer to media-borrowing-db-classes.puml
+  for concrete instances.
+end note
+
+note right of IDbConnection
+  Refer to media-borrowing-db-classes.puml
+  for concrete instances.
+end note
+
+note right of IDbTransaction
+  Refer to media-borrowing-db-classes.puml
+  for concrete instances.
+end note
+
+@enduml

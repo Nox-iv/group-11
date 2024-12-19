@@ -1,0 +1,68 @@
+@startuml
+
+interface IDbConnectionFactory {
+    +create() : Promise<IDbConnection>
+}
+
+interface IDbConnection {
+    +query<T>(queryText: string, params: any[] = []) : Promise<T[]>
+    +command<T>(commandText: string, params: any[]) : Promise<void>
+    +beginTransaction() : Promise<IDbTransaction>
+    +close() : void
+}
+
+interface IAmlBranchReader {
+    +getBranchesByLocationId(locationId: number) : Promise<Message<BranchReadModel[]>>
+}
+
+interface IAmlBranchReaderRepository {
+    +getBranchesByLocationId(locationId: number) : Promise<BranchReadModel[] | null>
+}
+
+class AmlBranchReader {
+    +getBranchesByLocationId(locationId: number) : Promise<Message<BranchReadModel[]>>
+}
+
+class AmlBranchReaderRepository {
+    +getBranchesByLocationId(locationId: number) : Promise<BranchReadModel[] | null>
+}
+
+interface IMediaBorrowingReader {
+    +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number) : Promise<Message<MediaBorrowingRecordListingDetails[]>>
+}
+
+interface IMediaBorrowingReaderRepository {
+    +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number) : Promise<MediaBorrowingRecordListingDetails[] | null>
+}
+
+class MediaBorrowingReader {
+    +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number) : Promise<Message<MediaBorrowingRecordListingDetails[]>>
+}
+
+class MediaBorrowingRecordReaderRepository {
+    +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number) : Promise<MediaBorrowingRecordListingDetails[] | null>
+}
+
+note right of IDbConnectionFactory
+  Refer to media-borrowing-db-classes.puml for concrete instance
+end note
+
+note right of IDbConnection
+  Refer to media-borrowing-db-classes.puml for concrete instance
+end note
+
+IDbConnectionFactory ..> IDbConnection : create()
+AmlBranchReader ..> IAmlBranchReaderRepository : uses
+AmlBranchReaderRepository ..> IDbConnectionFactory : uses
+AmlBranchReaderRepository ..> IDbConnection : uses
+
+AmlBranchReader --|> IAmlBranchReader
+AmlBranchReaderRepository --|> IAmlBranchReaderRepository
+
+MediaBorrowingReader --|> IMediaBorrowingReader
+MediaBorrowingRecordReaderRepository --|> IMediaBorrowingReaderRepository
+MediaBorrowingRecordReaderRepository ..> IDbConnectionFactory : uses
+MediaBorrowingRecordReaderRepository ..> IDbConnection : uses
+MediaBorrowingReader ..> IMediaBorrowingReaderRepository : uses
+
+@enduml

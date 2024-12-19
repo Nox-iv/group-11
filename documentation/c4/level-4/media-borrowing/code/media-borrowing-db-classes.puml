@@ -1,0 +1,124 @@
+@startuml
+
+interface IDbConnection {
+    +query<T>(queryText: string, params: any[]): Promise<T[]>
+    +command<T>(commandText: string, params: any[]): Promise<void>
+    +beginTransaction(): Promise<IDbTransaction>
+    +close(): void
+}
+
+interface IDbConnectionFactory {
+    +create(): Promise<IDbConnection>
+}
+
+class DbConnection implements IDbConnection {
+    -dbClient: PoolClient
+    +DbConnection(dbClient: PoolClient)
+    +beginTransaction(): Promise<IDbTransaction>
+    +query<T>(queryText: string, params: any[]): Promise<T[]>
+    +command(commandText: string, params: any[]): Promise<void>
+    +close(): void
+}
+
+class DbConnectionFactory implements IDbConnectionFactory {
+    -dbConnectionPool: Pool
+    +DbConnectionFactory(pool: Pool)
+    +create(): Promise<IDbConnection>
+}
+
+interface IDbTransaction {
+    +getConnection(): IDbConnection
+    +commit(): Promise<void>
+    +rollback(): Promise<void>
+}
+
+class DbTransaction implements IDbTransaction {
+    -connection: IDbConnection
+    +DbTransaction(connection: IDbConnection)
+    +getConnection(): IDbConnection
+    +commit(): Promise<void>
+    +rollback(): Promise<void>
+}
+
+interface IUnitOfWork {
+    +getTransaction(): IDbTransaction
+    +commit(): Promise<void>
+    +rollback(): Promise<void>
+}
+
+interface IUnitOfWorkFactory {
+    +Create(): Promise<IUnitOfWork>
+}
+
+class UnitOfWorkFactory implements IUnitOfWorkFactory {
+    -dbConnectionFactory: IDbConnectionFactory
+    +UnitOfWorkFactory(dbConnectionFactory: IDbConnectionFactory)
+    +Create(): Promise<IUnitOfWork>
+}
+
+class UnitOfWork implements IUnitOfWork {
+    -transaction: IDbTransaction
+    -connection: IDbConnection
+    +UnitOfWork(transaction: IDbTransaction)
+    +getTransaction(): IDbTransaction
+    +commit(): Promise<void>
+    +rollback(): Promise<void>
+}
+
+interface IDbContext {
+    +getMediaBorrowingRepository(): Promise<IMediaBorrowingRepository>
+    +getUserRepository(): Promise<IUserRepository>
+    +getMediaInventoryRepository(): Promise<IMediaInventoryRepository>
+    +getMediaBorrowingConfigRepository(): Promise<IMediaBorrowingConfigRepository>
+    +getBranchRepository(): Promise<IBranchRepository>
+    +commit(): Promise<void>
+    +rollback(): Promise<void>
+    +isClosed(): boolean
+}
+
+class DbContext implements IDbContext {
+    -unitOfWork: IUnitOfWork
+    -unitOfWorkFactory: IUnitOfWorkFactory
+    +DbContext(unitOfWorkFactory: IUnitOfWorkFactory)
+    +getMediaBorrowingRepository(): Promise<IMediaBorrowingRepository>
+    +getUserRepository(): Promise<IUserRepository>
+    +getMediaInventoryRepository(): Promise<IMediaInventoryRepository>
+    +getMediaBorrowingConfigRepository(): Promise<IMediaBorrowingConfigRepository>
+    +getBranchRepository(): Promise<IBranchRepository>
+    +commit(): Promise<void>
+    +rollback(): Promise<void>
+    +isClosed(): boolean
+}
+
+interface IDbContextFactory {
+    +create(): Promise<IDbContext>
+}
+
+class DbContextFactory implements IDbContextFactory {
+    +DbContextFactory()
+    +create(): Promise<IDbContext>
+}
+
+IDbConnection <|.. DbConnection
+IDbConnectionFactory <|.. DbConnectionFactory
+IDbTransaction <|.. DbTransaction
+IUnitOfWorkFactory <|.. UnitOfWorkFactory
+IUnitOfWork <|.. UnitOfWork
+IDbContext <|.. DbContext
+IDbContextFactory <|.. DbContextFactory
+
+DbConnectionFactory ..> IDbConnection : create()
+UnitOfWorkFactory ..> IUnitOfWork : Create()
+UnitOfWorkFactory ..> DbConnectionFactory : uses
+
+UnitOfWork ..> IDbTransaction : uses
+UnitOfWork ..> IDbConnection : uses
+
+DbConnection ..> IDbTransaction : beginTransaction()
+
+DbContextFactory ..> IDbContext : create()
+
+DbContext ..> IUnitOfWork : uses
+DbContext ..> IUnitOfWorkFactory : initialized with
+
+@enduml
