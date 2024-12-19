@@ -109,7 +109,7 @@ IDbContextFactory <|.. DbContextFactory
 
 DbConnectionFactory ..> IDbConnection : create()
 UnitOfWorkFactory ..> IUnitOfWork : Create()
-UnitOfWorkFactory ..> DbConnectionFactory : uses
+UnitOfWorkFactory ..> IDbConnectionFactory : uses
 
 UnitOfWork ..> IDbTransaction : uses
 UnitOfWork ..> IDbConnection : uses
