@@ -1,0 +1,21 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Component Diagram for Media Search Service
+
+' Define the boundary for the system
+Container_Boundary(AML_Media_Library, "AML Media Library") {
+    Component(SPA, "Single-Page Application", "React (Vite)", "Provides all of the Media Search functionality to members & guest users.")
+    Container_Boundary(Media_Search_Api_Boundary, "Media Search Service") {
+        Component(Media_Search_Api, "Media Search API", "Express (Node.js)", "API for all functionality related to filtering and searching for media.")
+        Component(Media_Search_Db, "Media Search DB", "Elasticsearch", "Distributed search engine capable of performing complex search queries and aggregations with an index mapping optimised for querying patterns in the media search API.")
+    }
+
+    Rel(SPA, Media_Search_Api, "uses", "http")
+
+    Rel(Media_Search_Api, Media_Search_Db, "uses", "tcp")
+
+}
+
+@enduml

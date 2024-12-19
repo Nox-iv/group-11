@@ -1,0 +1,29 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Component Diagram for Media Borrowing Service
+
+' Define the boundary for the system
+Container_Boundary(AML_Media_Library, "AML Media Library") {
+    Component(SPA, "Single-Page Application", "React (Vite)", "Provides all of the Media Borrowing & Search functionality to members & guest users.")
+    Container_Boundary(Media_Borrowing_Api_Boundary, "Media Borrowing Service") {
+        Component(Media_Borrowing_Api, "Media Borrowing API", "Express (Node.js)", "API for all functionality related to borrowing, returns and renewals.")
+        Component(Media_Borrowing_Reader, "Media Borrowing Reader API", "Express (Node.js)", "API for all functionality related to retrieval of borrowing records for display.")
+        Component(Branch_Reader_Api, "Branch Reader API", "Express (Node.js)", "API for all functionality related to retrieval of branch information for UI constraints.")
+        Component(Transaction_Scope, "Request DB Context (Transaction Scope)", "Express middleware", "Middleware to provide a request-scoped DB context for the API - Ensures that all operations are executed within a single transaction.")
+        Component(Media_Borrowing_Db, "Media Borrowing DB", "PostgreSQL", "Database for the Media Borrowing Service.")
+    }
+
+    Rel(SPA, Media_Borrowing_Reader, "uses", "http")
+    Rel(SPA, Branch_Reader_Api, "uses", "http")
+    Rel(SPA, Transaction_Scope, "uses", "http")
+    Rel_U(Transaction_Scope, Media_Borrowing_Api, "wraps", "middleware")
+
+    Rel(Media_Borrowing_Api, Media_Borrowing_Db, "uses", "tcp")
+    Rel(Media_Borrowing_Reader, Media_Borrowing_Db, "uses", "tcp")
+    Rel(Branch_Reader_Api, Media_Borrowing_Db, "uses", "tcp",)
+
+}
+
+@enduml
