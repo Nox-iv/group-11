@@ -22,13 +22,13 @@ class IDbContext {
     + isClosed() : boolean
 }
 
-IDbContextFactory --> IDbContext : create()
+IDbContextFactory .up.> IDbContext : create()
 
 interface IMediaBorrowingLogic {
     +BorrowMediaItem(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<Message<boolean>>
 }
 
-class MediaBorrowingLogic {
+class MediaBorrowingLogic implements IMediaBorrowingLogic {
     +BorrowMediaItem(mediaBorrowingRecord : MediaBorrowingRecord) : Promise<Message<boolean>>
     +verifyMediaItemIsAvailable(mediaId: number, branchId : number, result : Message<boolean>)
     +validateBorrowingDates(startDate : Date, endDate : Date, branchId: number ,result : Message<boolean>)
@@ -36,33 +36,29 @@ class MediaBorrowingLogic {
     +rejectIfUserIsAlreadyBorrowingMediaItem(mediaBorrowingRecord : MediaBorrowingRecord, dbContext : IDbContext, result: Message<boolean>)
 }
 
-MediaBorrowingLogic --|> IMediaBorrowingLogic
-
 interface IUserEligibilityLogic {
     +isUserEligibleToBorrowMediaItemAtBranch(userId : number, mediaId : number, branchId : number) : Promise<Message<boolean>>
 }
 
-class UserEligibilityLogic {
+class UserEligibilityLogic implements IUserEligibilityLogic {
     +isUserEligibleToBorrowMediaItemAtBranch(userId : number, mediaId : number, branchId : number) : Promise<Message<boolean>>
     +getUser(userId : number, dbContext : IDbContext) : Promise<User>
     +verifyUserIsInSameCityAsBranch(userLocationId : number, branchId : number, dbContext : IDbContext, result : Message<boolean>) : Promise<void>
 }
 
-UserEligibilityLogic --|> IUserEligibilityLogic
 MediaBorrowingLogic ..> IUserEligibilityLogic : uses
 
 interface IMediaBorrowingDateValidator {
     +validateBorrowingDates(dateValiationRequest : BorrowingDateValidationRequest) : Promise<Message<boolean>>
 }
 
-class MediaBorrowingDateValidator {
+class MediaBorrowingDateValidator implements IMediaBorrowingDateValidator {
     +validateBorrowingDates(borrowingDateValidationRequest : BorrowingDateValidationRequest) : Promise<Message<boolean>>
     +validateDateRangeAgainstMinimumBorrowingDuration(startDate : Date, endDate : Date, result : Message<boolean>)
     +validateDateRangeAgainstBranchOpeningHours(startDate : Date, endDate : Date, branchId : number, dbContext : IDbContext, result : Message<boolean>)
     +validateBorrowingDurationAgainstMaximum(borrowingDateValidationRequest : BorrowingDateValidationRequest, dbContext : IDbContext, result : Message<boolean>)
 }
 
-MediaBorrowingDateValidator --|> IMediaBorrowingDateValidator
 MediaBorrowingLogic ..> IMediaBorrowingDateValidator : uses
 
 interface IMediaInventoryLogic {
@@ -71,7 +67,7 @@ interface IMediaInventoryLogic {
     +decrementMediaItemAvailabilityAtBranch(mediaId : number, branchId : number) : Promise<Message<boolean>>
 }
 
-class MediaInventoryLogic {
+class MediaInventoryLogic implements IMediaInventoryLogic {
     +isMediaItemAvailableAtBranch(mediaId : number, branchId : number) : Promise<Message<boolean>>
     +incrementMediaItemAvailabilityAtBranch(mediaId : number, branchId : number) : Promise<Message<boolean>>
     +decrementMediaItemAvailabilityAtBranch(mediaId : number, branchId : number) : Promise<Message<boolean>>
@@ -79,31 +75,25 @@ class MediaInventoryLogic {
     +updateMediaItem(mediaInventoryRecord : MediaInventoryRecord, dbContext : IDbContext)
 }
 
-MediaInventoryLogic --|> IMediaInventoryLogic
 MediaBorrowingLogic ..> IMediaInventoryLogic : uses
 
 interface IMediaReturnLogic {
     +returnMediaItem(mediaId : number, branchId : number) : Promise<Message<boolean>>
 }
 
-class MediaReturnLogic {
+class MediaReturnLogic implements IMediaReturnLogic {
     +returnMediaItem(mediaId : number, branchId : number) : Promise<Message<boolean>>
 }
-
-MediaReturnLogic --|> IMediaReturnLogic : <|.. 
 
 interface IMediaRenewalLogic {
     +renewMediaItem(mediaRenewalRequest : MediaRenewalRequest) : Promise<Message<boolean>>
 }
 
-class MediaRenewalLogic {
+class MediaRenewalLogic implements IMediaRenewalLogic {
     +renewMediaItem(mediaRenewalRequest : MediaRenewalRequest) : Promise<Message<boolean>>
     +verifyRenewalLimitIsNotExceeded(renewals : number, branchId : number, dbContext : IDbContext, result : Message<boolean>)
     +validateRenewedEndDate(borrowingDateValidationRequest : BorrowingDateValidationRequest, result : Message<boolean>)
 }
-
-MediaRenewalLogic --|> IMediaRenewalLogic
-MediaRenewalLogic ..> IMediaBorrowingDateValidator : uses
 
 MediaBorrowingLogic ..> IDbContext : uses getMediaBorrowingRepository()
 MediaBorrowingDateValidator ..> IDbContext : uses getMediaBorrowingConfigRepository()

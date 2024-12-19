@@ -33,7 +33,7 @@ class HttpErrorHandler {
 interface IMediaBorrowingLogic {
     +BorrowMediaItem(mediaBorrowingRecord: MediaBorrowingRecord): Promise<Message<boolean>>
 }
-class MediaBorrowingLogic {
+class MediaBorrowingLogic implements IMediaBorrowingLogic {
     +BorrowMediaItem(mediaBorrowingRecord: MediaBorrowingRecord): Promise<Message<boolean>>
 }
 
@@ -41,7 +41,7 @@ interface IMediaRenewalLogic {
     +renewMediaItem(mediaRenewalRequest: MediaRenewalRequest): Promise<Message<boolean>>
 }
 
-class MediaRenewalLogic {
+class MediaRenewalLogic implements IMediaRenewalLogic {
     +renewMediaItem(mediaRenewalRequest: MediaRenewalRequest): Promise<Message<boolean>>
 }
 
@@ -49,7 +49,7 @@ interface IMediaReturnLogic {
     +returnMediaItem(mediaBorrowingRecordId: number): Promise<Message<boolean>>
 }
 
-class MediaReturnLogic {
+class MediaReturnLogic implements IMediaReturnLogic {
     +returnMediaItem(mediaBorrowingRecordId: number): Promise<Message<boolean>>
 }
 
@@ -57,7 +57,7 @@ interface IMediaBorrowingReader {
     +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number): Promise<Message<MediaBorrowingRecordListingDetails[]>>
 }
 
-class MediaBorrowingReader {
+class MediaBorrowingReader implements IMediaBorrowingReader {
     +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number): Promise<Message<MediaBorrowingRecordListingDetails[]>>
 }
 
@@ -65,22 +65,17 @@ interface IAmlBranchReader {
     +getBranchesByLocationId(locationId: number): Promise<Message<BranchReadModel[]>>
 }
 
-class AmlBranchReader {
+class AmlBranchReader implements IAmlBranchReader {
     +getBranchesByLocationId(locationId: number): Promise<Message<BranchReadModel[]>>
 }
 
-MediaBorrowingApi --> IMediaBorrowingLogic : uses
-MediaBorrowingApi --> IMediaRenewalLogic : uses
-MediaBorrowingApi --> IMediaReturnLogic : uses
-MediaBorrowingReaderApi --> IMediaBorrowingReader : uses
-AmlBranchReaderApi --> IAmlBranchReader : uses
-MediaBorrowingApi -up-> HttpErrorHandler : uses
-MediaBorrowingReaderApi -up-> HttpErrorHandler : uses
-AmlBranchReaderApi -up-> HttpErrorHandler : uses
-IMediaBorrowingLogic <|-- MediaBorrowingLogic
-IMediaRenewalLogic <|-- MediaRenewalLogic
-IMediaReturnLogic <|-- MediaReturnLogic
-IMediaBorrowingReader <|-- MediaBorrowingReader
-IAmlBranchReader <|-- AmlBranchReader
+MediaBorrowingApi ..> IMediaBorrowingLogic : uses
+MediaBorrowingApi ..> IMediaRenewalLogic : uses
+MediaBorrowingApi ..> IMediaReturnLogic : uses
+MediaBorrowingReaderApi ..> IMediaBorrowingReader : uses
+AmlBranchReaderApi ..> IAmlBranchReader : uses
+MediaBorrowingApi .up.> HttpErrorHandler : uses
+MediaBorrowingReaderApi .up.> HttpErrorHandler : uses
+AmlBranchReaderApi .up.> HttpErrorHandler : uses
 
 @enduml

@@ -38,14 +38,14 @@ interface IMediaBorrowingRepository {
     +getMediaBorrowingRecordById(mediaBorrowingRecordId: number): Promise<MediaBorrowingRecord | null>
 }
 
-class MediaBorrowingRepository extends IMediaBorrowingRepository {
+class MediaBorrowingRepository implements IMediaBorrowingRepository {
 }
 
 interface IUserRepository {
     +getUser(userId: number): Promise<User | null>
 }
 
-class UserRepository extends IUserRepository {
+class UserRepository implements IUserRepository {
 }
 
 interface IMediaInventoryRepository {
@@ -53,7 +53,7 @@ interface IMediaInventoryRepository {
     +updateMediaItemAvailability(mediaInventoryRecord: MediaInventoryRecord): Promise<void>
 }
 
-class MediaInventoryRepository extends IMediaInventoryRepository {
+class MediaInventoryRepository implements IMediaInventoryRepository {
 }
 
 interface IMediaBorrowingConfigRepository {
@@ -61,7 +61,7 @@ interface IMediaBorrowingConfigRepository {
     +getMaximumBorrowingDurationInDays(branchId: number): Promise<number | null>
 }
 
-class MediaBorrowingConfigRepository extends IMediaBorrowingConfigRepository {
+class MediaBorrowingConfigRepository implements IMediaBorrowingConfigRepository {
 }
 
 interface IBranchRepository {
@@ -69,24 +69,18 @@ interface IBranchRepository {
     +getBranchLocationId(branchId: number): Promise<number | null>
 }
 
-class BranchRepository extends IBranchRepository {
+class BranchRepository implements IBranchRepository {
 }
 
-IDbContext --> IUnitOfWork : returns
-IUnitOfWork --> IDbConnection : uses
-IDbConnection --> IDbTransaction : creates
+IDbContext ..> IUnitOfWork : returns
+IUnitOfWork ..> IDbConnection : uses
+IDbConnection ..> IDbTransaction : creates
 
-IMediaBorrowingRepository <|-- MediaBorrowingRepository
-IUserRepository <|-- UserRepository
-IMediaInventoryRepository <|-- MediaInventoryRepository
-IMediaBorrowingConfigRepository <|-- MediaBorrowingConfigRepository
-IBranchRepository <|-- BranchRepository
-
-MediaBorrowingRepository --> IDbTransaction : uses getConnection()
-UserRepository --> IDbTransaction : uses getConnection()
-MediaInventoryRepository --> IDbTransaction : uses getConnection()
-MediaBorrowingConfigRepository --> IDbTransaction : uses getConnection()
-BranchRepository --> IDbTransaction : uses getConnection()
+MediaBorrowingRepository ..> IDbTransaction : uses getConnection()
+UserRepository ..> IDbTransaction : uses getConnection()
+MediaInventoryRepository ..> IDbTransaction : uses getConnection()
+MediaBorrowingConfigRepository ..> IDbTransaction : uses getConnection()
+BranchRepository ..> IDbTransaction : uses getConnection()
 
 note right of IDbContext
   Refer to media-borrowing-db-classes.puml

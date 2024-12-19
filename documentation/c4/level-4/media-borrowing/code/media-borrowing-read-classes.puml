@@ -19,11 +19,11 @@ interface IAmlBranchReaderRepository {
     +getBranchesByLocationId(locationId: number) : Promise<BranchReadModel[] | null>
 }
 
-class AmlBranchReader {
+class AmlBranchReader implements IAmlBranchReader {
     +getBranchesByLocationId(locationId: number) : Promise<Message<BranchReadModel[]>>
 }
 
-class AmlBranchReaderRepository {
+class AmlBranchReaderRepository implements IAmlBranchReaderRepository {
     +getBranchesByLocationId(locationId: number) : Promise<BranchReadModel[] | null>
 }
 
@@ -35,11 +35,11 @@ interface IMediaBorrowingReaderRepository {
     +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number) : Promise<MediaBorrowingRecordListingDetails[] | null>
 }
 
-class MediaBorrowingReader {
+class MediaBorrowingReader implements IMediaBorrowingReader {
     +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number) : Promise<Message<MediaBorrowingRecordListingDetails[]>>
 }
 
-class MediaBorrowingRecordReaderRepository {
+class MediaBorrowingRecordReaderRepository implements IMediaBorrowingReaderRepository {
     +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number) : Promise<MediaBorrowingRecordListingDetails[] | null>
 }
 
@@ -56,13 +56,8 @@ AmlBranchReader ..> IAmlBranchReaderRepository : uses
 AmlBranchReaderRepository ..> IDbConnectionFactory : uses
 AmlBranchReaderRepository ..> IDbConnection : uses
 
-AmlBranchReader --|> IAmlBranchReader
-AmlBranchReaderRepository --|> IAmlBranchReaderRepository
-
-MediaBorrowingReader --|> IMediaBorrowingReader
-MediaBorrowingRecordReaderRepository --|> IMediaBorrowingReaderRepository
+MediaBorrowingReader ..> IMediaBorrowingReaderRepository : uses
 MediaBorrowingRecordReaderRepository ..> IDbConnectionFactory : uses
 MediaBorrowingRecordReaderRepository ..> IDbConnection : uses
-MediaBorrowingReader ..> IMediaBorrowingReaderRepository : uses
 
 @enduml

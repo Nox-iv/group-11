@@ -99,14 +99,6 @@ class DbContextFactory implements IDbContextFactory {
     +create(): Promise<IDbContext>
 }
 
-IDbConnection <|.. DbConnection
-IDbConnectionFactory <|.. DbConnectionFactory
-IDbTransaction <|.. DbTransaction
-IUnitOfWorkFactory <|.. UnitOfWorkFactory
-IUnitOfWork <|.. UnitOfWork
-IDbContext <|.. DbContext
-IDbContextFactory <|.. DbContextFactory
-
 DbConnectionFactory ..> IDbConnection : create()
 UnitOfWorkFactory ..> IUnitOfWork : Create()
 UnitOfWorkFactory ..> IDbConnectionFactory : uses
