@@ -1,0 +1,45 @@
+@startuml
+
+interface IMediaSearchClient {
+    +searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult>
+    +getMediaById(mediaId: number): Promise<MediaSearchResult>
+}
+
+class MediaSearchClient implements IMediaSearchClient {
+    +searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult>
+    +getMediaById(mediaId: number): Promise<MediaSearchResult>
+}
+
+interface IMediaSearchLogic {
+    +searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult>>
+    +getSearchFilters(): Promise<IMediaSearchFilters>
+    +getMediaById(mediaId: number): Promise<MediaSearchResult>
+}
+
+class MediaSearchLogic implements IMediaSearchLogic {
+    +searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult>>
+    +getSearchFilters(): Promise<IMediaSearchFilters>
+    +getMediaById(mediaId: number): Promise<MediaSearchResult>
+}
+
+class MediaSearchApi {
+    +searchMedia(request: Request, response: Response): Promise<void>
+    +getSearchFilters(request: Request, response: Response): Promise<void>
+    +getMediaById(request: Request, response: Response): Promise<void>
+}
+
+class Message<T> {
+    +value: T | null
+    +errors: Error[]
+    +addError(error: Error)
+    +hasErrors(): boolean
+}
+
+note right of Message
+    Used for messaging
+end note
+
+MediaSearchLogic ..> IMediaSearchClient : uses
+MediaSearchApi ..> IMediaSearchLogic : uses
+
+@enduml 
