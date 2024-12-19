@@ -10,7 +10,19 @@ export const getMediaBorrowingRecords = async (userId: number, offset: number, l
             .slice(offset, offset + limit);
     }
 
-    const response = await fetch(`${import.meta.env.VITE_MEDIA_BORROWING_API_URL}/user/${userId}/records?offset=${offset}&limit=${limit}`);
+    const response = await fetch(`${import.meta.env.VITE_MEDIA_BORROWING_API_URL}/user/${userId}/records?offset=${offset}&limit=${limit}`, {
+        headers: {
+            'Accept': 'application/json',
+        }
+    });
 
-    return response.json();
+    const data = await response.json();
+
+    return data.map((record: MediaBorrowingRecordDetails) => ({
+        ...record,
+        branch: {
+            ...record.branch,
+            openingHours: new Map(record.branch.openingHours)
+        }
+    }))
 }

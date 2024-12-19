@@ -8,6 +8,7 @@ export const renewMedia = async (mediaBorrowingRecordId: number, renewedEndDate:
     const response = await fetch(`${import.meta.env.VITE_MEDIA_BORROWING_API_URL}/renew`, {
         method: 'POST',
         headers: {
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ mediaBorrowingRecordId, renewedEndDate }),

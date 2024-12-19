@@ -14,6 +14,7 @@ export const borrowMedia = async (
     const response = await fetch(`${import.meta.env.VITE_MEDIA_BORROWING_API_URL}/borrow`, {
         method: 'POST',
         headers: {
+            'Accept': 'application/json',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ mediaId, userId, branchId, startDate, endDate }),

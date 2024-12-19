@@ -61,8 +61,8 @@ export default function MediaBorrowingRecordListing() {
                                         [
                                             { label: 'Author', value: record.author },
                                             { label: 'Branch', value: record.branch.name },
-                                            { label: 'Start Date', value: record.startDate.toLocaleString('en-GB') },
-                                            { label: 'End Date', value: record.endDate.toLocaleString('en-GB') },
+                                            { label: 'Start Date', value: dayjs(record.startDate).format('DD/MM/YYYY HH:mm') },
+                                            { label: 'End Date', value: dayjs(record.endDate).format('DD/MM/YYYY HH:mm') },
                                         ]
                                     }
                                     onClick={() => {
@@ -86,7 +86,12 @@ export default function MediaBorrowingRecordListing() {
                                 }
                                 open={openRenewalModal}
                                 onSubmit={async (branchId: number, startDate: Date, endDate: Date) => {
-                                    return await renewMedia(selectedRecord.mediaBorrowingRecordId, endDate);
+                                    const result = await renewMedia(selectedRecord.mediaBorrowingRecordId, endDate);
+                                    if (result.success) {
+                                        selectedRecord.endDate = endDate;
+                                    }
+                                    
+                                    return result;
                                 }}
                                 onClose={() => {
                                     setOpenRenewalModal(false);

@@ -24,25 +24,21 @@ export default function Details() {
 
     const [openBorrowModals, setOpenBorrowModals] = useState<Record<number, boolean>>({});
 
-    useEffect(() => {
-        if (location.state?.media) {
-            setMediaDocument(location.state.media as MediaDocument);
-            setHasMediaData(true);
-        }
-    }, [location.state?.media]);
-
     const mediaQuery = useQuery({
         queryKey: ["media", mediaId],
         queryFn: () => getMediaById(Number(mediaId)),
-        enabled: !location.state?.media,
+        enabled: !location.state?.media && !hasMediaData,
     })
 
     useEffect(() => {
-        if (mediaQuery.data) {
+        if (location.state?.media) {
+            setMediaDocument(location.state.media as MediaDocument);
+        } else {
             setMediaDocument(mediaQuery.data);
-            setHasMediaData(true);
         }
-    }, [mediaQuery.data]);
+
+        setHasMediaData(true);
+    }, [location.state?.media, mediaQuery.data]);
 
     return (
         <Box>

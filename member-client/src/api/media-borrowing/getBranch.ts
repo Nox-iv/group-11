@@ -8,7 +8,7 @@ export const getBranchesByLocationId = async (locationId: number) : Promise<Bran
     }
 
     const response = await fetch(`${import.meta.env.VITE_MEDIA_BORROWING_API_URL}/location/${locationId}/branches`)
-    const data: BranchResponseModel[] = await response.json()
+    const { data }: { data: BranchResponseModel[] } = await response.json()
 
     return data.map((branch: BranchResponseModel) => ({
       ...branch,
