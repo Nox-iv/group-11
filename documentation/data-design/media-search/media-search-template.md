@@ -81,7 +81,7 @@ The `imageUrl` field is also stored as `text` but not indexed for search. A user
 
 ## Attributes
 
-- **index_patterns**: Elasticsearch applies template mappings by matching index names against pattern. In this case, the index pattern is `m_index`, which means if we create an index with the name `m_index`, the template will be applied. The media search index has been named `m-index`, so this template will be applied. To ensure that the template is applied, we need to make sure the template is present on the Elasticsearch cluster prior to creation of the index.
+- **index_patterns**: Elasticsearch applies template mappings by matching index names against pattern. In this case, the index pattern is `m_index`, which means if we create an index with the name `m_index`, the template will be applied. The media search index has been named `m-index`, so this template will be applied to the live index. To ensure that the template is applied, we need to make sure the template is present on the Elasticsearch cluster prior to creation of the index.
 
 - **mappings**: Defines the structure of the documents in the index and the behaviour of elasticsearch with regards to each field.
   - **properties**: Defintion of the document structure, in this case media items.
