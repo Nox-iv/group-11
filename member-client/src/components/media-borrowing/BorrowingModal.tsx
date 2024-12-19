@@ -239,7 +239,7 @@ export default function BorrowingModal(
           <Typography variant="body1">
             {resultModalProps.isSuccess 
               ? `Your ${renewal !== null ? 'renewal' : 'borrowing'} request has been confirmed.`
-              : `Your ${renewal !== null ? 'renewal' : 'borrowing'} request could not be processed. Please try again.}`
+              : `Your ${renewal !== null ? 'renewal' : 'borrowing'} request could not be processed. Please try again.`
             }
           </Typography>
           {!resultModalProps.isSuccess && resultModalProps.errors.length > 0 && (

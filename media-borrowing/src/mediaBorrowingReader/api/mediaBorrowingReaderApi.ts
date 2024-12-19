@@ -21,7 +21,6 @@ export class MediaBorrowingReaderApi {
 
             if (result.hasErrors()) {
                 res.status(400).json({ errors: result.errors });
-                return;
             }
 
             res.status(200).json(result.value);

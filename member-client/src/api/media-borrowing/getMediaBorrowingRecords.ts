@@ -17,12 +17,17 @@ export const getMediaBorrowingRecords = async (userId: number, offset: number, l
     });
 
     const data = await response.json();
+    console.log(data)
 
-    return data.map((record: MediaBorrowingRecordDetails) => ({
+    const res = data.map((record: MediaBorrowingRecordDetails) => ({
         ...record,
         branch: {
             ...record.branch,
             openingHours: new Map(record.branch.openingHours)
         }
     }))
+
+    console.log(res)
+
+    return res;
 }

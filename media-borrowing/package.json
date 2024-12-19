@@ -7,6 +7,7 @@
     "start": "npm run build && npx functions-framework --source=./build/index.js --target=mediaBorrowing",
     "dev": "NODE_ENV=development npm run build && npx functions-framework --source=./build/index.js --target=mediaBorrowing",
     "seed:dev": "ts-node dev-seed/mediaBorrowingDevSeed.ts",
+    "seed:dev:teardown": "ts-node dev-seed/mediaBorrowingDevTeardown.ts",
     "migrate:up": "node-pg-migrate up",
     "migrate:down": "node-pg-migrate down",
     "migrate:redo": "node-pg-migrate redo",

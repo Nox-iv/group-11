@@ -18,6 +18,6 @@ export const renewMedia = async (mediaBorrowingRecordId: number, renewedEndDate:
         return { success: true, errors: [] };
     } else {
         const body = await response.json();
-        return { success: false, errors: body.errors };
+        return { success: false, errors: body.errors.map((error: { name: string }) => error.name) };
     }
 }

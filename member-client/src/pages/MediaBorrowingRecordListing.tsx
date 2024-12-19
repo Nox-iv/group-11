@@ -48,7 +48,7 @@ export default function MediaBorrowingRecordListing() {
                         <Stack direction="column" spacing={2} margin={2}>
                             {data?.map(record => (
                                 <ResultCard
-                                    disabled={record.renewals >= record.branch.maxRenewals}
+                                    disabled={record.renewals >= record.branch.borrowingConfig.maxRenewals}
                                     key={record.mediaBorrowingRecordId.toString()}
                                     resultCardMedia={{
                                         imageUrl: record.assetUrl,
@@ -89,8 +89,9 @@ export default function MediaBorrowingRecordListing() {
                                     const result = await renewMedia(selectedRecord.mediaBorrowingRecordId, endDate);
                                     if (result.success) {
                                         selectedRecord.endDate = endDate;
+                                        selectedRecord.renewals++;
                                     }
-                                    
+
                                     return result;
                                 }}
                                 onClose={() => {
