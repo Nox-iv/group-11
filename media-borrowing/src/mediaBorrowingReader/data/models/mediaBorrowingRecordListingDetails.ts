@@ -8,6 +8,14 @@ export interface MediaBorrowingRecordListingDetails {
     title : string,
     author : string,
     assetUrl : string,
-    branchId : number,
-    branchName : string,
+    branch: {
+        branchId: number;
+        locationId: number;
+        name: string;
+        openingHours: [number, [number, number][]][]
+        borrowingConfig: {
+            maxRenewals: number;
+            maxBorrowingPeriod: number;
+        };
+    }
 }

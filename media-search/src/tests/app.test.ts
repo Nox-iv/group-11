@@ -7,7 +7,7 @@ import request from 'supertest';
 import { Server } from 'http';
 import { log } from 'console';
 import fs from 'fs';
-import { MediaSearchResult, MediaStock } from '../mediaSearch/data/documents/mediaSearchResult';
+import { MediaDocument, MediaStock } from '../mediaSearch/data/documents/mediaSearchResult';
 import { MediaSearchFilters } from '../mediaSearch/interfaces/data/MediaSearchFilters';
 
 describe('Media Search API Tests', () => {
@@ -68,8 +68,8 @@ describe('Media Search API Tests', () => {
 
             expect(response.status).toBe(200);
             // Only one result because the search term is an exact match
-            expect(response.body.length).toEqual(1);
-            expect(response.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.RED_DEAD_REDEMPTION_2]);
+            expect(response.body.data.length).toEqual(1);
+            expect(response.body.data[0]).toEqual(mediaSearchResultTestData[testDataIdx.RED_DEAD_REDEMPTION_2]);
         });
 
         test('can match multiple media items.', async () => {
@@ -82,9 +82,9 @@ describe('Media Search API Tests', () => {
 
             expect(response.status).toBe(200);
             // 'The' is a common word, so all test data is returned
-            expect(response.body.length).toBeGreaterThan(1);
+            expect(response.body.data.length).toBeGreaterThan(1);
             // Best match first
-            expect(response.body[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_LEGEND_OF_ZELDA]);
+            expect(response.body.data[0]).toEqual(mediaSearchResultTestData[testDataIdx.THE_LEGEND_OF_ZELDA]);
         });
 
         test('can page search results', async () => {
@@ -97,7 +97,7 @@ describe('Media Search API Tests', () => {
 
             expect(resultNoPagination.status).toBe(200);
             
-            const top4Results = resultNoPagination.body.slice(0, 4);
+            const top4Results = resultNoPagination.body.data.slice(0, 4);
 
             const firstPageResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -109,8 +109,8 @@ describe('Media Search API Tests', () => {
             });
 
             expect(firstPageResponse.status).toBe(200);
-            expect(firstPageResponse.body.length).toBe(2);
-            expect(firstPageResponse.body).toEqual(top4Results.slice(0, 2));
+            expect(firstPageResponse.body.data.length).toBe(2);
+            expect(firstPageResponse.body.data).toEqual(top4Results.slice(0, 2));
 
             const secondPageResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -122,8 +122,8 @@ describe('Media Search API Tests', () => {
             });
 
             expect(secondPageResponse.status).toBe(200);
-            expect(secondPageResponse.body.length).toBe(2);
-            expect(secondPageResponse.body).toEqual(top4Results.slice(2, 4)); 
+            expect(secondPageResponse.body.data.length).toBe(2);
+            expect(secondPageResponse.body.data).toEqual(top4Results.slice(2, 4)); 
         });
 
         test('can filter by media type', async () => {
@@ -137,9 +137,9 @@ describe('Media Search API Tests', () => {
 
             expect(noFilterResponse.status).toBe(200);
             // Verify that test data has examples of books.
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Book')).toBe(true);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => x.type === 'Book')).toBe(true);
             // Verify that test data has examples of movies.
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Movie')).toBe(true);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => x.type === 'Movie')).toBe(true);
 
             const filterResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -152,8 +152,8 @@ describe('Media Search API Tests', () => {
             });
             
             expect(filterResponse.status).toBe(200);
-            expect(filterResponse.body.length).toBeGreaterThan(1);
-            expect(filterResponse.body.some((x: MediaSearchResult) => x.type !== 'Book')).toBe(false);
+            expect(filterResponse.body.data.length).toBeGreaterThan(1);
+            expect(filterResponse.body.data.some((x: MediaDocument) => x.type !== 'Book')).toBe(false);
         });
 
         test('can filter by multiple media types, bringing back all media items with at least one filter match', async () => {
@@ -166,10 +166,10 @@ describe('Media Search API Tests', () => {
             });
 
             expect(noFilterResponse.status).toBe(200);
-            expect(noFilterResponse.body.length).toBeGreaterThan(1);
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Book')).toBe(true);
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Game')).toBe(true);
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.type === 'Movie')).toBe(true);
+            expect(noFilterResponse.body.data.length).toBeGreaterThan(1);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => x.type === 'Book')).toBe(true);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => x.type === 'Game')).toBe(true);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => x.type === 'Movie')).toBe(true);
 
             const responseOnlyBooksAndMovies = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -182,8 +182,8 @@ describe('Media Search API Tests', () => {
             }); 
 
             expect(responseOnlyBooksAndMovies.status).toBe(200);
-            expect(responseOnlyBooksAndMovies.body.length).toBeGreaterThan(1);
-            expect(responseOnlyBooksAndMovies.body.some((x: MediaSearchResult) => x.type !== 'Book' && x.type !== 'Movie')).toBe(false);
+            expect(responseOnlyBooksAndMovies.body.data.length).toBeGreaterThan(1);
+            expect(responseOnlyBooksAndMovies.body.data.some((x: MediaDocument) => x.type !== 'Book' && x.type !== 'Movie')).toBe(false);
         });
 
         test('can filter by release date range', async () => {
@@ -199,14 +199,14 @@ describe('Media Search API Tests', () => {
             });
 
             expect(noFilterResponse.status).toBe(200);
-            expect(noFilterResponse.body.length).toBeGreaterThan(1);
+            expect(noFilterResponse.body.data.length).toBeGreaterThan(1);
 
             // Verify that test data has examples above upper bound
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => new Date(x.releaseDate) > upperBound)).toBe(true);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => new Date(x.releaseDate) > upperBound)).toBe(true);
             // Verify that test data has examples below lower bound
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => new Date(x.releaseDate) < lowerBound)).toBe(true);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => new Date(x.releaseDate) < lowerBound)).toBe(true);
             // Verify that test data has examples within the bounds
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => new Date(x.releaseDate) >= lowerBound && new Date(x.releaseDate) <= upperBound)).toBe(true);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => new Date(x.releaseDate) >= lowerBound && new Date(x.releaseDate) <= upperBound)).toBe(true);
 
             const filterResponseUpperAndLowerBound = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -222,8 +222,8 @@ describe('Media Search API Tests', () => {
             });
 
             expect(filterResponseUpperAndLowerBound.status).toBe(200);
-            expect(filterResponseUpperAndLowerBound.body.length).toBeGreaterThanOrEqual(1);
-            expect(filterResponseUpperAndLowerBound.body.some((x: MediaSearchResult) => new Date(x.releaseDate) < lowerBound || new Date(x.releaseDate) > upperBound)).toBe(false);
+            expect(filterResponseUpperAndLowerBound.body.data.length).toBeGreaterThanOrEqual(1);
+            expect(filterResponseUpperAndLowerBound.body.data.some((x: MediaDocument) => new Date(x.releaseDate) < lowerBound || new Date(x.releaseDate) > upperBound)).toBe(false);
 
             const filterResponseUpperBound = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -238,8 +238,8 @@ describe('Media Search API Tests', () => {
             });
 
             expect(filterResponseUpperBound.status).toBe(200);
-            expect(filterResponseUpperBound.body.length).toBeGreaterThanOrEqual(1);
-            expect(filterResponseUpperBound.body.some((x: MediaSearchResult) => new Date(x.releaseDate) > upperBound)).toBe(false);
+            expect(filterResponseUpperBound.body.data.length).toBeGreaterThanOrEqual(1);
+            expect(filterResponseUpperBound.body.data.some((x: MediaDocument) => new Date(x.releaseDate) > upperBound)).toBe(false);
 
             const filterResponseLowerBound = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -254,8 +254,8 @@ describe('Media Search API Tests', () => {
             });
 
             expect(filterResponseLowerBound.status).toBe(200);
-            expect(filterResponseLowerBound.body.length).toBeGreaterThanOrEqual(1);
-            expect(filterResponseLowerBound.body.some((x: MediaSearchResult) => new Date(x.releaseDate) < lowerBound)).toBe(false);
+            expect(filterResponseLowerBound.body.data.length).toBeGreaterThanOrEqual(1);
+            expect(filterResponseLowerBound.body.data.some((x: MediaDocument) => new Date(x.releaseDate) < lowerBound)).toBe(false);
         });
 
         test('can filter by media genre (single & multiple)', async () => {
@@ -270,10 +270,10 @@ describe('Media Search API Tests', () => {
             });
 
             expect(noFilterResponse.status).toBe(200);
-            expect(noFilterResponse.body.length).toBeGreaterThanOrEqual(1);
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.genres.includes('Fantasy'))).toBe(true);
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.genres.includes('Sci-Fi'))).toBe(true);
-            expect(noFilterResponse.body.some((x: MediaSearchResult) => x.genres.includes('Adventure'))).toBe(true);
+            expect(noFilterResponse.body.data.length).toBeGreaterThanOrEqual(1);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => x.genres.includes('Fantasy'))).toBe(true);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => x.genres.includes('Sci-Fi'))).toBe(true);
+            expect(noFilterResponse.body.data.some((x: MediaDocument) => x.genres.includes('Adventure'))).toBe(true);
 
 
             const singleGenreResponse = await agent.post('/search')
@@ -287,8 +287,8 @@ describe('Media Search API Tests', () => {
             });
 
             expect(singleGenreResponse.status).toBe(200);
-            expect(singleGenreResponse.body.length).toBeGreaterThanOrEqual(1);
-            expect(singleGenreResponse.body.some((x: MediaSearchResult) => !x.genres.includes('Fantasy'))).toBe(false);
+            expect(singleGenreResponse.body.data.length).toBeGreaterThanOrEqual(1);
+            expect(singleGenreResponse.body.data.some((x: MediaDocument) => !x.genres.includes('Fantasy'))).toBe(false);
 
             let multipleGenreResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -301,8 +301,8 @@ describe('Media Search API Tests', () => {
             });
 
             expect(multipleGenreResponse.status).toBe(200);
-            expect(multipleGenreResponse.body.length).toBeGreaterThanOrEqual(1);
-            expect(multipleGenreResponse.body.some((x: MediaSearchResult) => !x.genres.includes('Fantasy') && !x.genres.includes('Sci-Fi'))).toBe(false);
+            expect(multipleGenreResponse.body.data.length).toBeGreaterThanOrEqual(1);
+            expect(multipleGenreResponse.body.data.some((x: MediaDocument) => !x.genres.includes('Fantasy') && !x.genres.includes('Sci-Fi'))).toBe(false);
         });
 
         test(`can only show media items available at a given location`, async () => {
@@ -317,14 +317,14 @@ describe('Media Search API Tests', () => {
             });
 
             expect(noFilterResponse.status).toBe(200);
-            expect(noFilterResponse.body.length).toBeGreaterThanOrEqual(1);
+            expect(noFilterResponse.body.data.length).toBeGreaterThanOrEqual(1);
             // Verify that test data contains examples of media items unavailable at given location.
-            expect(noFilterResponse.body.some((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount === 0))).toBe(true);
+            expect(noFilterResponse.body.data.some((x : MediaDocument) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount === 0))).toBe(true);
             // Verify that test data contains examples of media items available at given location.
-            expect(noFilterResponse.body.some((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount > 0))).toBe(true);
+            expect(noFilterResponse.body.data.some((x : MediaDocument) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount > 0))).toBe(true);
             // Verify that test data contains examples of media items available at other locations.
-            expect(noFilterResponse.body.some((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId !== locationId && y.stockCount > 0))).toBe(true);
-            expect(noFilterResponse.body.some((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId !== locationId && y.stockCount === 0))).toBe(true);
+            expect(noFilterResponse.body.data.some((x : MediaDocument) => x.mediaStock.some((y : MediaStock) => y.locationId !== locationId && y.stockCount > 0))).toBe(true);
+            expect(noFilterResponse.body.data.some((x : MediaDocument) => x.mediaStock.some((y : MediaStock) => y.locationId !== locationId && y.stockCount === 0))).toBe(true);
 
             const availableAtLocationResponse = await agent.post('/search')
             .set('Content-Type', 'application/json')
@@ -337,8 +337,8 @@ describe('Media Search API Tests', () => {
             });
 
             expect(availableAtLocationResponse.status).toBe(200);
-            expect(availableAtLocationResponse.body.length).toBeGreaterThanOrEqual(1);
-            expect(availableAtLocationResponse.body.every((x : MediaSearchResult) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount > 0))).toBe(true);
+            expect(availableAtLocationResponse.body.data.length).toBeGreaterThanOrEqual(1);
+            expect(availableAtLocationResponse.body.data.every((x : MediaDocument) => x.mediaStock.some((y : MediaStock) => y.locationId === locationId && y.stockCount > 0))).toBe(true);
         });
     });
 
@@ -481,6 +481,15 @@ describe('Media Search API Tests', () => {
             expect(response.status).toBe(200);
             expect(response.body.type).toEqual(Array.from(MediaSearchFilters.get('type')!));
             expect(response.body.genres).toEqual(Array.from(MediaSearchFilters.get('genres')!));
+        });
+    });
+
+    describe('200 GET /search/:mediaId', () => {
+        test('can get a media item by id', async () => {
+            const response = await agent.get(`/search/${mediaSearchResultTestData[testDataIdx.RED_DEAD_REDEMPTION_2].mediaId}`);
+
+            expect(response.status).toBe(200);
+            expect(response.body.data).toEqual(mediaSearchResultTestData[testDataIdx.RED_DEAD_REDEMPTION_2]);
         });
     });
 

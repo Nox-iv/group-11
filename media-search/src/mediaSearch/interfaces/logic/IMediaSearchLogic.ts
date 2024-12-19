@@ -12,11 +12,15 @@ export default class IMediaSearchLogic {
 
     }
 
-    public searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult[]>> {
+    public searchMedia(searchParams: MediaSearchLogicParams): Promise<Message<MediaSearchResult>> {
         throw new NotImplementedError();
     }
 
     public getSearchFilters(): Promise<IMediaSearchFilters> {
+        throw new NotImplementedError();
+    }
+
+    public getMediaById(mediaId: number): Promise<MediaSearchResult> {
         throw new NotImplementedError();
     }
 }

@@ -1,3 +1,5 @@
+import { BranchOpeningHoursEntity } from "../../../amlBranchReader/data/entities/BranchReadModelEntity";
+
 export interface MediaBorrowingRecordListingDetailsEntity {
     mediaborrowingrecordid : number,
     startdate : Date,
@@ -9,5 +11,10 @@ export interface MediaBorrowingRecordListingDetailsEntity {
     author : string,
     asseturl : string,
     branchid : number,
+    locationid : number,
     branchname : string,
+    openinghours : BranchOpeningHoursEntity[],
+    renewallimit : number,
+    maximumborrowingdurationindays : number
+    
 }

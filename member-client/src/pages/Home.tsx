@@ -1,107 +1,26 @@
-import Navigation from "../components/Navigation";
-import { Box, IconButton, Typography } from "@mui/material";
-import MultiCarousel from "../components/MultiCarousel";
+import { Box, CircularProgress, IconButton, Typography } from "@mui/material";
+import MultiCarousel from "../components/carousel/MultiCarousel";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 
+import { useQueries, useQuery } from "@tanstack/react-query";
+
+import { Link, useNavigate } from "react-router";
+
+import Navigation from "../components/navigation/Navigation";
+import { getSearchFilters } from "../api/media-search/getSearchFilters";
+import { getAllMediaWithType } from "../api/media-search/searchMedia";
+
 export default function Home() {
-    const books = [
-        {
-            title: 'Book 1',
-            author: 'Author 1',
-            description: 'Description 1',   
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Book 2',
-            author: 'Author 2',
-            description: 'Description 2',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Book 3',
-            author: 'Author 3',
-            description: 'Description 3',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Book 4',
-            author: 'Author 4',
-            description: 'Description 4',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Book 5',
-            author: 'Author 5',
-            description: 'Description 5',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-    ];
+    const navigate = useNavigate();
+    const searchFiltersQuery = useQuery({ queryKey: ['search', 'filters'], queryFn: getSearchFilters });
+    const typeFilters = searchFiltersQuery.data?.type;
 
-    const films = [
-        {
-            title: 'Film 1',
-            director: 'Director 1',
-            description: 'Description 1',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Film 2',
-            director: 'Director 2',
-            description: 'Description 2',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Film 3',
-            director: 'Director 3',
-            description: 'Description 3',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Film 4',
-            director: 'Director 4',
-            description: 'Description 4',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Film 5',
-            director: 'Director 5',
-            description: 'Description 5',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-    ];
-
-    const games = [
-        {
-            title: 'Game 1',
-            developer: 'Developer 1',
-            description: 'Description 1',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Game 2',
-            developer: 'Developer 2',
-            description: 'Description 2',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Game 3',
-            developer: 'Developer 3',
-            description: 'Description 3',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Game 4',
-            developer: 'Developer 4',
-            description: 'Description 4',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-        {
-            title: 'Game 5',
-            developer: 'Developer 5',
-            description: 'Description 5',
-            imgSrc: 'https://images.unsplash.com/photo-1502657877623-f66bf489d236?auto=format&fit=crop&w=800',
-        },
-    ];
+    const mediaQueries = useQueries({
+        queries: typeFilters?.map(type => ({
+            queryKey: ['media', type],
+            queryFn: () => getAllMediaWithType(type, 0, 10),
+        })) ?? [],
+    });
 
     return (
         <>
@@ -114,33 +33,34 @@ export default function Home() {
                     gap: 2,
                     padding: 2,
                 }}>
-                    <Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <Typography marginLeft={2} variant="h4">Books</Typography>
-                            <IconButton>
-                                <ArrowForwardIcon />
-                            </IconButton>
+                    {mediaQueries.some(query => query.isLoading) && (
+                        <CircularProgress />
+                    )}
+                    {mediaQueries.every(query => query.isSuccess) && !searchFiltersQuery.isLoading && (
+                        <Box>
+                            {typeFilters?.map((type, index) => (
+                                <Box>
+                                    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                                        <Typography marginLeft={2} variant="h4">{type}s</Typography>
+                                        <Link to={`/search?type=${type}`}>
+                                            <IconButton>
+                                                <ArrowForwardIcon />
+                                            </IconButton>
+                                        </Link>
+                                    </Box>
+                                    <MultiCarousel 
+                                        items={mediaQueries[index]?.data?.data?.map(media => ({
+                                            key: media.mediaId.toString(),
+                                            title: media.title,
+                                            description: media.description,
+                                            imgSrc: media.imageUrl,
+                                            onClick: () => navigate(`/details/${media.mediaId}`, { state: { media } })
+                                        })) ?? []} 
+                                    />
+                                </Box>
+                            ))}
                         </Box>
-                        <MultiCarousel items={books} />
-                    </Box>
-                    <Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <Typography marginLeft={2} variant="h4">Films</Typography>
-                            <IconButton>
-                                <ArrowForwardIcon />
-                            </IconButton>
-                        </Box>
-                        <MultiCarousel items={films} />
-                    </Box>
-                    <Box>
-                        <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <Typography marginLeft={2} variant="h4">Games</Typography>
-                            <IconButton>
-                                <ArrowForwardIcon />
-                            </IconButton>
-                        </Box>
-                        <MultiCarousel items={games} />
-                    </Box>
+                    )}
                 </Box>
             </Box>
         </>

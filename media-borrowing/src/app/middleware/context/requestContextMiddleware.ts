@@ -1,4 +1,4 @@
-import { Request, Response } from '@google-cloud/functions-framework';
+import { Request, Response } from 'express';
 import { RequestContext } from './requestContext';
 import { IDbContext } from '../../../db/interfaces/dbContext';
 import { DbContext } from '../../../db/dbContext';

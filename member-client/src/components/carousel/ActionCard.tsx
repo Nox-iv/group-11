@@ -10,24 +10,27 @@ export default function ActionCard({
   description,
   height = 300,
   width = 300,
+  onClick,
 }: {
   imgSrc: string;
   title: string;
   description: string;
   height?: number;
   width?: number;
+  onClick?: () => void;
 }) {
   return (
     <Card sx={{ margin: 2 }}>
-      <CardActionArea>
+      <CardActionArea onClick={onClick}>
         <CardMedia
           component="img"
           height={height}
           width={width}
           image={imgSrc}
-          alt="green iguana"
+          alt="media image"
+          sx={{ padding: "1em 1em 0 1em", objectFit: "contain" }}
         />
-        <CardContent>
+        <CardContent sx={{ height: 120 }}>
           <Typography gutterBottom variant="h5" component="div">
             {title}
           </Typography>

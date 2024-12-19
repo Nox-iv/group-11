@@ -1,4 +1,4 @@
-import { Response as GCloudResponse } from '@google-cloud/functions-framework';
+import { Response as GCloudResponse } from 'express';
 import { RequestParsingError } from "../errors/requestParsingError";
 
 export class HttpErrorHandler {

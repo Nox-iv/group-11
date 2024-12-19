@@ -8,7 +8,11 @@ export default class IMediaSearchClient {
     
     constructor() {}
 
-    public searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult[]> {
+    public searchMedia(searchParams: MediaSearchClientParams): Promise<MediaSearchResult> {
+        throw new NotImplementedError();
+    }
+
+    public getMediaById(mediaId: number): Promise<MediaSearchResult> {
         throw new NotImplementedError();
     }
 }

@@ -13,9 +13,12 @@ services:
       - PGPORT=5432
       - PGDATABASE=dev-db
       - DATABASE_URL=postgres://dev:dev@media-borrowing-db:5432/dev-db
+      - DATA_FILE_PATH=/usr/dev-seed/data.json
     depends_on:
       - postgres  
-    command: ${APP_COMMAND:-pnpm start}
+    command: ${APP_COMMAND:-pnpm run dev}
+    volumes:
+      - ../dev-seed:/usr/dev-seed
 
   postgres:
     container_name: media-borrowing-db

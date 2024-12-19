@@ -1,6 +1,6 @@
 import { Container } from 'typedi';
 import { MediaBorrowingApi } from '../../mediaBorrowing/api/mediaBorrowingApi';
-import { Request, Response } from '@google-cloud/functions-framework';
+import { Request, Response } from 'express';
 
 export async function borrowMediaItem(req: Request, res: Response) {
     const mediaBorrowingApi = Container.get(MediaBorrowingApi);

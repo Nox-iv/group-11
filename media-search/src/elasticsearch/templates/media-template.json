@@ -15,6 +15,7 @@
         "type": "text"
       },
       "description": {
+        "index": false,
         "type": "text"
       },
       "releaseDate": {

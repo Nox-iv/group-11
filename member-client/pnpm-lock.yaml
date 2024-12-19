@@ -23,6 +23,9 @@ dependencies:
   '@mui/x-date-pickers':
     specifier: ^7.23.1
     version: 7.23.1(@emotion/react@11.13.5)(@emotion/styled@11.13.5)(@mui/material@6.1.10)(@mui/system@6.1.10)(@types/react@18.3.14)(dayjs@1.11.13)(react-dom@18.3.1)(react@18.3.1)
+  '@tanstack/react-query':
+    specifier: ^5.62.7
+    version: 5.62.7(react@18.3.1)
   dayjs:
     specifier: ^1.11.13
     version: 1.11.13
@@ -43,6 +46,9 @@ devDependencies:
   '@eslint/js':
     specifier: ^9.15.0
     version: 9.16.0
+  '@types/node':
+    specifier: ^22.10.2
+    version: 22.10.2
   '@types/react':
     specifier: ^18.3.12
     version: 18.3.14
@@ -72,7 +78,7 @@ devDependencies:
     version: 8.17.0(eslint@9.16.0)(typescript@5.6.3)
   vite:
     specifier: ^6.0.1
-    version: 6.0.3
+    version: 6.0.3(@types/node@22.10.2)
 
 packages:
 
@@ -1122,6 +1128,19 @@ packages:
     dev: true
     optional: true
 
+  /@tanstack/query-core@5.62.7:
+    resolution: {integrity: sha512-fgpfmwatsrUal6V+8EC2cxZIQVl9xvL7qYa03gsdsCy985UTUlS4N+/3hCzwR0PclYDqisca2AqR1BVgJGpUDA==}
+    dev: false
+
+  /@tanstack/react-query@5.62.7(react@18.3.1):
+    resolution: {integrity: sha512-+xCtP4UAFDTlRTYyEjLx0sRtWyr5GIk7TZjZwBu4YaNahi3Rt2oMyRqfpfVrtwsqY2sayP4iXVCwmC+ZqqFmuw==}
+    peerDependencies:
+      react: ^18 || ^19
+    dependencies:
+      '@tanstack/query-core': 5.62.7
+      react: 18.3.1
+    dev: false
+
   /@types/babel__core@7.20.5:
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
     dependencies:
@@ -1161,6 +1180,12 @@ packages:
 
   /@types/json-schema@7.0.15:
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+    dev: true
+
+  /@types/node@22.10.2:
+    resolution: {integrity: sha512-Xxr6BBRCAOQixvonOye19wnzyDiUtTeqldOOmj3CkeblonbccA12PFwlufvRdrpjXxqnmUaeiU5EOA+7s5diUQ==}
+    dependencies:
+      undici-types: 6.20.0
     dev: true
 
   /@types/parse-json@4.0.2:
@@ -1330,7 +1355,7 @@ packages:
       '@babel/plugin-transform-react-jsx-source': 7.25.9(@babel/core@7.26.0)
       '@types/babel__core': 7.20.5
       react-refresh: 0.14.2
-      vite: 6.0.3
+      vite: 6.0.3(@types/node@22.10.2)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -2328,6 +2353,10 @@ packages:
     hasBin: true
     dev: true
 
+  /undici-types@6.20.0:
+    resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
+    dev: true
+
   /update-browserslist-db@1.1.1(browserslist@4.24.2):
     resolution: {integrity: sha512-R8UzCaa9Az+38REPiJ1tXlImTJXlVfgHZsglwBD/k6nj76ctsH1E3q4doGrukiLQd3sGQYu56r5+lo5r94l29A==}
     hasBin: true
@@ -2345,7 +2374,7 @@ packages:
       punycode: 2.3.1
     dev: true
 
-  /vite@6.0.3:
+  /vite@6.0.3(@types/node@22.10.2):
     resolution: {integrity: sha512-Cmuo5P0ENTN6HxLSo6IHsjCLn/81Vgrp81oaiFFMRa8gGDj5xEjIcEpf2ZymZtZR8oU0P2JX5WuUp/rlXcHkAw==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
     hasBin: true
@@ -2385,6 +2414,7 @@ packages:
       yaml:
         optional: true
     dependencies:
+      '@types/node': 22.10.2
       esbuild: 0.24.0
       postcss: 8.4.49
       rollup: 4.28.1

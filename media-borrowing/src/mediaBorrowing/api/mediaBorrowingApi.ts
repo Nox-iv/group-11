@@ -1,4 +1,4 @@
-import { Request, Response } from '@google-cloud/functions-framework';
+import { Request, Response } from 'express';
 import { IMediaBorrowingLogic } from '../interfaces/logic/mediaBorrowing/IMediaBorrowingLogic';
 import { IMediaRenewalLogic } from '../interfaces/logic/mediaRenewals/IMediaRenewalLogic';
 import { IMediaReturnLogic } from '../interfaces/logic/mediaReturns/IMediaReturnLogic';
@@ -22,7 +22,6 @@ export class MediaBorrowingApi {
             
             if (result.hasErrors()) {
                 res.status(400).json({ errors: result.errors.map(e => e.message) });
-                return;
             }
 
             res.status(200).json(result.value);
@@ -38,7 +37,6 @@ export class MediaBorrowingApi {
             
             if (result.hasErrors()) {
                 res.status(400).json({ errors: result.errors });
-                return;
             }
 
             res.status(200).json(result.value);
@@ -54,7 +52,6 @@ export class MediaBorrowingApi {
             
             if (result.hasErrors()) {
                 res.status(400).json({ errors: result.errors.map(e => e.message) });
-                return;
             }
 
             res.status(200).json(result.value);
