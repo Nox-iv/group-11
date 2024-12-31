@@ -1,0 +1,59 @@
+@startuml
+skinparam sequence {
+    ActorBorderColor Black
+    ActorBackgroundColor #A9DCDF
+    ParticipantBorderColor Black
+    ParticipantBackgroundColor #F8E1A0
+    LifeLineBorderColor Black
+    LifeLineBackgroundColor White
+    NoteBorderColor Black
+    NoteBackgroundColor #FEFECE
+    ArrowColor Black
+    ArrowThickness 1
+    ActivationBorderColor Black
+    ActivationBackgroundColor #B3E2CD
+}
+
+title UC-001: Automatic Scaling During Traffic Spikes
+
+actor User #A9DCDF
+participant LoadBalancer #F8E1A0
+participant ServerInstances #F8E1A0
+participant MonitoringService #F8E1A0
+participant AutoScalingService #F8E1A0
+actor SysAdmin as "System Administrator" #A9DCDF
+
+== Normal Operation ==
+
+loop Continuous Operation
+    User -> LoadBalancer: Send Request
+    LoadBalancer -> ServerInstances: Distributes Requests
+    ServerInstances --> User: Response
+end loop
+
+== ALT - Traffic Spike Detected ==
+
+loop
+MonitoringService -> MonitoringService: Monitor Resources
+end loop
+MonitoringService -> AutoScalingService: High Resource Usage Detected
+AutoScalingService -> AutoScalingService: Provision Additional Resources
+AutoScalingService -> ServerInstances: Add New Instances
+AutoScalingService -> LoadBalancer: Update Configuration
+AutoScalingService -> SysAdmin: Notify Scaling Up
+
+note over User, ServerInstances #FEFECE
+User experience remains normal.
+end note
+
+== ALT - Traffic Returns to Normal ==
+
+loop
+MonitoringService -> MonitoringService: Monitor Resources
+end loop
+MonitoringService -> AutoScalingService: Low Resource Usage Detected
+AutoScalingService -> ServerInstances: Remove Unused Instances
+AutoScalingService -> LoadBalancer: Update Configuration
+AutoScalingService -> SysAdmin: Notify Scaling Down
+
+@enduml

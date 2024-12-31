@@ -1,0 +1,81 @@
+@startuml
+
+class MediaBorrowingApi {
+    +borrowMediaItem(req: Request, res: Response): Promise<void>
+    +renewMediaItem(req: Request, res: Response): Promise<void>
+    +returnMediaItem(req: Request, res: Response): Promise<void>
+}
+
+class MediaBorrowingReaderApi {
+    +getMediaBorrowingRecordsForUser(req: Request, res: Response): Promise<void>
+}
+
+class AmlBranchReaderApi {
+    +getBranchesByLocationId(req: Request, res: Response): Promise<void>
+}
+
+class Message<T> {
+    +value: T
+    +errors: Error[]
+    +addError(error: Error): void
+    +addErrorsFromMessage(rmessage: Message<any>): void
+    +hasErrors(): boolean
+}
+
+note right of Message
+    used for message passing
+end note
+
+class HttpErrorHandler {
+    +handle(error: unknown, res: GCloudResponse): void
+}
+
+interface IMediaBorrowingLogic {
+    +BorrowMediaItem(mediaBorrowingRecord: MediaBorrowingRecord): Promise<Message<boolean>>
+}
+class MediaBorrowingLogic implements IMediaBorrowingLogic {
+    +BorrowMediaItem(mediaBorrowingRecord: MediaBorrowingRecord): Promise<Message<boolean>>
+}
+
+interface IMediaRenewalLogic {
+    +renewMediaItem(mediaRenewalRequest: MediaRenewalRequest): Promise<Message<boolean>>
+}
+
+class MediaRenewalLogic implements IMediaRenewalLogic {
+    +renewMediaItem(mediaRenewalRequest: MediaRenewalRequest): Promise<Message<boolean>>
+}
+
+interface IMediaReturnLogic {
+    +returnMediaItem(mediaBorrowingRecordId: number): Promise<Message<boolean>>
+}
+
+class MediaReturnLogic implements IMediaReturnLogic {
+    +returnMediaItem(mediaBorrowingRecordId: number): Promise<Message<boolean>>
+}
+
+interface IMediaBorrowingReader {
+    +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number): Promise<Message<MediaBorrowingRecordListingDetails[]>>
+}
+
+class MediaBorrowingReader implements IMediaBorrowingReader {
+    +getMediaBorrowingRecordsByUserId(userId: number, offset: number, limit: number): Promise<Message<MediaBorrowingRecordListingDetails[]>>
+}
+
+interface IAmlBranchReader {
+    +getBranchesByLocationId(locationId: number): Promise<Message<BranchReadModel[]>>
+}
+
+class AmlBranchReader implements IAmlBranchReader {
+    +getBranchesByLocationId(locationId: number): Promise<Message<BranchReadModel[]>>
+}
+
+MediaBorrowingApi ..> IMediaBorrowingLogic : uses
+MediaBorrowingApi ..> IMediaRenewalLogic : uses
+MediaBorrowingApi ..> IMediaReturnLogic : uses
+MediaBorrowingReaderApi ..> IMediaBorrowingReader : uses
+AmlBranchReaderApi ..> IAmlBranchReader : uses
+MediaBorrowingApi .up.> HttpErrorHandler : uses
+MediaBorrowingReaderApi .up.> HttpErrorHandler : uses
+AmlBranchReaderApi .up.> HttpErrorHandler : uses
+
+@enduml

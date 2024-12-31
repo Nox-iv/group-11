@@ -1,0 +1,1324 @@
+{
+  "locations": [
+    {
+      "locationId": 1,
+      "locationName": "Sheffield"
+    },
+    {
+      "locationId": 2,
+      "locationName": "Manchester"
+    }
+  ],
+  "mediaBorrowingConfigs": [
+    {
+      "mediaBorrowingConfigId": 1,
+      "renewalLimit": 1,
+      "maximumBorrowingDurationInDays": 14
+    },
+    {
+      "mediaBorrowingConfigId": 2,
+      "renewalLimit": 2,
+      "maximumBorrowingDurationInDays": 7
+    }
+  ],
+  "branches": [
+    {
+      "branchId": 1,
+      "locationId": 1,
+      "mediaBorrowingConfigId": 1,
+      "branchName": "Sheffield Central Library",
+      "address": "123 Central St, Sheffield",
+      "phoneNumber": "0114 123 4567",
+      "email": "central.sheffield@library.com"
+    },
+    {
+      "branchId": 2,
+      "locationId": 1,
+      "mediaBorrowingConfigId": 2,
+      "branchName": "Sheffield South Library",
+      "address": "456 South St, Sheffield",
+      "phoneNumber": "0114 765 4321",
+      "email": "south.sheffield@library.com"
+    },
+    {
+      "branchId": 3,
+      "locationId": 2,
+      "mediaBorrowingConfigId": 1,
+      "branchName": "Manchester Central Library",
+      "address": "789 Central Ave, Manchester",
+      "phoneNumber": "0161 123 4567",
+      "email": "central.manchester@library.com"
+    },
+    {
+      "branchId": 4,
+      "locationId": 2,
+      "mediaBorrowingConfigId": 2,
+      "branchName": "Manchester South Library",
+      "address": "321 South Ave, Manchester",
+      "phoneNumber": "0161 765 4321",
+      "email": "south.manchester@library.com"
+    }
+  ],
+  "branchOpeningHours": [
+    {
+      "branchOpeningHoursId": 1,
+      "branchId": 1,
+      "dayOfWeek": 0,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 2,
+      "branchId": 1,
+      "dayOfWeek": 0,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 3,
+      "branchId": 1,
+      "dayOfWeek": 1,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 4,
+      "branchId": 1,
+      "dayOfWeek": 1,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 5,
+      "branchId": 1,
+      "dayOfWeek": 2,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 6,
+      "branchId": 1,
+      "dayOfWeek": 2,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 7,
+      "branchId": 1,
+      "dayOfWeek": 3,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 8,
+      "branchId": 1,
+      "dayOfWeek": 3,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 9,
+      "branchId": 1,
+      "dayOfWeek": 4,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 10,
+      "branchId": 1,
+      "dayOfWeek": 4,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 11,
+      "branchId": 1,
+      "dayOfWeek": 5,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 12,
+      "branchId": 1,
+      "dayOfWeek": 5,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 13,
+      "branchId": 1,
+      "dayOfWeek": 6,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 14,
+      "branchId": 1,
+      "dayOfWeek": 6,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 15,
+      "branchId": 2,
+      "dayOfWeek": 0,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 16,
+      "branchId": 2,
+      "dayOfWeek": 1,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 17,
+      "branchId": 2,
+      "dayOfWeek": 2,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 18,
+      "branchId": 2,
+      "dayOfWeek": 3,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 19,
+      "branchId": 2,
+      "dayOfWeek": 4,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 20,
+      "branchId": 2,
+      "dayOfWeek": 5,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 21,
+      "branchId": 2,
+      "dayOfWeek": 6,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 22,
+      "branchId": 3,
+      "dayOfWeek": 0,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 23,
+      "branchId": 3,
+      "dayOfWeek": 0,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 24,
+      "branchId": 3,
+      "dayOfWeek": 1,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 25,
+      "branchId": 3,
+      "dayOfWeek": 1,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 26,
+      "branchId": 3,
+      "dayOfWeek": 2,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 27,
+      "branchId": 3,
+      "dayOfWeek": 2,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 28,
+      "branchId": 3,
+      "dayOfWeek": 3,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 29,
+      "branchId": 3,
+      "dayOfWeek": 3,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 30,
+      "branchId": 3,
+      "dayOfWeek": 4,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 31,
+      "branchId": 3,
+      "dayOfWeek": 4,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 32,
+      "branchId": 3,
+      "dayOfWeek": 5,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 33,
+      "branchId": 3,
+      "dayOfWeek": 5,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 34,
+      "branchId": 3,
+      "dayOfWeek": 6,
+      "openingTime": 0,
+      "closingTime": 200
+    },
+    {
+      "branchOpeningHoursId": 35,
+      "branchId": 3,
+      "dayOfWeek": 6,
+      "openingTime": 1000,
+      "closingTime": 2359
+    },
+    {
+      "branchOpeningHoursId": 36,
+      "branchId": 4,
+      "dayOfWeek": 0,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 37,
+      "branchId": 4,
+      "dayOfWeek": 1,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 38,
+      "branchId": 4,
+      "dayOfWeek": 2,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 39,
+      "branchId": 4,
+      "dayOfWeek": 3,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 40,
+      "branchId": 4,
+      "dayOfWeek": 4,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 41,
+      "branchId": 4,
+      "dayOfWeek": 5,
+      "openingTime": 900,
+      "closingTime": 1700
+    },
+    {
+      "branchOpeningHoursId": 42,
+      "branchId": 4,
+      "dayOfWeek": 6,
+      "openingTime": 900,
+      "closingTime": 1700
+    }
+  ],
+  "mediaTypes": [
+    {
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book"
+    },
+    {
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie"
+    },
+    {
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game"
+    }
+  ],
+  "media": [
+    {
+      "mediaId": 1,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg/220px-To_Kill_a_Mockingbird_%28first_edition_cover%29.jpg",
+      "description": "A novel about the serious issues of rape and racial inequality.",
+      "releaseDate": "1960-07-11",
+      "genres": ["Drama", "Mystery"]
+    },
+    {
+      "mediaId": 2,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "1984",
+      "author": "George Orwell",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/commons/0/04/Nineteen_Eighty-Four_cover_Soviet_1984.jpg",
+      "description": "A dystopian social science fiction novel and cautionary tale.",
+      "releaseDate": "1949-06-08",
+      "genres": ["Sci-Fi", "Political"]
+    },
+    {
+      "mediaId": 3,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/The_Great_Gatsby_Cover_1925_Retouched.jpg/220px-The_Great_Gatsby_Cover_1925_Retouched.jpg",
+      "description": "A story about the young and mysterious millionaire Jay Gatsby.",
+      "releaseDate": "1925-04-10",
+      "genres": ["Drama", "Romance"]
+    },
+    {
+      "mediaId": 4,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/PrideAndPrejudiceTitlePage.jpg/220px-PrideAndPrejudiceTitlePage.jpg",
+      "description": "A romantic novel that charts the emotional development of the protagonist, Elizabeth Bennet.",
+      "releaseDate": "1813-01-28",
+      "genres": ["Romance", "Drama"]
+    },
+    {
+      "mediaId": 5,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "The Hobbit",
+      "author": "J.R.R. Tolkien",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/4/4a/TheHobbit_FirstEdition.jpg",
+      "description": "A fantasy novel and children's book by J.R.R. Tolkien.",
+      "releaseDate": "1937-09-21",
+      "genres": ["Fantasy", "Adventure"]
+    },
+    {
+      "mediaId": 6,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "Fahrenheit 451",
+      "author": "Ray Bradbury",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/d/db/Fahrenheit_451_1st_ed_cover.jpg",
+      "description": "A dystopian novel presenting a future American society where books are outlawed.",
+      "releaseDate": "1953-10-19",
+      "genres": ["Sci-Fi", "Dystopian"]
+    },
+    {
+      "mediaId": 7,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "Moby-Dick",
+      "author": "Herman Melville",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Moby-Dick_FE_title_page.jpg/220px-Moby-Dick_FE_title_page.jpg",
+      "description": "The narrative of Captain Ahab's obsessive quest to kill the white whale, Moby Dick.",
+      "releaseDate": "1851-10-18",
+      "genres": ["Adventure", "Drama"]
+    },
+    {
+      "mediaId": 8,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "War and Peace",
+      "author": "Leo Tolstoy",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Tolstoy_-_War_and_Peace_-_first_edition%2C_1869.jpg/220px-Tolstoy_-_War_and_Peace_-_first_edition%2C_1869.jpg",
+      "description": "A literary work mixed with chapters on history and philosophy by the Russian author Leo Tolstoy.",
+      "releaseDate": "1869-01-01",
+      "genres": ["Historical", "Drama"]
+    },
+    {
+      "mediaId": 9,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "The Catcher in the Rye",
+      "author": "J.D. Salinger",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg/220px-The_Catcher_in_the_Rye_%281951%2C_first_edition_cover%29.jpg",
+      "description": "A story about teenage alienation and angst through the eyes of Holden Caulfield.",
+      "releaseDate": "1951-07-16",
+      "genres": ["Drama", "Coming-of-Age"]
+    },
+    {
+      "mediaId": 10,
+      "mediaTypeId": 1,
+      "mediaTypeName": "Book",
+      "title": "Brave New World",
+      "author": "Aldous Huxley",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/6/62/BraveNewWorld_FirstEdition.jpg",
+      "description": "A dystopian novel set in a futuristic World State, exploring themes of technology and control.",
+      "releaseDate": "1932-08-30",
+      "genres": ["Sci-Fi", "Dystopian"]
+    },
+    {
+      "mediaId": 11,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "Inception",
+      "author": "Christopher Nolan",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg",
+      "description": "A thief who steals corporate secrets through dream-sharing technology.",
+      "releaseDate": "2010-07-16",
+      "genres": ["Action", "Sci-Fi", "Thriller"]
+    },
+    {
+      "mediaId": 12,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "The Matrix",
+      "author": "The Wachowskis",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg",
+      "description": "A computer hacker learns about the true nature of his reality.",
+      "releaseDate": "1999-03-31",
+      "genres": ["Action", "Sci-Fi"]
+    },
+    {
+      "mediaId": 13,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "Interstellar",
+      "author": "Christopher Nolan",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg",
+      "description": "A team travels through a wormhole in space in an attempt to ensure humanity's survival.",
+      "releaseDate": "2014-11-07",
+      "genres": ["Adventure", "Drama", "Sci-Fi"]
+    },
+    {
+      "mediaId": 14,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "The Godfather",
+      "author": "Francis Ford Coppola",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg",
+      "description": "The aging patriarch of an organized crime dynasty transfers control to his reluctant son.",
+      "releaseDate": "1972-03-24",
+      "genres": ["Crime", "Drama"]
+    },
+    {
+      "mediaId": 15,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "Pulp Fiction",
+      "author": "Quentin Tarantino",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/Pulp_Fiction_%281994%29_poster.jpg/220px-Pulp_Fiction_%281994%29_poster.jpg",
+      "description": "The lives of two mob hitmen, a boxer, and others intertwine in four tales of violence and redemption.",
+      "releaseDate": "1994-10-14",
+      "genres": ["Crime", "Drama"]
+    },
+    {
+      "mediaId": 16,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "The Shawshank Redemption",
+      "author": "Frank Darabont",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg",
+      "description": "Two imprisoned men bond over a number of years, finding solace and eventual redemption.",
+      "releaseDate": "1994-09-23",
+      "genres": ["Drama"]
+    },
+    {
+      "mediaId": 17,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "Fight Club",
+      "author": "David Fincher",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg",
+      "description": "An insomniac office worker and a soap maker form an underground fight club.",
+      "releaseDate": "1999-10-15",
+      "genres": ["Drama", "Thriller"]
+    },
+    {
+      "mediaId": 18,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "The Dark Knight",
+      "author": "Christopher Nolan",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg",
+      "description": "Batman sets out to dismantle the remaining criminal organizations that plague Gotham.",
+      "releaseDate": "2008-07-18",
+      "genres": ["Action", "Crime", "Drama"]
+    },
+    {
+      "mediaId": 19,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "Forrest Gump",
+      "author": "Robert Zemeckis",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg",
+      "description": "The presidencies of Kennedy and Johnson through the eyes of an Alabama man.",
+      "releaseDate": "1994-07-06",
+      "genres": ["Drama", "Romance"]
+    },
+    {
+      "mediaId": 20,
+      "mediaTypeId": 2,
+      "mediaTypeName": "Movie",
+      "title": "The Lord of the Rings: The Fellowship of the Ring",
+      "author": "Peter Jackson",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/f/fb/Lord_Rings_Fellowship_Ring.jpg",
+      "description": "A meek Hobbit and eight companions set out on a journey to destroy the One Ring.",
+      "releaseDate": "2001-12-19",
+      "genres": ["Adventure", "Drama", "Fantasy"]
+    },
+    {
+      "mediaId": 21,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "The Legend of Zelda: Breath of the Wild",
+      "author": "Nintendo",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/c/c6/The_Legend_of_Zelda_Breath_of_the_Wild.jpg",
+      "description": "An open-world action-adventure game set in a vast land of Hyrule.",
+      "releaseDate": "2017-03-03",
+      "genres": ["Action", "Adventure", "Fantasy"]
+    },
+    {
+      "mediaId": 22,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "God of War",
+      "author": "Santa Monica Studio",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg",
+      "description": "Kratos embarks on a journey with his son in the realm of Norse gods.",
+      "releaseDate": "2018-04-20",
+      "genres": ["Action", "Adventure"]
+    },
+    {
+      "mediaId": 23,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "Minecraft",
+      "author": "Mojang Studios",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/thumb/b/b6/Minecraft_2024_cover_art.png/220px-Minecraft_2024_cover_art.png",
+      "description": "A sandbox game that allows players to build and explore infinite worlds.",
+      "releaseDate": "2011-11-18",
+      "genres": ["Adventure", "Sandbox"]
+    },
+    {
+      "mediaId": 24,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "Super Mario Odyssey",
+      "author": "Nintendo",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/8/8d/Super_Mario_Odyssey.jpg",
+      "description": "Mario travels across various worlds to rescue Princess Peach from Bowser.",
+      "releaseDate": "2017-10-27",
+      "genres": ["Action", "Adventure"]
+    },
+    {
+      "mediaId": 25,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "The Witcher 3: Wild Hunt",
+      "author": "CD Projekt",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/0/0c/Witcher_3_cover_art.jpg",
+      "description": "Geralt of Rivia searches for his adopted daughter on the run from the Wild Hunt.",
+      "releaseDate": "2015-05-19",
+      "genres": ["Action", "RPG", "Fantasy"]
+    },
+    {
+      "mediaId": 26,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "Red Dead Redemption 2",
+      "author": "Rockstar Games",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/4/44/Red_Dead_Redemption_II.jpg",
+      "description": "An outlaw aims to survive as the modern world encroaches upon the Wild West.",
+      "releaseDate": "2018-10-26",
+      "genres": ["Action", "Adventure", "Western"]
+    },
+    {
+      "mediaId": 27,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "Halo Infinite",
+      "author": "343 Industries",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/thumb/1/14/Halo_Infinite.png/220px-Halo_Infinite.png",
+      "description": "Master Chief returns to face Brand New Threats in the Halo universe.",
+      "releaseDate": "2021-12-08",
+      "genres": ["Action", "Shooter", "Sci-Fi"]
+    },
+    {
+      "mediaId": 28,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "Animal Crossing: New Horizons",
+      "author": "Nintendo",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/thumb/1/1f/Animal_Crossing_New_Horizons.jpg/220px-Animal_Crossing_New_Horizons.jpg",
+      "description": "Customize your own island paradise and interact with anthropomorphic animals.",
+      "releaseDate": "2020-03-20",
+      "genres": ["Simulation", "Casual"]
+    },
+    {
+      "mediaId": 29,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "Cyberpunk 2077",
+      "author": "CD Projekt",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/9/9f/Cyberpunk_2077_box_art.jpg",
+      "description": "An open-world, action-adventure story set in the megalopolis of Night City.",
+      "releaseDate": "2020-12-10",
+      "genres": ["Action", "RPG", "Sci-Fi"]
+    },
+    {
+      "mediaId": 30,
+      "mediaTypeId": 3,
+      "mediaTypeName": "Game",
+      "title": "Fortnite",
+      "author": "Epic Games",
+      "assetUrl": "https://upload.wikimedia.org/wikipedia/en/thumb/7/72/Fortnite_BR_cover.jpg/220px-Fortnite_BR_cover.jpg",
+      "description": "A battle royale game where players fight to be the last one standing.",
+      "releaseDate": "2017-07-25",
+      "genres": ["Action", "Battle Royale", "Shooter"]
+    }
+  ],
+  "mediaInventory": [
+    {
+      "mediaInventoryId": 1,
+      "mediaId": 1,
+      "branchId": 1,
+      "availability": 5
+    },
+    {
+      "mediaInventoryId": 2,
+      "mediaId": 1,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 3,
+      "mediaId": 1,
+      "branchId": 3,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 4,
+      "mediaId": 1,
+      "branchId": 4,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 5,
+      "mediaId": 2,
+      "branchId": 1,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 6,
+      "mediaId": 2,
+      "branchId": 2,
+      "availability": 4
+    },
+    {
+      "mediaInventoryId": 7,
+      "mediaId": 3,
+      "branchId": 1,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 8,
+      "mediaId": 3,
+      "branchId": 3,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 9,
+      "mediaId": 4,
+      "branchId": 1,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 10,
+      "mediaId": 4,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 11,
+      "mediaId": 5,
+      "branchId": 1,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 12,
+      "mediaId": 5,
+      "branchId": 2,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 13,
+      "mediaId": 6,
+      "branchId": 1,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 14,
+      "mediaId": 6,
+      "branchId": 3,
+      "availability": 4
+    },
+    {
+      "mediaInventoryId": 15,
+      "mediaId": 7,
+      "branchId": 3,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 16,
+      "mediaId": 7,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 17,
+      "mediaId": 8,
+      "branchId": 1,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 18,
+      "mediaId": 8,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 19,
+      "mediaId": 9,
+      "branchId": 3,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 20,
+      "mediaId": 9,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 21,
+      "mediaId": 10,
+      "branchId": 1,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 22,
+      "mediaId": 10,
+      "branchId": 2,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 23,
+      "mediaId": 11,
+      "branchId": 1,
+      "availability": 4
+    },
+    {
+      "mediaInventoryId": 24,
+      "mediaId": 11,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 25,
+      "mediaId": 11,
+      "branchId": 3,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 26,
+      "mediaId": 11,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 27,
+      "mediaId": 12,
+      "branchId": 1,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 28,
+      "mediaId": 12,
+      "branchId": 2,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 29,
+      "mediaId": 12,
+      "branchId": 3,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 30,
+      "mediaId": 12,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 31,
+      "mediaId": 13,
+      "branchId": 1,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 32,
+      "mediaId": 13,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 33,
+      "mediaId": 13,
+      "branchId": 3,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 34,
+      "mediaId": 13,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 35,
+      "mediaId": 14,
+      "branchId": 1,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 36,
+      "mediaId": 14,
+      "branchId": 2,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 37,
+      "mediaId": 14,
+      "branchId": 3,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 38,
+      "mediaId": 14,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 39,
+      "mediaId": 15,
+      "branchId": 1,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 40,
+      "mediaId": 15,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 41,
+      "mediaId": 15,
+      "branchId": 3,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 42,
+      "mediaId": 15,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 43,
+      "mediaId": 16,
+      "branchId": 1,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 44,
+      "mediaId": 16,
+      "branchId": 2,
+      "availability": 4
+    },
+    {
+      "mediaInventoryId": 45,
+      "mediaId": 16,
+      "branchId": 3,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 46,
+      "mediaId": 16,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 47,
+      "mediaId": 17,
+      "branchId": 1,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 48,
+      "mediaId": 17,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 49,
+      "mediaId": 17,
+      "branchId": 3,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 50,
+      "mediaId": 17,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 51,
+      "mediaId": 18,
+      "branchId": 1,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 52,
+      "mediaId": 18,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 53,
+      "mediaId": 18,
+      "branchId": 3,
+      "availability": 4
+    },
+    {
+      "mediaInventoryId": 54,
+      "mediaId": 18,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 55,
+      "mediaId": 19,
+      "branchId": 1,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 56,
+      "mediaId": 19,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 57,
+      "mediaId": 19,
+      "branchId": 3,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 58,
+      "mediaId": 19,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 59,
+      "mediaId": 20,
+      "branchId": 1,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 60,
+      "mediaId": 20,
+      "branchId": 2,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 61,
+      "mediaId": 21,
+      "branchId": 1,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 62,
+      "mediaId": 21,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 63,
+      "mediaId": 21,
+      "branchId": 3,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 64,
+      "mediaId": 21,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 65,
+      "mediaId": 22,
+      "branchId": 1,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 66,
+      "mediaId": 22,
+      "branchId": 2,
+      "availability": 4
+    },
+    {
+      "mediaInventoryId": 67,
+      "mediaId": 22,
+      "branchId": 3,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 68,
+      "mediaId": 22,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 69,
+      "mediaId": 23,
+      "branchId": 1,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 70,
+      "mediaId": 23,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 71,
+      "mediaId": 23,
+      "branchId": 3,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 72,
+      "mediaId": 23,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 73,
+      "mediaId": 24,
+      "branchId": 1,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 74,
+      "mediaId": 24,
+      "branchId": 2,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 75,
+      "mediaId": 24,
+      "branchId": 3,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 76,
+      "mediaId": 24,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 77,
+      "mediaId": 25,
+      "branchId": 1,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 78,
+      "mediaId": 25,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 79,
+      "mediaId": 25,
+      "branchId": 3,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 80,
+      "mediaId": 25,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 81,
+      "mediaId": 26,
+      "branchId": 1,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 82,
+      "mediaId": 26,
+      "branchId": 2,
+      "availability": 4
+    },
+    {
+      "mediaInventoryId": 83,
+      "mediaId": 26,
+      "branchId": 3,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 84,
+      "mediaId": 26,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 85,
+      "mediaId": 27,
+      "branchId": 1,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 86,
+      "mediaId": 27,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 87,
+      "mediaId": 27,
+      "branchId": 3,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 88,
+      "mediaId": 27,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 89,
+      "mediaId": 28,
+      "branchId": 1,
+      "availability": 1
+    },
+    {
+      "mediaInventoryId": 90,
+      "mediaId": 28,
+      "branchId": 2,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 91,
+      "mediaId": 28,
+      "branchId": 3,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 92,
+      "mediaId": 28,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 93,
+      "mediaId": 29,
+      "branchId": 1,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 94,
+      "mediaId": 29,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 95,
+      "mediaId": 29,
+      "branchId": 3,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 96,
+      "mediaId": 29,
+      "branchId": 4,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 97,
+      "mediaId": 30,
+      "branchId": 1,
+      "availability": 2
+    },
+    {
+      "mediaInventoryId": 98,
+      "mediaId": 30,
+      "branchId": 2,
+      "availability": 0
+    },
+    {
+      "mediaInventoryId": 99,
+      "mediaId": 30,
+      "branchId": 3,
+      "availability": 3
+    },
+    {
+      "mediaInventoryId": 100,
+      "mediaId": 30,
+      "branchId": 4,
+      "availability": 0
+    }
+  ],
+  "users": [
+    {
+      "userId": 1,
+      "locationId": 1,
+      "firstName": "Alice",
+      "lastName": "Smith",
+      "emailAddress": "alice.smith@sheffield.com",
+      "phoneNumber": "07700 900123"
+    },
+    {
+      "userId": 2,
+      "locationId": 2,
+      "firstName": "Bob",
+      "lastName": "Johnson",
+      "emailAddress": "bob.johnson@manchester.com",
+      "phoneNumber": "07700 900456"
+    }
+  ]
+}

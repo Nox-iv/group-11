@@ -1,0 +1,104 @@
+@startuml
+
+entity "Locations" {
+    * locationId : SERIAL
+    --
+    locationName : VARCHAR(255)
+}
+
+entity "Users" {
+    * userId : SERIAL
+    --
+    locationId : INT
+    firstName : VARCHAR(255)
+    lastName : VARCHAR(255)
+    emailAddress : VARCHAR(100)
+    phoneNumber : VARCHAR(15)
+}
+
+entity "Branches" {
+    * branchId : SERIAL
+    --
+    locationId : INT
+    mediaBorrowingConfigId : INT
+    branchName : VARCHAR(255)
+    address : TEXT
+    phoneNumber : VARCHAR(20)
+    email : VARCHAR(100)
+}
+
+entity "MediaTypes" {
+    * mediaTypeId : SERIAL
+    --
+    mediaTypeName : VARCHAR(255)
+}
+
+entity "Media" {
+    * mediaId : SERIAL
+    --
+    mediaTypeId : INT
+    title : VARCHAR(255)
+    author : VARCHAR(255)
+    assetUrl : VARCHAR(255)
+}
+
+entity "MediaInventory" {
+    * mediaInventoryId : SERIAL
+    --
+    mediaId : INT
+    branchId : INT
+    availability : INT
+}
+
+entity "MediaBorrowingConfig" {
+    * mediaBorrowingConfigId : SERIAL
+    --
+    renewalLimit : INT
+    maximumBorrowingDurationInDays : INT
+}
+
+entity "MediaBorrowingRecords" {
+    * mediaBorrowingRecordId : SERIAL
+    --
+    userId : INT
+    mediaId : INT
+    branchId : INT
+    startDate : TIMESTAMPTZ
+    endDate : TIMESTAMPTZ
+    renewals : INT
+}
+
+entity "ArchivedMediaBorrowingRecords" {
+    * archivedMediaBorrowingRecordId : SERIAL
+    --
+    mediaBorrowingRecordId : INT
+    userId : INT
+    mediaId : INT
+    branchId : INT
+    startDate : TIMESTAMPTZ
+    endDate : TIMESTAMPTZ
+    returnedDate : TIMESTAMPTZ
+    renewals : INT
+}
+
+entity "BranchOpeningHours" {
+    * branchOpeningHoursId : SERIAL
+    --
+    branchId : INT
+    dayOfWeek : INT
+    openingTime : INT
+    closingTime : INT
+}
+
+Users }|..|| Locations : "locationId"
+Branches }|..|| Locations : "locationId"
+Branches }|..|| MediaBorrowingConfig : "mediaBorrowingConfigId"
+Media }|..|| MediaTypes : "mediaTypeId"
+MediaInventory }|..|| Media : "mediaId"
+MediaInventory }|..|| Branches : "branchId"
+MediaBorrowingRecords }|..|| Users : "userId"
+MediaBorrowingRecords }|..|| Media : "mediaId"
+MediaBorrowingRecords }|..|| Branches : "branchId"
+BranchOpeningHours }|..|| Branches : "branchId"
+
+@enduml

@@ -1,0 +1,15 @@
+@startuml media-reservation
+
+left to right direction
+
+rectangle "<<service>> \n Media Reservation Service" {
+    (Reserve Media Item) as reserve_media
+    (Cancel Media Reservation) as cancel_reservation
+}
+
+:AML Member: as aml_member
+
+aml_member -- reserve_media
+aml_member -- cancel_reservation
+
+@enduml
