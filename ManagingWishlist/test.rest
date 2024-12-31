@@ -2,15 +2,15 @@
 GET http://localhost:3001/media
 
 ### Get a specific media
-GET http://localhost:3001/media/4
+GET http://localhost:3001/media/6
 
 ### Create a new wishlist
 POST http://localhost:5000/wishlists
 Content-Type: application/json
 
 {
-    "wishlistName": "Business",
-    "member_id": 8
+    "wishlistName": "Something",
+    "member_id": 5
 }
 
 ### Add media to wishlist
@@ -18,7 +18,7 @@ POST http://localhost:5000/wishlists/16/media
 Content-Type: application/json
 
 {
-    "media_id": 1
+    "media_id": 10
 }
 
 ### Remove media from a wishlist

@@ -1,0 +1,71 @@
+/* Import custom fonts if needed (for example, from Google Fonts) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Tailwind directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-50; /* Light gray background for better contrast */
+    @apply text-gray-900; /* Darker text for better readability */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 
+      'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Improve heading typography */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+
+  /* Improve default link styling */
+  a {
+    @apply text-blue-600 hover:text-blue-800 transition-colors;
+  }
+}
+
+/* Custom component classes that can be reused across your application */
+@layer components {
+  .page-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-sm p-6;
+  }
+
+  .button-primary {
+    @apply bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 
+    transition-colors duration-200 ease-in-out;
+  }
+
+  .button-secondary {
+    @apply bg-gray-100 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-200 
+    transition-colors duration-200 ease-in-out;
+  }
+
+  .input-field {
+    @apply w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 
+    focus:ring-blue-500;
+  }
+}
+
+/* Custom utilities for specific styling needs */
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+}
+
+/* Code block styling */
+code {
+  @apply font-mono bg-gray-100 px-1 py-0.5 rounded text-sm;
+}

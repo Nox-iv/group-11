@@ -1,14 +1,28 @@
 ### Get Member Subscription List
-GET http://localhost:5000/subscription/memberSub
+GET http://localhost:5001/subscription/memberSub
 Content-Type: application/json
 
-###
-
 ### Upgrade or Downgrade Member Subscription
-PUT http://localhost:5000/subscription/memberSub
+PUT http://localhost:5001/subscription/memberSub
 Content-Type: application/json
 
 {
-  "member_id": 2,           
-  "new_subid": 1           
+  "member_id": 1,           
+  "new_subid": 2           
 }
+
+### Get All Billing Records
+GET http://localhost:5001/subscription/memberSub/billing
+Content-Type: application/json
+
+### Get Billing History for Specific Subscription
+GET http://localhost:5001/subscription/memberSub/billing/12
+Content-Type: application/json
+
+### Update Billing Status
+PUT http://localhost:5001/subscription/memberSub/billing/7
+Content-Type: application/json
+
+{
+    "status": "completed"
+}       

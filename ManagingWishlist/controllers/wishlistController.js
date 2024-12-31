@@ -1,4 +1,4 @@
-const wishlistService = require("../services/wishlistService");
+const wishlistService = require("../logic/wishlistLogic");
 
 exports.createWishlist = async (req, res) => {
     try {

@@ -1,30 +1,67 @@
-### Retrieve susbscription type
-GET http://localhost:5000/subscription
+### Retrieve subscription type
+GET http://localhost:5000/subscription/types
 Content-Type: application/json
 
-### 
-POST  http://localhost:5000/subscription
+### Subscribe to library
+POST http://localhost:5000/subscription
 Content-Type: application/json
 
 {
-  "member_id": 1,
-  "subid": 2
+  "member_id": 9,
+  "subid": 1
 }
 
-###
+### Update subscription
 PUT http://localhost:5000/subscription
 Content-Type: application/json
 
 {
-  "member_id": 1,
+  "member_id": 45,
   "subid": 3
 }
 
-###
+### Remove subscription
 DELETE http://localhost:5000/subscription
 Content-Type: application/json
 
 {
   "member_id": 1,
   "subid": 3
+}
+
+ 
+
+### Get member's current subscription (new)
+GET http://localhost:5000/subscription/member/9
+
+### Get member's billing history (new)
+GET http://localhost:5000/subscription/billing/history/9
+
+### Process new payment (new)
+POST http://localhost:5000/subscription/billing
+Content-Type: application/json
+
+{
+  "member_id": 9,
+  "subscription_id": 6,
+  "payment_amount": 49.99,
+  "payment_method": "credit_card"
+}
+
+### Renew subscription (new)
+POST http://localhost:5000/subscription/renew
+Content-Type: application/json
+
+{
+  "member_id": 9,
+  "subid": 2
+}
+
+### Toggle auto-renewal (new)
+PUT http://localhost:5000/subscription/auto-renew
+Content-Type: application/json
+
+{
+  "memberId": 9,
+  "autoRenew": false
 }
