@@ -1,0 +1,54 @@
+{
+  "index_patterns": ["m_index"],
+  "mappings": {
+    "properties": {
+      "mediaId": {
+        "type": "keyword"
+      },
+      "title": {
+        "type": "text"
+      },
+      "type": {
+        "type": "keyword"
+      },
+      "author": {
+        "type": "text"
+      },
+      "description": {
+        "index": false,
+        "type": "text"
+      },
+      "releaseDate": {
+        "type": "date"
+      },
+      "imageUrl": {
+        "type": "text",
+        "index": false
+      },
+      "genres": {
+        "type": "keyword"
+      },
+      "mediaStock": {
+        "type": "nested",
+        "properties": {
+          "locationId": {
+            "type": "keyword"
+          },
+          "locationName": {
+            "type": "text"
+          },
+          "stockCount": {
+            "type": "integer"
+          }
+        }
+      }
+    }
+  },
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1
+  },
+  "aliases": {
+    "media": {}
+  }
+}

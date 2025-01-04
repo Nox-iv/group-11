@@ -1,0 +1,38 @@
+@startuml
+
+skinparam sequence {
+    ActorBorderColor Black
+    ActorBackgroundColor #A9DCDF
+    ParticipantBorderColor Black
+    ParticipantBackgroundColor #F8E1A0
+    LifeLineBorderColor Black
+    LifeLineBackgroundColor White
+    NoteBorderColor Black
+    NoteBackgroundColor #FEFECE
+    ArrowColor Black
+    ArrowThickness 1
+    ActivationBorderColor Black
+    ActivationBackgroundColor #B3E2CD
+}
+
+title UC-003: Wishlist Management
+
+actor AMLmember as Member
+participant FrontendApplication as FrontendApp
+participant WishlistController as wishlist_controller 
+participant WishlistLogic as wishlist_logic
+participant WishlistRepository as wishlist_repo
+
+Member -> FrontendApp: browses media
+FrontendApp --> Member: returns media details
+
+Member -> FrontendApp: selects media to add
+FrontendApp -> wishlist_controller: add media request
+wishlist_controller -> wishlist_logic: process add media request
+wishlist_logic -> wishlist_repo: validate and store media  
+wishlist_repo --> wishlist_logic: confirmation of media addition
+wishlist_logic --> wishlist_controller: media added successful
+wishlist_controller --> FrontendApp: notify media added to wishlist
+FrontendApp --> Member: display confirmation
+
+@enduml

@@ -1,0 +1,73 @@
+@startuml
+' Define skin parameters for styling
+skinparam sequence {
+    ActorBorderColor Black
+    ActorBackgroundColor #A9DCDF
+    ParticipantBorderColor Black
+    ParticipantBackgroundColor #F8E1A0
+    LifeLineBorderColor Black
+    LifeLineBackgroundColor White
+    NoteBorderColor Black
+    NoteBackgroundColor #FEFECE
+    ArrowColor Black
+    ArrowThickness 1
+    ActivationBorderColor Black
+    ActivationBackgroundColor #B3E2CD
+}
+
+title UC-004: Managing User Profiles and Roles
+
+' Define actors and participants
+actor User #A9DCDF
+participant "Frontend Application" as FrontendApp #F8E1A0
+participant "Authentication Service" as AuthService #F8E1A0
+participant "Validation Service" as ValidationService #F8E1A0
+participant "User Service" as UserService #F8E1A0
+participant "Audit Service" as AuditService #F8E1A0
+participant "Notification Service" as NotificationService #F8E1A0
+
+== User Updates Own Profile ==
+
+User -> FrontendApp: Enter Credentials
+activate FrontendApp
+alt Valid Credentials
+    FrontendApp -> AuthService: Authenticate(User Credentials)
+    activate AuthService
+    AuthService --> FrontendApp: ReturnAuthToken()
+    FrontendApp --> User: AccessGranted()
+else Invalid Credentials
+    FrontendApp -> AuthService: Authenticate(User Credentials)
+    AuthService --> FrontendApp: ReturnInvalid()
+    deactivate AuthService
+    FrontendApp --> User: Alert(InvalidCredentials)
+end
+
+User -> FrontendApp: Click on User Profile
+FrontendApp --> User: ReturnPage(UserManagementProfile)
+User -> FrontendApp: Update Profile Details
+activate ValidationService
+FrontendApp -> ValidationService: ValidateInputData(UserInput)
+
+alt Valid Input
+    ValidationService --> FrontendApp: ValidationSuccess()
+    activate UserService
+    FrontendApp -> UserService: UpdateProfile(Data)
+    activate AuditService
+    UserService -> AuditService: LogChange(ChangedData)
+    UserService --> FrontendApp: Alert(Success)
+    
+    FrontendApp --> User: Refresh(UpdatedData)
+    deactivate UserService
+else Invalid Input
+    ValidationService --> FrontendApp: ValidationFailure()
+    FrontendApp --> User: Alert(Failure)
+    deactivate ValidationService
+    FrontendApp -> AuditService: LogChange(AttemptedChangeData)
+    note over User
+    No data is updated.
+    end note
+    deactivate AuditService
+    deactivate FrontendApp
+end
+
+@enduml
