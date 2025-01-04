@@ -1,0 +1,50 @@
+@startuml
+title Wishlist Service Class Diagram
+
+class WishlistController {
+    -wishlistLogic: WishlistLogic
+    +createWishlist(request: Request, response: Response): Promise<void>
+    +addMediaToWishlist(request: Request, response: Response): Promise<void>
+    +removeMediaFromWishlist(request: Request, response: Response): Promise<void>
+    +deleteWishlist(request: Request, response: Response): Promise<void>
+}
+
+class WishlistLogic {
+    -wishlistRepo: WishlistRepository
+    +createWishlist(userId: number, mediaId: number): Promise<Message<boolean>>
+    +addMediaToWishlist(userId: number, mediaId: number): Promise<Message<boolean>>
+    +removeMediaFromWishlist(userId: number): Promise<Message<WishlistItem[]>>
+    +deleteWishlist(userId: number, mediaId: number): Promise<Message<boolean>>
+}
+
+class WishlistRepository {
+    -db: DatabaseConnection
+    +createWishlist(wishlistItem: WishlistItem): Promise<number>
+    +addMediaToWishlist(userId: number, mediaId: number): Promise<boolean>
+    +removeMediaFromWishlist(userId: number): Promise<WishlistItem[]>
+    +deleteWishlist(userId: number, mediaId: number): Promise<boolean>
+}
+
+class Message<T> {
+    +value: T
+    +errors: Error[]
+    +addError(error: Error): void
+    +hasErrors(): boolean
+}
+
+class WishlistItem {
+    +userId: number
+    +mediaId: number
+}
+
+note right of WishlistItem
+    Represents a media item
+    in a user's wishlist
+end note
+
+WishlistController --> WishlistLogic : uses
+WishlistLogic --> WishlistRepository : uses
+WishlistLogic --> Message : uses
+WishlistRepository --> WishlistItem : uses
+
+@enduml

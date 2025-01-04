@@ -1,0 +1,39 @@
+@startuml
+title Subscription Service Class Diagram
+
+class SubscriptionController {
+    -subscriptionLogic: SubscriptionLogic
+    +getSubscriptionTypes(request: Request, response: Response): Promise<void>
+    +subscribeToLibrary(request: Request, response: Response): Promise<void>
+    +updateSubscription(request: Request, response: Response): Promise<void>
+    +removeSubscription(request: Request, response: Response): Promise<void>
+}
+
+class SubscriptionLogic {
+    -subscriptionRepo: SubscriptionRepository
+    +getSubscriptionTypes(subId: number, subType: string): Promise<Message<boolean>>
+    +subscribeToLibrary(subId: number): Promise<Message<boolean>>
+    +updateSubscription(subId: number): Promise<Message<boolean>>
+    +removeSubscription(subId: number): Promise<Message<boolean>>
+}
+
+class SubscriptionRepository {
+    -db: DatabaseConnection
+    +getSubscriptionTypes(subscription: SubscriptionRecord): Promise<number>
+    +subscribeToLibrary(subscriptionId: number, status: string): Promise<boolean>
+    +updateSubscription(userId: number): Promise<SubscriptionRecord>
+    +removeSubscription(subscriptionId: number): Promise<SubscriptionRecord>
+}
+
+class Message<T> {
+    +value: T
+    +errors: Error[]
+    +addError(error: Error): void
+    +hasErrors(): boolean
+}
+
+SubscriptionController --> SubscriptionLogic : uses
+SubscriptionLogic --> SubscriptionRepository : uses
+SubscriptionLogic --> Message : uses
+
+@enduml

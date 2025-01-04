@@ -1,0 +1,24 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Component Diagram for Subscription Management Service
+
+Container_Boundary(AML_Media_Library, "AML Media Library") {
+    Component(SPA, "Single-Page Application", "React", "Frontend interface for members to manage their subscriptions.")
+    
+    Container_Boundary(Subscription_Service_Boundary, "Subscription Management Service") {
+        Component(Subscription_Api, "Subscription API", "Express (Node.js)", "Handles all subscription-related operations including routes and controllers for managing member subscriptions.")
+        
+        Component(Business_Core, "Subscription Core", "JavaScript", "Contains business logic and data access layer for subscription management.")
+        
+        Component(Database, "Subscription Database", "PostgreSQL", "Stores subscription and member data.")
+    }
+
+    Rel(SPA, Subscription_Api, "uses", "http")
+    Rel(Subscription_Api, Business_Core, "uses", "function calls")
+    Rel(Business_Core, Database, "uses", "tcp")
+
+}
+
+@enduml

@@ -1,31 +1,32 @@
 ### Get media lists
 GET http://localhost:3001/media
 
+
 ### Get a specific media
 GET http://localhost:3001/media/6
 
 ### Create a new wishlist
-POST http://localhost:5000/wishlists
+POST http://localhost:5002/wishlists
 Content-Type: application/json
 
 {
-    "wishlistName": "Something",
-    "member_id": 5
+    "wishlistName": "My Books",
+    "member_id": 1
 }
 
 ### Add media to wishlist
-POST http://localhost:5000/wishlists/16/media
+POST http://localhost:5002/wishlists/47/media
 Content-Type: application/json
 
 {
-    "media_id": 10
+    "media_id": 1
 }
 
 ### Remove media from a wishlist
-DELETE http://localhost:5000/wishlists/16/media/1
+DELETE http://localhost:5002/wishlists/16/media/1
 
 ### Delete a wishlist
-DELETE http://localhost:5000/wishlists/4
+DELETE http://localhost:5002/wishlists/5
 
 ### Get a specific wishlist with media details
-GET http://localhost:5000/wishlists/17
+GET http://localhost:5002/wishlists/17
