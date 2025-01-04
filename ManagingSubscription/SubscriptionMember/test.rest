@@ -7,7 +7,7 @@ POST http://localhost:5000/subscription
 Content-Type: application/json
 
 {
-  "member_id": 9,
+  "member_id": 12,
   "subid": 1
 }
 
@@ -15,7 +15,7 @@ Content-Type: application/json
 PUT http://localhost:5000/subscription
 Content-Type: application/json
 
-{
+{ 
   "member_id": 45,
   "subid": 3
 }
@@ -28,8 +28,6 @@ Content-Type: application/json
   "member_id": 1,
   "subid": 3
 }
-
- 
 
 ### Get member's current subscription (new)
 GET http://localhost:5000/subscription/member/9

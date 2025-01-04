@@ -1,0 +1,24 @@
+@startuml
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Component Diagram for Wishlist Service
+
+Container_Boundary(AML_Media_Library, "AML Media Library") {
+    Component(SPA, "Single-Page Application", "React", "Frontend interface for AML members to manage their wishlists.")
+    
+    Container_Boundary(Wishlist_Service_Boundary, "Wishlist Service") {
+        Component(Wishlist_Api, "Wishlist API", "Express (Node.js)", "Handles all wishlist-related operations including routes and controllers for managing wishlist items.")
+        
+        Component(Business_Core, "Wishlist Core", "JavaScript", "Contains business logic and data access layer for wishlist management.")
+        
+        Component(Database, "Wishlist Database", "PostgreSQL", "Stores wishlist and media reference data.")
+    }
+
+    Rel(SPA, Wishlist_Api, "uses", "http")
+    Rel(Wishlist_Api, Business_Core, "uses", "function calls")
+    Rel(Business_Core, Database, "uses", "tcp")
+
+}
+
+@enduml
