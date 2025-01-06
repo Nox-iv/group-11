@@ -31,7 +31,7 @@ const {
   
   exports.verifyEmail = async (req, res) => {
     try {
-      const code = req.params.code;
+      const code = req.query;
       const result = await verifyEmail(code);
       res.json({ success: true, ...result });
     } catch (err) {
@@ -43,7 +43,7 @@ const {
   exports.checkUserExists = async (req, res) => {
     try {
       const { userId } = req.query;
-      const exists = await checkUserExists(userId);
+      const exists = await checkUserExists(req, userId);
       res.json({ exists });
     } catch (err) {
       console.error(err);
@@ -54,7 +54,7 @@ const {
   exports.getUserEmail = async (req, res) => {
     try {
       const { userId } = req.query;
-      const clientEmail = await getUserEmailById(null, userId); // pass null or new client if needed
+      const clientEmail = await getUserEmailById(req, null, userId);
       if (!clientEmail) return res.status(404).json({ error: 'User not found' });
       res.json({ email: clientEmail });
     } catch (err) {
@@ -66,7 +66,7 @@ const {
   exports.getUserRole = async (req, res) => {
     try {
       const { userId } = req.query;
-      const role = await getUserRole(userId);
+      const role = await getUserRole(req, userId);
       if (!role) return res.status(404).json({ error: 'User not found' });
       res.json({ role });
     } catch (err) {
@@ -78,7 +78,7 @@ const {
   exports.getUserDetails = async (req, res) => {
     try {
       const { userId } = req.query;
-      const details = await getUserDetails(userId);
+      const details = await getUserDetails(req, userId);
       res.json(details);
     } catch (err) {
       console.error(err);
