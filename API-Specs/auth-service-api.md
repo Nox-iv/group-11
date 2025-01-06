@@ -1,16 +1,16 @@
-# Auth Service API Endpoints
+# Auth Service API Documentation
 
 ## 1) Register Credentials
 
-**Endpoint**:  
-POST /register
-
-**Description**:  
-Registers new credentials for a user.
+**Endpoint**: POST /register  
+**Description**: Registers new credentials for a user  
 
 **Headers**:  
-- x-api-key: [Auth service API key] (required)  
-- Content-Type: application/json  
+- `x-api-key`: [Auth service API key] (required)  
+- `Content-Type`: application/json  
+
+**Query Parameters**:  
+(None)  
 
 **Request Body**:
 ```json
@@ -20,8 +20,8 @@ Registers new credentials for a user.
 }
 ```
 
-**Response**:
-- Status: 200 OK
+**Response**:  
+- Status: 200 OK  
 - Body:
 ```json
 {
@@ -34,47 +34,48 @@ Registers new credentials for a user.
 
 ## 2) Check Password
 
-**Endpoint**:  
-POST /check-password
-
-**Description**:  
-Checks if the provided password matches the existing credentials.
+**Endpoint**: POST /check-password  
+**Description**: Checks user credentials  
 
 **Headers**:  
-- x-api-key: [Auth service API key] (required)  
-- Content-Type: application/json  
+- `x-api-key`: [Auth service API key] (required)  
+- `Content-Type`: application/json  
+
+**Query Parameters**:  
+(None)  
 
 **Request Body**:
 ```json
 {
   "userId": "123",
-  "password": "userPassword"
+  "password": "setPasswordHere"
 }
 ```
 
-**Response**:
-- Status: 200 OK
+**Response**:  
+- Status: 200 OK  
 - Body:
 ```json
 {
-  "valid": true
+  "valid": true,
+  "token": "jwtStringIfValid"
 }
 ```
-(If invalid, it will return { "valid": false })
+(If invalid, returns 401 status with { "valid": false })
 
 ---
 
 ## 3) Update User Password
 
-**Endpoint**:  
-PATCH /update-user-password
-
-**Description**:  
-Updates a user's password if the old password is correct.
+**Endpoint**: PATCH /update-user-password  
+**Description**: Updates the user’s password if the old one is correct  
 
 **Headers**:  
-- x-api-key: [Auth service API key] (required)  
-- Content-Type: application/json  
+- `x-api-key`: [Auth service API key] (required)  
+- `Content-Type`: application/json  
+
+**Query Parameters**:  
+(None)
 
 **Request Body**:
 ```json
@@ -85,8 +86,8 @@ Updates a user's password if the old password is correct.
 }
 ```
 
-**Response**:
-- Status: 200 OK
+**Response**:  
+- Status: 200 OK  
 - Body:
 ```json
 {

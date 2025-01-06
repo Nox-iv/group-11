@@ -72,3 +72,12 @@ exports.updateUserPassword = async (userId, oldPassword, newPassword) => {
     client.release();
   }
 };
+
+exports.getUserRole = async (userId) => {
+  const res = await pool.query(`
+    SELECT user_role FROM users WHERE user_id = $1
+  `, [userId]);
+  if (res.rowCount === 0) return null;
+
+  return res.rows[0].user_role;
+}
