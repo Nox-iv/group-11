@@ -1,10 +1,7 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const authRoutes = require('./routes/auth-routes');
+const functions = require('@google-cloud/functions-framework');
+const app = require('./app');
 
-const app = express();
-app.use(bodyParser.json());
-
-app.use('/', authRoutes);
-
-module.exports = app;
+// Export the HTTP-triggered function
+functions.http('authService', (req, res) => {
+  app(req, res);
+});
