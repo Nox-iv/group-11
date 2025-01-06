@@ -1,24 +1,22 @@
 {
-  "name": "userservice",
+  "name": "user-service",
   "version": "1.0.0",
   "description": "",
-  "main": "entry-point.js",
+  "main": "index.js",
   "scripts": {
-    "start": "env-cmd -r ./.env.json functions-framework --target=handleUserRequests --port=9090"
+    "start": "env-cmd -r ./.env.json functions-framework --target=userService --port=8080"
   },
+  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/functions-framework": "^3.4.2",
+    "@google-cloud/functions-framework": "^3.4.5",
     "axios": "^1.7.9",
-    "bcrypt": "^5.1.1",
-    "body-parser": "^1.20.3",
+    "dotenv": "^16.4.7",
     "env-cmd": "^10.1.0",
     "express": "^4.21.2",
     "joi": "^17.13.3",
-    "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.16",
-    "pg": "^8.13.1",
-    "yaml2json": "^1.0.2"
+    "pg": "^8.13.1"
   }
 }
