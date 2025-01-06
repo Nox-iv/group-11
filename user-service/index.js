@@ -1,17 +1,7 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const userRoutes = require('./routes/user-routes');
+const functions = require('@google-cloud/functions-framework');
+const app = require('./app');
 
-const app = express();
-app.use(bodyParser.json());
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
+// Wrap the Express app into the Cloud Function
+functions.http('userService', (req, res) => {
+  app(req, res);
 });
-
-app.use('/' , userRoutes);
-
-module.exports = app;
