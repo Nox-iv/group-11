@@ -1,15 +1,16 @@
-# User Service API Endpoints
+# User Service API Documentation
 
 ## 1) Register User
 
-**Endpoint**:  
-POST /register
-
-**Description**:  
-Registers a new user in the system.
+**Endpoint**: POST /register  
+**Description**: Registers a new user  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)  
+- `Content-Type`: application/json  
+
+**Query Parameters**:  
+(None)
 
 **Request Body**:
 ```json
@@ -20,16 +21,17 @@ Registers a new user in the system.
   "phone": "1234567890",
   "branchLocationID": 1,
   "dob": "1990-01-01",
-  "password": "password123"
+  "password": "secretPassword"
 }
 ```
 
-**Response**:
-- Status: 200 OK
+**Response**:  
+- Status: 200 OK  
 - Body:
 ```json
 {
-  "userId": 1
+  "success": true,
+  "userId": 123
 }
 ```
 
@@ -37,102 +39,159 @@ Registers a new user in the system.
 
 ## 2) Login User
 
-**Endpoint**:  
-POST /login
-
-**Description**:  
-Logs a user in by checking credentials.
+**Endpoint**: POST /login  
+**Description**: Checks user credentials and logs them in  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)  
+- `Content-Type`: application/json  
+
+**Query Parameters**:  
+(None)
 
 **Request Body**:
 ```json
 {
   "email": "john.doe@example.com",
-  "password": "password123"
+  "password": "secretPassword"
 }
 ```
 
-**Response**:
-- Status: 200 OK
+**Response**:  
+- Status: 200 OK  
 - Body:
 ```json
 {
-  "userId": 1,
-  "branchLocationId": 10,
+  "success": true,
+  "userId": 123,
+  "branchLocationId": 1,
   "role": "user",
   "message": "Login successful"
 }
 ```
-(If not verified or wrong password, an appropriate error or message is returned.)
+(If invalid, returns an error message.)
 
 ---
 
 ## 3) Verify Email
 
-**Endpoint**:  
-POST /verify
-
-**Description**:  
-Verifies a user’s email given a verification code.
+**Endpoint**: GET /verify-email
+**Description**: Verifies a user’s email  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)
 
-**Request Body**:
-```json
-{
-  "code": "ABC123"
-}
-```
+**Query Parameters**:  
+- `verificationCode` (string, required): The code of the user to verify
 
-**Response**:
-- Status: 200 OK
+**Request Body**:  
+(None)
+
+**Response**:  
+- Status: 200 OK  
 - Body:
 ```json
 {
+  "success": true,
   "message": "Email verified successfully"
 }
 ```
-(If code is invalid or expired, an error message is returned.)
+(If the code is invalid or expired, an error is returned.)
 
 ---
 
 ## 4) Check User Exists
 
-**Endpoint**:  
-GET /user-exists/:userId
-
-**Description**:  
-Checks if a user exists by user ID.
+**Endpoint**: GET /check-user-exists  
+**Description**: Checks if a user exists by ID  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)
+- `Authorization`: Bearer [token] (required)
+
+**Query Parameters**:  
+- `userId` (string, required): The ID of the user to check
+
+**Request Body**:  
+(None)
 
 **Response**:
-- Status: 200 OK
+- Status: 200 OK  
 - Body:
 ```json
-true
+{
+  "exists": true
+}
 ```
 (Or false if user not found.)
 
 ---
 
-## 5) Get User Details
+## 5) Get User Email
 
-**Endpoint**:  
-GET /users/:userId
-
-**Description**:  
-Retrieves user details by user ID.
+**Endpoint**: GET /get-user-email  
+**Description**: Retrieves a user’s email  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)
+- `Authorization`: Bearer [token] (required)
 
-**Response**:
-- Status: 200 OK
+**Query Parameters**:  
+- `userId` (string, required)
+
+**Request Body**:  
+(None)
+
+**Response**:  
+- Status: 200 OK  
+- Body:
+```json
+{
+  "email": "user@example.com"
+}
+```
+(Or 404 if user not found.)
+
+---
+
+## 6) Get User Role
+
+**Endpoint**: GET /get-user-role  
+**Description**: Retrieves a user’s role  
+
+**Headers**:  
+- `x-api-key`: [User service API key] (required)
+- `Authorization`: Bearer [token] (required)
+
+**Query Parameters**:  
+- `userId` (string, required)
+
+**Response**:  
+- Status: 200 OK  
+- Body:
+```json
+{
+  "role": "admin"
+}
+```
+(Or 404 if user not found.)
+
+---
+
+## 7) Get User Details
+
+**Endpoint**: GET /get-user-details  
+**Description**: Retrieves user details  
+
+**Headers**:  
+- `x-api-key`: [User service API key] (required)
+- `Authorization`: Bearer [token] (required)
+
+**Query Parameters**:  
+- `userId` (string, required)
+
+**Response**:  
+- Status: 200 OK  
 - Body:
 ```json
 {
@@ -149,23 +208,22 @@ Retrieves user details by user ID.
 
 ---
 
-## 6) Update Self
+## 8) Update Self
 
-**Endpoint**:  
-PATCH /users/:userId
-
-**Description**:  
-User updates their own profile details. The user can only update their fname, sname, and phone.
+**Endpoint**: PATCH /user-update-self  
+**Description**: User updates their own profile details  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)
+- `Authorization`: Bearer [token] (required)
 
 **Request Body**:
 ```json
 {
+  "userId": 123,
   "fname": "John",
   "sname": "Doe",
-  "phone": "0987654321"
+  "phone": "1234567890"
 }
 ```
 
@@ -174,28 +232,28 @@ User updates their own profile details. The user can only update their fname, sn
 - Body:
 ```json
 {
+  "success": true,
   "message": "User updated successfully"
 }
 ```
 
 ---
 
-## 7) Update Password
+## 9) Update User Password
 
-**Endpoint**:  
-PATCH /users/:userId/password
-
-**Description**:  
-Allows the user to change their password (via the auth service).
+**Endpoint**: PATCH /user-update-password  
+**Description**: Updates the user’s password if the old one is correct  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)
+- `Authorization`: Bearer [token] (required)
 
 **Request Body**:
 ```json
 {
-  "oldPassword": "oldPass123",
-  "newPassword": "newPass123"
+  "userId": 123,
+  "oldPassword": "oldPass",
+  "newPassword": "newPass"
 }
 ```
 
@@ -204,29 +262,33 @@ Allows the user to change their password (via the auth service).
 - Body:
 ```json
 {
+  "success": true,
   "message": "Password updated successfully"
 }
 ```
-(If the old password is wrong, an error is returned.)
+(If the old password is wrong, responds with an error message.)
 
 ---
 
-## 8) Admin Update User
+## 10) Admin Update User
 
-**Endpoint**:  
-PATCH /admin/users/:targetUserId
-
-**Description**:  
-Admin updates a user’s info (role, branch location, email, etc.).
+**Endpoint**: PATCH /admin-update-user  
+**Description**: Admin updates a user’s info  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)
+- `Authorization`: Bearer [token] (required)
 
 **Request Body**:
 ```json
 {
+  "adminId": 456,
+  "targetUserId": 123,
   "fname": "Jane",
   "sname": "Smith",
+  "phone": "9876543210",
+  "branchLocationID": 2,
+  "dob": "1992-12-31",
   "role": "admin",
   "email": "jane.smith@example.com"
 }
@@ -237,44 +299,67 @@ Admin updates a user’s info (role, branch location, email, etc.).
 - Body:
 ```json
 {
+  "success": true,
   "message": "User updated by admin"
 }
 ```
 
 ---
 
-## 9) Get All Users
+## 11) Get All Users
 
-**Endpoint**:  
-GET /admin/users
-
-**Description**:  
-Admin retrieves all users in the system.
+**Endpoint**: GET /get-all-users  
+**Description**: Admin retrieves all users  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)
+- `Authorization`: Bearer [token] (required)
+
+**Query Parameters**:
+- `adminId` (string, required)
 
 **Response**:
 - Status: 200 OK
-- Body: An array of user objects.
+- Body: 
+```json
+[
+  {
+    "user_id": 1,
+    "first_name": "User1",
+    "last_name": "Example",
+    "email": "user1@example.com"
+  },
+  ...
+]
+```
 
 ---
 
-## 10) Get All Users (Paginated)
+## 12) Get All Users Paginated
 
-**Endpoint**:  
-GET /admin/users/paginated?limit=10&offset=0
-
-**Description**:  
-Admin retrieves a paginated list of users.
+**Endpoint**: GET /get-all-users-paginated  
+**Description**: Admin retrieves a paginated list of users  
 
 **Headers**:  
-- Content-Type: application/json
+- `x-api-key`: [User service API key] (required)
+- `Authorization`: Bearer [token] (required)
 
 **Query Parameters**:  
-- limit (number)  
-- offset (number)
+- `adminId` (string, required)  
+- `limit` (number, required)  
+- `offset` (number, required)
 
 **Response**:
-- Status: 200 OK
-- Body: An array of user objects limited and offset by the query parameters.
+- Status: 200 OK  
+- Body: 
+```json
+[
+  {
+    "user_id": 1,
+    "first_name": "User1",
+    "last_name": "Example",
+    "email": "user1@example.com"
+  },
+  ...
+]
+```

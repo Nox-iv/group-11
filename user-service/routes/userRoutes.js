@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const authMiddleware = require('../middleware/authMiddleware');
 
 const apiKeyMiddleware = (req, res, next) => {
   const apiKey = req.headers['x-api-key'];
@@ -15,6 +16,8 @@ router.use(apiKeyMiddleware);
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 router.get('/verify-email/:code', userController.verifyEmail);
+
+router.use(authMiddleware);
 
 router.get('/check-user-exists', userController.checkUserExists);
 router.get('/get-user-email', userController.getUserEmail);

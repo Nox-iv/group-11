@@ -58,8 +58,8 @@ exports.loginUser = async ({ email, password }) => {
     const { user_id, is_verified, branch_location_id, user_role } = userRes.rows[0];
 
     // Check password with Auth service
-    const { valid } = await checkPassword(user_id, password);
-    if (!valid) throw new Error('Invalid email or password');
+    const authRes = await checkPassword(user_id, password);
+    if (!authRes.valid) throw new Error('Invalid email or password');
 
     if (!is_verified) {
       // Check if code is valid or expired
@@ -90,6 +90,7 @@ exports.loginUser = async ({ email, password }) => {
       userId: user_id,
       branchLocationId: branch_location_id,
       role: user_role,
+      token: authRes.token,
       message: 'Login successful',
     };
   } finally {
@@ -142,23 +143,35 @@ exports.verifyEmail = async (code) => {
   }
 };
 
-exports.checkUserExists = async (userId) => {
+exports.checkUserExists = async (req, userId) => {
+  if (req.user.role !== 'admin') {
+    throw new Error('Access denied');
+  }
   const { rows } = await pool.query(`SELECT user_id FROM users WHERE user_id = $1`, [userId]);
   return rows.length > 0;
 };
 
-async function getUserEmailById(client, userId) {
+async function getUserEmailById(req, client, userId) {
+  if (req.user.role !== 'admin') {
+    throw new Error('Access denied');
+  }
   const { rows } = await client.query(`SELECT email FROM users WHERE user_id = $1`, [userId]);
   return rows[0]?.email;
 }
 exports.getUserEmailById = getUserEmailById;
 
-exports.getUserRole = async (userId) => {
+exports.getUserRole = async (req, userId) => {
+  if (req.user.role !== 'admin') {
+    throw new Error('Access denied');
+  }
   const { rows } = await pool.query(`SELECT user_role FROM users WHERE user_id = $1`, [userId]);
   return rows[0]?.user_role;
 };
 
-exports.getUserDetails = async (userId) => {
+exports.getUserDetails = async (req, userId) => {
+  if (req.user.role !== 'admin') {
+    throw new Error('Access denied');
+  }
   const { rows } = await pool.query(`
     SELECT first_name, last_name, email, phone, branch_location_id, date_of_birth, user_role, is_verified
     FROM users
@@ -183,6 +196,9 @@ exports.userUpdateSelf = async (userId, { fname, sname, phone }) => {
 };
 
 exports.userUpdatePassword = async (userId, oldPassword, newPassword) => {
+  if (req.user.role !== 'admin') {
+    throw new Error('Access denied');
+  }
   const result = await updatePassword(userId, oldPassword, newPassword);
   if (!result.success) throw new Error(result.message || 'Password update failed');
   return { message: 'Password updated successfully' };
