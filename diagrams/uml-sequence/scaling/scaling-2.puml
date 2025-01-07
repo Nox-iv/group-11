@@ -29,7 +29,6 @@ loop Every Quarter
 	ReportingService -> AutoScalingService: Provision Additional Resources
 	AutoScalingService -> ServerInstances: Add New Instances
 	AutoScalingService -> LoadBalancer: Update Configuration
-	AutoScalingService -> SysAdmin: Notify Scaling Up
 end loop
 
 == ALT - Scaling Up Failure ==

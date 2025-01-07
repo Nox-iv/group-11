@@ -21,7 +21,6 @@ participant LoadBalancer #F8E1A0
 participant ServerInstances #F8E1A0
 participant MonitoringService #F8E1A0
 participant AutoScalingService #F8E1A0
-actor SysAdmin as "System Administrator" #A9DCDF
 
 == Normal Operation ==
 
@@ -40,7 +39,6 @@ MonitoringService -> AutoScalingService: High Resource Usage Detected
 AutoScalingService -> AutoScalingService: Provision Additional Resources
 AutoScalingService -> ServerInstances: Add New Instances
 AutoScalingService -> LoadBalancer: Update Configuration
-AutoScalingService -> SysAdmin: Notify Scaling Up
 
 note over User, ServerInstances #FEFECE
 User experience remains normal.
@@ -54,6 +52,5 @@ end loop
 MonitoringService -> AutoScalingService: Low Resource Usage Detected
 AutoScalingService -> ServerInstances: Remove Unused Instances
 AutoScalingService -> LoadBalancer: Update Configuration
-AutoScalingService -> SysAdmin: Notify Scaling Down
 
 @enduml
