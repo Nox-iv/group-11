@@ -2,16 +2,15 @@
 const { Pool } = require('pg');
 const wishlistRepo = require('./wishlistRepo');
 
-// Mock the pg Pool
-jest.mock('pg', () => {
-    const mockPool = {
-        query: jest.fn(),
-    };
-    return { Pool: jest.fn(() => mockPool) };
-});
+// First, let's mock the entire database module
+jest.mock('../db', () => ({
+    query: jest.fn(),
+    on: jest.fn(),  
+    connect: jest.fn()  
+}));
 
 // Get the mock pool instance
-const pool = new Pool();
+const pool = require('../db');
 
 describe('Wishlist Repository Tests', () => {
     // Clear mock data before each test
@@ -30,19 +29,14 @@ describe('Wishlist Repository Tests', () => {
                 }]
             };
 
-            // Setup the mock to return our data
             pool.query.mockResolvedValue(mockWishlist);
-
-            // Call the repository function
             const result = await wishlistRepo.createWishlist('My Reading List', 123);
 
-            // Verify the query was called with correct SQL and parameters
             expect(pool.query).toHaveBeenCalledWith(
                 'INSERT INTO wishlists (name, member_id) VALUES ($1, $2) RETURNING *',
                 ['My Reading List', 123]
             );
 
-            // Verify we got back what we expected
             expect(result).toEqual(mockWishlist);
         });
     });
