@@ -1,0 +1,64 @@
+@startuml
+skinparam class {
+  BackgroundColor #FFFFFF
+  ArrowColor #000000
+  BorderColor #000000
+}
+
+title User Service Class Diagram
+
+class UserController {
+    -userService: UserService
+    +registerUser(email: string, password: string): Promise<UserRegistrationResponse>
+    +loginUser(email: string, password: string): Promise<LoginResponse>
+    +updateUser(userId: string, userData: UserData): Promise<void>
+}
+
+class UserService {
+    -userRepository: UserRepository
+    -emailService: EmailService
+    +createUser(email: string, password: string): UserRegistrationResponse
+    +loginUser(email: string, password: string): LoginResponse
+    +updateUserProfile(userId: string, userData: UserData): void
+}
+
+class UserRepository {
+    +createUser(email: string, passwordHash: string): User
+    +getUserByEmail(email: string): User
+    +updateUser(userId: string, data: UserData): void
+}
+
+class EmailService {
+    +sendVerificationEmail(email: string, code: string): void
+    +sendNotificationEmail(email: string, message: string): void
+}
+
+class User {
+    -userId: string
+    -email: string
+    -passwordHash: string
+    -isVerified: boolean
+}
+
+class UserRegistrationResponse {
+    +userId: string
+    +message: string
+}
+
+class LoginResponse {
+    +userId: string
+    +token: string
+    +message: string
+}
+
+class UserData {
+    +email: string
+    +password?: string
+    +otherFields?: any
+}
+
+UserController --> UserService : uses
+UserService --> UserRepository : database ops
+UserService --> EmailService : sends emails
+UserRepository --> User : manages
+@enduml
