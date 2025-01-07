@@ -1,73 +1,54 @@
 @startuml
-' Define skin parameters for styling
 skinparam sequence {
-    ActorBorderColor Black
-    ActorBackgroundColor #A9DCDF
-    ParticipantBorderColor Black
-    ParticipantBackgroundColor #F8E1A0
-    LifeLineBorderColor Black
-    LifeLineBackgroundColor White
-    NoteBorderColor Black
-    NoteBackgroundColor #FEFECE
-    ArrowColor Black
-    ArrowThickness 1
-    ActivationBorderColor Black
-    ActivationBackgroundColor #B3E2CD
+  ActorBorderColor Black
+  ActorBackgroundColor #A9DCDF
+  ParticipantBorderColor Black
+  ParticipantBackgroundColor #F8E1A0
+  LifeLineBorderColor Black
+  LifeLineBackgroundColor White
+  NoteBorderColor Black
+  NoteBackgroundColor #FEFECE
+  ArrowColor Black
+  ArrowThickness 1
+  ActivationBorderColor Black
+  ActivationBackgroundColor #B3E2CD
 }
 
-title UC-004: Managing User Profiles and Roles
+title UC-004: Managing Users Profiles and Roles
 
-' Define actors and participants
-actor User #A9DCDF
-participant "Frontend Application" as FrontendApp #F8E1A0
-participant "Authentication Service" as AuthService #F8E1A0
-participant "Validation Service" as ValidationService #F8E1A0
-participant "User Service" as UserService #F8E1A0
-participant "Audit Service" as AuditService #F8E1A0
-participant "Notification Service" as NotificationService #F8E1A0
+actor "Library Member / Admin / Branch Librarian" as Actor
+participant "User Interface" as UI
+participant "System" as SYS
 
-== User Updates Own Profile ==
+Actor -> UI: Login and Navigate to Profile Management
+UI -> SYS: Validate Credentials
+SYS --> UI: Authentication Success
 
-User -> FrontendApp: Enter Credentials
-activate FrontendApp
-alt Valid Credentials
-    FrontendApp -> AuthService: Authenticate(User Credentials)
-    activate AuthService
-    AuthService --> FrontendApp: ReturnAuthToken()
-    FrontendApp --> User: AccessGranted()
-else Invalid Credentials
-    FrontendApp -> AuthService: Authenticate(User Credentials)
-    AuthService --> FrontendApp: ReturnInvalid()
-    deactivate AuthService
-    FrontendApp --> User: Alert(InvalidCredentials)
+UI -> SYS: Initiate Profile Update (fields + role?)
+alt Is Actor Updating Own Profile?
+  note over Actor,UI: Library Member updates own details
+  alt Valid Input
+    SYS -> SYS: Check business rules (own profile update)
+    SYS -> SYS: Apply changes
+    SYS --> UI: Success (updated profile)
+  else Invalid Input
+    SYS --> UI: Error message (correct the data)
+  end
+else Admin (or Librarian) Updating Another User
+  note over Actor,UI: Admin updates details/role of another user
+  SYS -> SYS: Check admin/librarian permissions
+  alt Sufficient Permissions
+    alt Valid Input
+      SYS -> SYS: Apply changes and log action
+      SYS --> UI: Success (updated user data)
+    else Invalid Input
+      SYS --> UI: Error message (correct the data)
+    end
+  else Insufficient Permissions
+    SYS --> UI: Error message (request denied)
+  end
 end
 
-User -> FrontendApp: Click on User Profile
-FrontendApp --> User: ReturnPage(UserManagementProfile)
-User -> FrontendApp: Update Profile Details
-activate ValidationService
-FrontendApp -> ValidationService: ValidateInputData(UserInput)
-
-alt Valid Input
-    ValidationService --> FrontendApp: ValidationSuccess()
-    activate UserService
-    FrontendApp -> UserService: UpdateProfile(Data)
-    activate AuditService
-    UserService -> AuditService: LogChange(ChangedData)
-    UserService --> FrontendApp: Alert(Success)
-    
-    FrontendApp --> User: Refresh(UpdatedData)
-    deactivate UserService
-else Invalid Input
-    ValidationService --> FrontendApp: ValidationFailure()
-    FrontendApp --> User: Alert(Failure)
-    deactivate ValidationService
-    FrontendApp -> AuditService: LogChange(AttemptedChangeData)
-    note over User
-    No data is updated.
-    end note
-    deactivate AuditService
-    deactivate FrontendApp
-end
+UI --> Actor: Operation Result (profile/role updated or error)
 
 @enduml
