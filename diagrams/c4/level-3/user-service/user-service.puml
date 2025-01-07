@@ -1,0 +1,20 @@
+@startuml
+!include https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+TITLE User Service - C4 Level 3
+
+Boundary(userBoundary, "User Service") {
+  Component(userController, "UserController", "Nodejs", "Handles user profile and account-related requests.")
+  Component(userService, "UserService", "Nodejs", "Business logic for user data management.")
+  Component(userRepository, "UserRepository", "Nodejs", "Manages CRUD operations on user data.")
+}
+
+SystemDb(userDB, "UserDB", "PostgreSQL", "Stores user-related information.")
+
+Rel(userController, userService, "GET/POST", "REST/JSON")
+Rel(userService, userRepository, "Uses", "SQL")
+Rel(userRepository, userDB, "Reads/Writes", "SQL")
+
+@enduml
