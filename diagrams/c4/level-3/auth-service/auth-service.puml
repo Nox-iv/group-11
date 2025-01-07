@@ -1,0 +1,22 @@
+@startuml
+!include https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+TITLE Auth Service - C4 Level 3
+
+Boundary(authBoundary, "Auth Service") {
+  Component(authController, "AuthController", "Nodejs", "Handles user authentication requests (login, logout, etc).")
+  Component(authenticationService, "AuthenticationService", "Nodejs", "Validates credentials and authorizes users.")
+  Component(tokenService, "TokenService", "Nodejs", "Creates and validates JWT tokens.")
+  Component(userRepository, "UserRepository", "Nodejs", "Provides user persistence operations.")
+}
+
+SystemDb(authDB, "AuthDB", "PostgreSQL", "Stores user credentials, tokens, etc.")
+
+Rel(authController, authenticationService, "Authenticates via", "REST/JSON")
+Rel(authenticationService, userRepository, "Reads/Writes user data", "SQL")
+Rel(authenticationService, tokenService, "Generates/Validates tokens")
+Rel(userRepository, authDB, "Reads/Writes", "SQL")
+
+@enduml
