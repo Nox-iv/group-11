@@ -120,6 +120,7 @@ exports.verifyEmail = async (code) => {
 
     if (!codeRes.rowCount) throw new Error('Invalid verification code');
     const { user_id, expires_at, used } = codeRes.rows[0];
+    console.log(codeRes.rows);
 
     if (used) throw new Error('Code already used');
     if (new Date() > new Date(expires_at)) {
@@ -144,34 +145,22 @@ exports.verifyEmail = async (code) => {
 };
 
 exports.checkUserExists = async (req, userId) => {
-  if (req.user.role !== 'admin') {
-    throw new Error('Access denied');
-  }
   const { rows } = await pool.query(`SELECT user_id FROM users WHERE user_id = $1`, [userId]);
   return rows.length > 0;
 };
 
 async function getUserEmailById(req, client, userId) {
-  if (req.user.role !== 'admin') {
-    throw new Error('Access denied');
-  }
   const { rows } = await client.query(`SELECT email FROM users WHERE user_id = $1`, [userId]);
   return rows[0]?.email;
 }
 exports.getUserEmailById = getUserEmailById;
 
 exports.getUserRole = async (req, userId) => {
-  if (req.user.role !== 'admin') {
-    throw new Error('Access denied');
-  }
   const { rows } = await pool.query(`SELECT user_role FROM users WHERE user_id = $1`, [userId]);
   return rows[0]?.user_role;
 };
 
 exports.getUserDetails = async (req, userId) => {
-  if (req.user.role !== 'admin') {
-    throw new Error('Access denied');
-  }
   const { rows } = await pool.query(`
     SELECT first_name, last_name, email, phone, branch_location_id, date_of_birth, user_role, is_verified
     FROM users
@@ -205,7 +194,7 @@ exports.userUpdatePassword = async (userId, oldPassword, newPassword) => {
 };
 
 exports.adminUpdateUser = async (adminId, targetUserId, updates) => {
-  const adminRole = await this.getUserRole(adminId);
+  const adminRole = await this.getUserRole("", adminId);
   if (adminRole !== 'admin') throw new Error('Access denied');
   
   const fields = [];
@@ -221,6 +210,7 @@ exports.adminUpdateUser = async (adminId, targetUserId, updates) => {
   if (!fields.length) return { message: 'No fields to update' };
   const setClause = fields.map((f, i) => `${f} = $${i + 1}`).join(', ');
   
+  console.log(setClause, values, targetUserId);
   await pool.query(`UPDATE users SET ${setClause}, updated_at = now() WHERE user_id = $${fields.length + 1}`, [...values, targetUserId]);
   return { message: 'User updated by admin' };
 };
@@ -233,7 +223,7 @@ exports.getAllUsers = async (adminId) => {
 };
 
 exports.getAllUsersPaginated = async (adminId, limit, offset) => {
-  const adminRole = await this.getUserRole(adminId);
+  const adminRole = await this.getUserRole("", adminId);
   if (adminRole !== 'admin') throw new Error('Access denied');
   const { rows } = await pool.query(`SELECT * FROM users ORDER BY user_id LIMIT $1 OFFSET $2`, [limit, offset]);
   return rows;

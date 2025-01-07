@@ -4,6 +4,11 @@ const userController = require('../controllers/userController');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const apiKeyMiddleware = (req, res, next) => {
+
+  if (req.method === 'OPTIONS') {
+    return next();
+  }
+
   const apiKey = req.headers['x-api-key'];
   if (!apiKey || apiKey !== process.env.API_KEY_USER_SERVICE) {
     return res.status(403).json({ error: 'Forbidden' });
@@ -15,7 +20,7 @@ router.use(apiKeyMiddleware);
 
 router.post('/register', userController.register);
 router.post('/login', userController.login);
-router.get('/verify-email/:code', userController.verifyEmail);
+router.get('/verify-email', userController.verifyEmail);
 
 router.use(authMiddleware);
 

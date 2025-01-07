@@ -31,8 +31,8 @@ const {
   
   exports.verifyEmail = async (req, res) => {
     try {
-      const code = req.query;
-      const result = await verifyEmail(code);
+      const { verificationCode } = req.query;
+      const result = await verifyEmail(verificationCode);
       res.json({ success: true, ...result });
     } catch (err) {
       console.error(err);
