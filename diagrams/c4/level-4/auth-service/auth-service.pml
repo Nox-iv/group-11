@@ -1,5 +1,4 @@
 @startuml
-'skin and styling (optional, but can be included for better visuals)
 skinparam class {
   BackgroundColor #FFFFFF
   ArrowColor #000000
@@ -9,40 +8,54 @@ skinparam class {
 title Auth Service Class Diagram
 
 class AuthController {
-    -authenticationService: AuthenticationService
-    +login(request: Request, response: Response): Token
-    +logout(request: Request, response: Response): void
+    -authService: AuthenticationService
+    +login(email: string, password: string): Promise<LoginResponse>
+    +logout(token: string): void
+    +refreshToken(token: string): Promise<string>
 }
 
 class AuthenticationService {
     -tokenService: TokenService
     -userRepository: UserRepository
-    +authenticate(username: String, password: String): boolean
-    +generateToken(username: String): String
-    +validateToken(token: String): boolean
+    +authenticate(email: string, password: string): LoginResponse
+    +invalidateToken(token: string): void
+    +refreshToken(oldToken: string): string
 }
 
 class TokenService {
-    +createToken(username: String): String
-    +verifyToken(token: String): boolean
+    +generateToken(userId: string): string
+    +verifyToken(token: string): boolean
+    +decodeToken(token: string): DecodedToken
 }
 
 class UserRepository {
-    +findUserByUsername(username: String): User
-    +saveUser(user: User): User
+    +findUserByEmail(email: string): User
+    +findUserById(userId: string): User
+    +updateUserToken(userId: string, token: string): void
 }
 
 class User {
-    -id: Long
-    -username: String
-    -passwordHash: String
-    +getId(): Long
-    +getUsername(): String
-    +getPasswordHash(): String
+    -userId: string
+    -email: string
+    -passwordHash: string
+}
+
+class LoginResponse {
+    +userId: string
+    +token: string
+    +message: string
+}
+
+class DecodedToken {
+    +userId: string
+    +issuedAt: Date
+    +expiresAt: Date
 }
 
 AuthController --> AuthenticationService : uses
 AuthenticationService --> TokenService : uses
-AuthenticationService --> UserRepository : uses
-UserRepository --> User : returns
+AuthenticationService --> UserRepository : reads/writes
+UserRepository --> User : manipulates
+TokenService --> DecodedToken : returns
+AuthenticationService --> LoginResponse : returns
 @enduml
