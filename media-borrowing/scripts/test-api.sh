@@ -6,5 +6,5 @@ if [ ! -f "package.json" ]; then
 fi
 
 docker compose -f docker-compose.test.yml down
-docker compose -f docker-compose.test.yml up --build --abort-on-container-exit --exit-code-from node-app-test
+docker compose -f docker-compose.test.yml up --build --remove-orphans --abort-on-container-exit --exit-code-from node-app-test
 docker compose -f docker-compose.test.yml down

@@ -17,11 +17,9 @@ export class AmlBranchReaderApi {
 
             if (result.hasErrors()) {
                 res.status(400).json({ errors: result.errors });
+            } else {
+                res.status(200).json({ data: result.value });
             }
-
-            res.status(200).json({
-                data: result.value
-            });
         } catch (error) {
             this.httpErrorHandler.handle(error, res);
         }

@@ -12,7 +12,7 @@
     "migrate:down": "node-pg-migrate down",
     "migrate:redo": "node-pg-migrate redo",
     "migrate:create": "node-pg-migrate create -j sql",
-    "test:unit": "jest --testPathIgnorePatterns=./src/app.test.ts",
+    "test:unit": "jest --verbose --testPathIgnorePatterns=./src/app.test.ts",
     "test:api": "jest --forceExit src/app.test.ts"
   },
   "keywords": [],

@@ -22,9 +22,9 @@ export class MediaBorrowingApi {
             
             if (result.hasErrors()) {
                 res.status(400).json({ errors: result.errors.map(e => e.message) });
+            } else{
+                res.status(200).json(result.value);
             }
-
-            res.status(200).json(result.value);
         } catch (error) {
             this.httpErrorHandler.handle(error, res);
         }
@@ -37,9 +37,9 @@ export class MediaBorrowingApi {
             
             if (result.hasErrors()) {
                 res.status(400).json({ errors: result.errors });
+            } else {
+                res.status(200).json(result.value);
             }
-
-            res.status(200).json(result.value);
         } catch (error) {
             this.httpErrorHandler.handle(error, res);
         }
@@ -52,9 +52,9 @@ export class MediaBorrowingApi {
             
             if (result.hasErrors()) {
                 res.status(400).json({ errors: result.errors.map(e => e.message) });
+            } else {
+                res.status(200).json(result.value);
             }
-
-            res.status(200).json(result.value);
         } catch (error) {
             this.httpErrorHandler.handle(error, res);
         }

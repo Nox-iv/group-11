@@ -1,10 +1,12 @@
-import supertest from 'supertest';
 import express from 'express';
 import { createApp } from './app/app';
-
+import request from 'supertest';
+import { Server } from 'http';
 //TODO: Current test setup works but is fragile - clean up tests and use a more reliable seeding method.
 describe('Media Borrowing Integration Tests', () => {
   let app: express.Application;
+  let server: Server;
+  let agent: request.Agent;
 
   let baseDate: Date;
   let mediaBorrowingId: number = 0;
@@ -37,12 +39,15 @@ describe('Media Borrowing Integration Tests', () => {
   beforeAll(async () => {
     baseDate = new Date();
     app = createApp()
+
+    server = app.listen(3000);
+    agent = request.agent(app);
   });
 
   describe('Media borrowing, renewals, and returns', () => {
     it('A user can borrow a media item, renew the borrowing period once, and return the media item', async () => {
       // Borrow media item
-      const borrowResponse = await supertest(app)
+      const borrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -56,7 +61,7 @@ describe('Media Borrowing Integration Tests', () => {
       const mediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
       // Renew media item
-      const renewResponse = await supertest(app)
+      const renewResponse = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId,
@@ -66,7 +71,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(renewResponse.status).toBe(200);
 
       // Return media item
-      const returnResponse = await supertest(app)
+      const returnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId
@@ -77,7 +82,7 @@ describe('Media Borrowing Integration Tests', () => {
 
     it('Two users can borrow the same media item from the same branch, renew each item, and then return their media items', async () => {
       // Borrow media item - user 1
-      const borrowResponse1 = await supertest(app)
+      const borrowResponse1 = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -92,7 +97,7 @@ describe('Media Borrowing Integration Tests', () => {
       const mediaBorrowingRecordId1 = DATABASE.MEDIA_BORROWING_ID();
 
       // Borrow media item - user 2
-      const borrowResponse2 = await supertest(app)
+      const borrowResponse2 = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_2,
@@ -107,7 +112,7 @@ describe('Media Borrowing Integration Tests', () => {
       const mediaBorrowingRecordId2 = DATABASE.MEDIA_BORROWING_ID();
 
       // Renew media item - user 1
-      const renewResponse1 = await supertest(app)
+      const renewResponse1 = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId1,
@@ -117,7 +122,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(renewResponse1.status).toBe(200);
 
       // Renew media item - user 2
-      const renewResponse2 = await supertest(app)
+      const renewResponse2 = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId2,
@@ -127,7 +132,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(renewResponse2.status).toBe(200);
 
       // Return media item - user 1
-      const returnResponse1 = await supertest(app)
+      const returnResponse1 = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId1
@@ -136,7 +141,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(returnResponse1.status).toBe(200);
 
       // Return media item - user 2
-      const returnResponse2 = await supertest(app)
+      const returnResponse2 = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId2
@@ -147,7 +152,7 @@ describe('Media Borrowing Integration Tests', () => {
 
   it('If a user borrows the last copy of a media item from a branch, other users can borrow from a different branch where it is available', async () => {
       // Make item unavailable at Sheffield Central
-      const user1BorrowResponse = await supertest(app)
+      const user1BorrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -162,7 +167,7 @@ describe('Media Borrowing Integration Tests', () => {
       const mediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
       // Different user tries to borrow from Sheffield Central but fails
-      const user2UnavailableResponse = await supertest(app)
+      const user2UnavailableResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_2,
@@ -175,7 +180,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(user2UnavailableResponse.status).toBe(400);
 
       // User can borrow from Sheffield South where it is available
-      const user2AvailableResponse = await supertest(app)
+      const user2AvailableResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_2,
@@ -189,7 +194,7 @@ describe('Media Borrowing Integration Tests', () => {
       const user2MediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
       // Reset DB state
-      const user1ReturnResponse = await supertest(app)
+      const user1ReturnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId
@@ -197,7 +202,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(user1ReturnResponse.status).toBe(200);
 
-      const user2ReturnResponse = await supertest(app)
+      const user2ReturnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: user2MediaBorrowingRecordId
@@ -208,7 +213,7 @@ describe('Media Borrowing Integration Tests', () => {
 
     it('If a user borrows the last copy of a media item from a branch, and returns it, other users can borrow from the same branch', async () => {
       // Borrow last copy of Gatsby at Sheffield Central
-      const initialBorrowResponse = await supertest(app)
+      const initialBorrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -223,7 +228,7 @@ describe('Media Borrowing Integration Tests', () => {
       const mediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
       // Different user tries to borrow gatsby from Sheffield Central but fails
-      const user2UnavailableResponse = await supertest(app)
+      const user2UnavailableResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_2,
@@ -236,7 +241,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(user2UnavailableResponse.status).toBe(400);
 
       // User returns final copy of Gatsby at Sheffield Central
-      const returnResponse = await supertest(app)
+      const returnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId
@@ -245,7 +250,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(returnResponse.status).toBe(200);
 
       // Different user can now borrow  gatsby from Sheffield Central
-      const user2AvailableResponse = await supertest(app)
+      const user2AvailableResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_2,
@@ -258,7 +263,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(user2AvailableResponse.status).toBe(200);
       const user2MediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID()
 
-      const user2ReturnResponse = await supertest(app)
+      const user2ReturnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: user2MediaBorrowingRecordId
@@ -269,7 +274,7 @@ describe('Media Borrowing Integration Tests', () => {
 
     it('A media item that does not exist cannot be borrowed', async () => {
       // Borrow media item that does not exist
-      const borrowResponse = await supertest(app)
+      const borrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -284,7 +289,7 @@ describe('Media Borrowing Integration Tests', () => {
 
     it('A media item that is not in stock at a given branch cannot be borrowed', async () => {
       // Borrow media item that is not in stock at a given branch
-      const borrowResponse = await supertest(app)
+      const borrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.MANCHESTER_USER,
@@ -299,7 +304,7 @@ describe('Media Borrowing Integration Tests', () => {
 
     it('A user cannot borrow a media item that they have already borrowed, whether that be the same branch or a different branch', async () => {
       // Borrow media item
-      const initialBorrowResponse = await supertest(app)
+      const initialBorrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -313,7 +318,7 @@ describe('Media Borrowing Integration Tests', () => {
       const mediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
       // Borrow media item again from same branch
-      const secondBorrowResponse = await supertest(app)
+      const secondBorrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -326,7 +331,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(secondBorrowResponse.status).toBe(400);
 
       // Borrow media item again from different branch
-      const thirdBorrowResponse = await supertest(app)
+      const thirdBorrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -338,7 +343,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(thirdBorrowResponse.status).toBe(400);
 
-      const returnResponse = await supertest(app)
+      const returnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId
@@ -349,7 +354,7 @@ describe('Media Borrowing Integration Tests', () => {
 
     it('A user cannot borrow a media item if the end date is before the start date', async () => {
       // Borrow media item with end date before start date
-      const borrowResponse = await supertest(app)
+      const borrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -364,7 +369,7 @@ describe('Media Borrowing Integration Tests', () => {
 
     it('A user cannot borrow a media item if the end date is outside branch opening hours', async () => {
       // Borrow media item otuside branch hours (Mon-Sun : 0900-1700)
-      const borrowResponse = await supertest(app)
+      const borrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -379,7 +384,7 @@ describe('Media Borrowing Integration Tests', () => {
     
     it('A user cannot borrow a media item if the start date is outside branch opening hours', async () => {
       // Borrow media item outside branch hours (Mon-Sun : 0900-1700)
-      const borrowResponse = await supertest(app)
+      const borrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -394,7 +399,7 @@ describe('Media Borrowing Integration Tests', () => {
 
     it('If a branch has more than one opening period, then a media item can be borrowed with start/end dates within each period', async () => {
       // Borrow media item within branch opening hours (Mon-Sun : 0000-0200,0900-1700)
-      const borrowAfternoonResponse = await supertest(app)
+      const borrowAfternoonResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -407,7 +412,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(borrowAfternoonResponse.status).toBe(200);
       const mediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
-      const borrowMorningResponse = await supertest(app)
+      const borrowMorningResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -420,7 +425,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(borrowMorningResponse.status).toBe(200);
       const mediaBorrowingRecordId2 = DATABASE.MEDIA_BORROWING_ID();
 
-      const returnResponse = await supertest(app)
+      const returnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId
@@ -428,7 +433,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(returnResponse.status).toBe(200);
 
-      const returnResponse2 = await supertest(app)
+      const returnResponse2 = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId2
@@ -438,7 +443,7 @@ describe('Media Borrowing Integration Tests', () => {
     })
 
     it('A media item cannot be borrowed for longer than a branch\'s maximum borrowing duration as specified in the media borrowing config', async () => {
-      const borrowResponse14DaysMaxBranch = await supertest(app)
+      const borrowResponse14DaysMaxBranch = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -450,7 +455,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(borrowResponse14DaysMaxBranch.status).toBe(400);
 
-      const borrowResponse7DaysMaxBranch = await supertest(app)
+      const borrowResponse7DaysMaxBranch = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -464,7 +469,7 @@ describe('Media Borrowing Integration Tests', () => {
     })
 
     it('A non-existent media borrowing record cannot be renewed', async () => {
-      const renewResponse = await supertest(app)
+      const renewResponse = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: 999999,
@@ -475,7 +480,7 @@ describe('Media Borrowing Integration Tests', () => {
     })
 
     it('A media borrowing record cannot be renewed more times than the renewal limit specified in the given branch\'s media borrowing config', async () => {
-      const borrowResponseMaxOneRenewal = await supertest(app)
+      const borrowResponseMaxOneRenewal = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -488,7 +493,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(borrowResponseMaxOneRenewal.status).toBe(200);
       const mediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
-      const renewResponseMaxOneAllowedSuccess = await supertest(app)
+      const renewResponseMaxOneAllowedSuccess = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId,
@@ -497,7 +502,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(renewResponseMaxOneAllowedSuccess.status).toBe(200);
 
-      const renewResponseMaxOneAllowedFailure = await supertest(app)
+      const renewResponseMaxOneAllowedFailure = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId,
@@ -506,7 +511,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(renewResponseMaxOneAllowedFailure.status).toBe(400);
 
-      const returnResponseMaxOneRenewal = await supertest(app)
+      const returnResponseMaxOneRenewal = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId
@@ -514,7 +519,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(returnResponseMaxOneRenewal.status).toBe(200);
 
-      const borrowResponseMaxTwoRenewals = await supertest(app)
+      const borrowResponseMaxTwoRenewals = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -527,7 +532,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(borrowResponseMaxTwoRenewals.status).toBe(200);
       const mediaBorrowingRecordId2 = DATABASE.MEDIA_BORROWING_ID();
 
-      const renewResponseMaxTwoAllowedSuccess = await supertest(app)
+      const renewResponseMaxTwoAllowedSuccess = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId2,
@@ -536,7 +541,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(renewResponseMaxTwoAllowedSuccess.status).toBe(200);
 
-      const renewResponseMaxTwoAllowedSuccess2 = await supertest(app)
+      const renewResponseMaxTwoAllowedSuccess2 = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId2,
@@ -545,7 +550,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(renewResponseMaxTwoAllowedSuccess2.status).toBe(200);
 
-      const renewResponseMaxTwoAllowedFailure = await supertest(app)
+      const renewResponseMaxTwoAllowedFailure = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId2,
@@ -554,7 +559,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(renewResponseMaxTwoAllowedFailure.status).toBe(400);
 
-      const returnResponseMaxTwoRenewals = await supertest(app)
+      const returnResponseMaxTwoRenewals = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId2
@@ -564,7 +569,7 @@ describe('Media Borrowing Integration Tests', () => {
     })
 
     it('A media item cannot be renewed if the renewed end date is before the previous end date', async () => {
-      const borrowResponse = await supertest(app)
+      const borrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -577,7 +582,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(borrowResponse.status).toBe(200);
       const mediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
-      const renewResponse = await supertest(app)
+      const renewResponse = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId,
@@ -586,7 +591,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(renewResponse.status).toBe(400);
 
-      const returnResponse = await supertest(app)
+      const returnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId
@@ -596,7 +601,7 @@ describe('Media Borrowing Integration Tests', () => {
     })
 
     it('A media item cannot be renewed if the renewed end date is outside the branch\'s opening hours', async () => {
-      const borrowResponse = await supertest(app)
+      const borrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -609,7 +614,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(borrowResponse.status).toBe(200);
       const mediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
-      const renewResponse = await supertest(app)
+      const renewResponse = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId,
@@ -618,7 +623,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(renewResponse.status).toBe(400);
 
-      const returnResponse = await supertest(app)
+      const returnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId
@@ -628,7 +633,7 @@ describe('Media Borrowing Integration Tests', () => {
     })
 
     it('A media item cannot be renewed if the renewed borrowing duration is longer than the branch\'s maximum borrowing duration', async () => {
-      const borrowResponse = await supertest(app)
+      const borrowResponse = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -641,7 +646,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(borrowResponse.status).toBe(200);
       const mediaBorrowingRecordId = DATABASE.MEDIA_BORROWING_ID();
 
-      const renewResponse = await supertest(app)
+      const renewResponse = await agent
         .post('/renew')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId,
@@ -650,7 +655,7 @@ describe('Media Borrowing Integration Tests', () => {
 
       expect(renewResponse.status).toBe(400);
 
-      const returnResponse = await supertest(app)
+      const returnResponse = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId
@@ -661,7 +666,7 @@ describe('Media Borrowing Integration Tests', () => {
 
     it('A user can request a list of their borrowed media items', async () => {
       // Borrow two media items
-      const borrowResponse1 = await supertest(app)
+      const borrowResponse1 = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -674,7 +679,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(borrowResponse1.status).toBe(200);
       const mediaBorrowingRecordId1 = DATABASE.MEDIA_BORROWING_ID();
   
-      const borrowResponse2 = await supertest(app)
+      const borrowResponse2 = await agent
         .post('/borrow')
         .send({
           userId: DATABASE.USERS.SHEFFIELD_USER_1,
@@ -687,7 +692,7 @@ describe('Media Borrowing Integration Tests', () => {
       expect(borrowResponse2.status).toBe(200);
       const mediaBorrowingRecordId2 = DATABASE.MEDIA_BORROWING_ID();
   
-      const getBorrowedMediaItemsResponse = await supertest(app)
+      const getBorrowedMediaItemsResponse = await agent
         .get(`/user/${DATABASE.USERS.SHEFFIELD_USER_1}/records`)
         .query({
           limit: 10,
@@ -695,11 +700,11 @@ describe('Media Borrowing Integration Tests', () => {
         })
   
       expect(getBorrowedMediaItemsResponse.status).toBe(200);
-      expect(getBorrowedMediaItemsResponse.body.length).toBe(2);
-      expect(getBorrowedMediaItemsResponse.body[0].mediaBorrowingRecordId).toBe(mediaBorrowingRecordId2);
-      expect(getBorrowedMediaItemsResponse.body[1].mediaBorrowingRecordId).toBe(mediaBorrowingRecordId1);
+      expect(getBorrowedMediaItemsResponse.body.data.length).toBe(2);
+      expect(getBorrowedMediaItemsResponse.body.data[0].mediaBorrowingRecordId).toBe(mediaBorrowingRecordId2);
+      expect(getBorrowedMediaItemsResponse.body.data[1].mediaBorrowingRecordId).toBe(mediaBorrowingRecordId1);
 
-      const mediaBorrowingRecord = getBorrowedMediaItemsResponse.body[1];
+      const mediaBorrowingRecord = getBorrowedMediaItemsResponse.body.data[1];
 
       expect(mediaBorrowingRecord.mediaId).toBe(DATABASE.MEDIA.INCEPTION);
       expect(mediaBorrowingRecord.startDate).toBe(new Date(baseDate.setUTCHours(15, 0, 0, 0)).toISOString());
@@ -724,7 +729,7 @@ describe('Media Borrowing Integration Tests', () => {
         expect(openingHoursLate[1]).toBe(1700);
       }
   
-      const returnResponse1 = await supertest(app)
+      const returnResponse1 = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId1
@@ -732,7 +737,7 @@ describe('Media Borrowing Integration Tests', () => {
   
       expect(returnResponse1.status).toBe(200);
   
-      const returnResponse2 = await supertest(app)
+      const returnResponse2 = await agent
         .post('/return')
         .send({
           mediaBorrowingRecordId: mediaBorrowingRecordId2
@@ -742,7 +747,7 @@ describe('Media Borrowing Integration Tests', () => {
     })
 
     it('A user can request a list of branches for a given location', async () => {
-      const getBranchesResponse = await supertest(app).get(`/location/${DATABASE.LOCATIONS.SHEFFIELD}/branches`)
+      const getBranchesResponse = await agent.get(`/location/${DATABASE.LOCATIONS.SHEFFIELD}/branches`)
 
       expect(getBranchesResponse.status).toBe(200);
       expect(getBranchesResponse.body.data.length).toBe(2);
@@ -782,5 +787,9 @@ describe('Media Borrowing Integration Tests', () => {
       }
     })
   })
+
+  afterAll(() => {
+    server.close();
+  });
 });
  
