@@ -16,7 +16,7 @@ const {
       res.status(400).json({ error: err.message });
     }
   };
-  
+    
   exports.login = async (req, res) => {
     try {
       const { error } = userLoginSchema.validate(req.body);
