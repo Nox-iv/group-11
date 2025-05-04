@@ -1,32 +1,79 @@
-### Get media lists
+### 1) Get media lists (no auth required)
 GET http://localhost:3001/media
 
+###
 
-### Get a specific media
-GET http://localhost:3001/media/6
+### 2) LOGIN — authenticate and capture token
+# @name postLogin
+POST http://localhost:5002/auth/login
+Content-Type: application/json
 
-### Create a new wishlist
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+###
+
+@token = {{postLogin.response.body.token}}
+
+### 3) Access wishlist without a token (should 401)
+GET http://localhost:5002/wishlists
+
+###
+
+### 4) Access wishlist with an invalid token (should 403)
+GET http://localhost:5002/wishlists
+Authorization: Bearer invalid-token-here
+
+###
+
+### 5) Access wishlist with valid token (should 200)
+GET http://localhost:5002/wishlists
+Authorization: Bearer {{token}}
+
+###
+
+### 6) Get a specific media (no auth required)
+GET http://localhost:3001/media/7
+
+###
+
+### 7) Create a new wishlist (protected)
 POST http://localhost:5002/wishlists
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-    "wishlistName": "My Books",
-    "member_id": 1
+  "wishlistName": "The Books",
+  "member_id": 23
 }
 
-### Add media to wishlist
-POST http://localhost:5002/wishlists/47/media
+###
+
+### 8) Add media to wishlist (protected)
+POST http://localhost:5002/wishlists/6/media
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-    "media_id": 1
+  "media_id": 2
 }
 
-### Remove media from a wishlist
-DELETE http://localhost:5002/wishlists/16/media/1
+###
 
-### Delete a wishlist
+### 9) Remove media from a wishlist (protected)
+DELETE http://localhost:5002/wishlists/6/media/2
+Authorization: Bearer {{token}}
+
+###
+
+### 10) Delete a wishlist (protected)
 DELETE http://localhost:5002/wishlists/5
+Authorization: Bearer {{token}}
 
-### Get a specific wishlist with media details
+###
+
+### 11) Get a specific wishlist with media details (protected)
 GET http://localhost:5002/wishlists/17
+Authorization: Bearer {{token}}

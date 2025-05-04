@@ -1,28 +1,94 @@
-### Get Member Subscription List
-GET http://localhost:5001/subscription/memberSub
+### 1) LOGIN — authenticate and capture token
+# @name postLogin
+POST http://localhost:5001/auth/login
 Content-Type: application/json
 
-### Upgrade or Downgrade Member Subscription
+{
+  "email": "acct1@example.com",
+  "password": "pass123"
+}
+
+###
+
+@token = {{postLogin.response.body.token}}
+
+### 2) Get Member Subscription List without token (should 401)
+GET http://localhost:5001/subscription/memberSub
+
+###
+
+### 3) Get Member Subscription List with invalid token (should 403)
+GET http://localhost:5001/subscription/memberSub
+Authorization: Bearer invalid-token-here
+
+###
+
+### 4) Get Member Subscription List with valid token (should 200)
+GET http://localhost:5001/subscription/memberSub
+Authorization: Bearer {{token}}
+
+###
+
+### 5) Upgrade or Downgrade Member Subscription without token (should 401)
 PUT http://localhost:5001/subscription/memberSub
 Content-Type: application/json
 
 {
-  "member_id": 1,           
-  "new_subid": 2           
+  "member_id": 1,
+  "new_subid": 2
 }
-    
-### Get All Billing Records
+
+###
+
+### 6) Upgrade or Downgrade Member Subscription with valid token (should 200)
+PUT http://localhost:5001/subscription/memberSub
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "member_id": 1,
+  "new_subid": 2
+}
+
+###
+
+### 7) Get All Billing Records without token (should 401)
 GET http://localhost:5001/subscription/memberSub/billing
-Content-Type: application/json
 
-### Get Billing History for Specific Subscription
+###
+
+### 8) Get All Billing Records with valid token (should 200)
+GET http://localhost:5001/subscription/memberSub/billing
+Authorization: Bearer {{token}}
+
+###
+
+### 9) Get Billing History for Specific Subscription without token (should 401)
 GET http://localhost:5001/subscription/memberSub/billing/12
-Content-Type: application/json
 
-### Update Billing Status
+###
+
+### 10) Get Billing History for Specific Subscription with valid token (should 200)
+GET http://localhost:5001/subscription/memberSub/billing/12
+Authorization: Bearer {{token}}
+
+###
+
+### 11) Update Billing Status without token (should 401)
 PUT http://localhost:5001/subscription/memberSub/billing/9
 Content-Type: application/json
 
 {
-    "status": "completed"
-}       
+  "status": "completed"
+}
+
+###
+
+### 12) Update Billing Status with valid token (should 200)
+PUT http://localhost:5001/subscription/memberSub/billing/9
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "completed"
+}

@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const subscriptionController = require("../controllers/subscriptionController");
+const authMiddleware = require("../authMiddleware");
+
+// Require a valid JWT on all subscription endpoints:
+router.use(authMiddleware);
 
 // Get subscription list
 router.get("/types", subscriptionController.getSubscriptionTypes);

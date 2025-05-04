@@ -1,65 +1,186 @@
-### Retrieve subscription type
-GET http://localhost:5000/subscription/types
+### 1) LOGIN — authenticate and capture token
+# @name postLogin
+POST http://localhost:5000/auth/login
 Content-Type: application/json
 
-### Subscribe to library
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+
+###
+
+@token = {{postLogin.response.body.token}}
+
+### 2) Access subscription types without a token (should 401)
+GET http://localhost:5000/subscription/types
+
+###
+
+### 3) Access subscription types with an invalid token (should 403)
+GET http://localhost:5000/subscription/types
+Authorization: Bearer invalid-token-here
+
+###
+
+### 4) Access subscription types with valid token (should 200)
+GET http://localhost:5000/subscription/types
+Authorization: Bearer {{token}}
+
+###
+
+### 5) Subscribe to library without a token (should 401)
 POST http://localhost:5000/subscription
 Content-Type: application/json
 
 {
-  "member_id": 12,
-  "subid": 1
+  "memberId": 1,
+  "subid": 2
 }
 
-### Update subscription
-PUT http://localhost:5000/subscription
-Content-Type: application/json
+###
 
-{ 
-  "member_id": 45,
+### 6) Subscribe to library with valid token (should 201)
+POST http://localhost:5000/subscription
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "memberId": 10,
   "subid": 3
 }
 
-### Remove subscription
-DELETE http://localhost:5000/subscription
+###
+
+### 7) Update subscription without a token (should 401)
+PUT http://localhost:5000/subscription
 Content-Type: application/json
+
+{
+  "memberId": 1,
+  "newTypeId": 3
+}
+
+###
+
+### 8) Update subscription with valid token (should 200)
+PUT http://localhost:5000/subscription
+Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "member_id": 1,
   "subid": 3
 }
 
-### Get member's current subscription (new)
-GET http://localhost:5000/subscription/member/9
+###
 
-### Get member's billing history (new)
-GET http://localhost:5000/subscription/billing/history/9
+### 9) Remove subscription without a token (should 401)
+DELETE http://localhost:5000/subscription
+Content-Type: application/json
 
-### Process new payment (new)
+{
+  "member_id": 1
+}
+
+###
+
+### 10) Remove subscription with valid token (should 200)
+DELETE http://localhost:5000/subscription
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "member_id": 1
+}
+
+###
+
+### 11) Get member subscription without token (should 401)
+GET http://localhost:5000/subscription/member/1
+
+###
+
+### 12) Get member subscription with valid token (should 200)
+GET http://localhost:5000/subscription/member/1
+Authorization: Bearer {{token}}
+
+###
+
+### 13) Process billing without token (should 401)
 POST http://localhost:5000/subscription/billing
 Content-Type: application/json
 
 {
-  "member_id": 9,
-  "subscription_id": 6,
+  "memberId": 1,
+  "amount": 49.99
+}
+
+###
+
+### 14) Process billing with valid token (should 200)
+POST http://localhost:5000/subscription/billing
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "member_id": 1,
   "payment_amount": 49.99,
   "payment_method": "credit_card"
 }
 
-### Renew subscription (new)
+###
+
+### 15) Get billing history without token (should 401)
+GET http://localhost:5000/subscription/billing/history/1
+
+###
+
+### 16) Get billing history with valid token (should 200)
+GET http://localhost:5000/subscription/billing/history/1
+Authorization: Bearer {{token}}
+
+###
+
+### 17) Renew subscription without token (should 401)
 POST http://localhost:5000/subscription/renew
 Content-Type: application/json
 
 {
-  "member_id": 9,
-  "subid": 2
+  "memberId": 1
 }
 
-### Toggle auto-renewal (new)
+###
+
+### 18) Renew subscription with valid token (should 200)
+POST http://localhost:5000/subscription/renew
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "member_id": 3,
+  "subid": 2 
+}
+
+###
+
+### 19) Toggle auto-renewal without token (should 401)
 PUT http://localhost:5000/subscription/auto-renew
 Content-Type: application/json
 
 {
-  "memberId": 9,
+  "memberId": 1,
+  "autoRenew": true
+}
+
+###
+
+### 20) Toggle auto-renewal with valid token (should 200)
+PUT http://localhost:5000/subscription/auto-renew
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "memberId": 1,
   "autoRenew": false
 }
